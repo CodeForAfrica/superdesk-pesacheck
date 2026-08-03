@@ -11,16 +11,14 @@ setTimeout(() => {
                 id: 'planning-extension',
                 load: () => import('superdesk-planning/client/planning-extension'),
             },
-            {
-                id: 'broadcasting',
-                load: () => import('superdesk-core/scripts/extensions/broadcasting').then((broadcasting) => {
-                    broadcasting.setCustomizations({
-                        getRundownItemDisplayName: (rundown) => rundown.technical_title,
-                    });
-
-                    return broadcasting;
-                }),
-            },
+            // NOTE: the 'broadcasting' extension (develop default) is intentionally
+            // NOT enabled. It evaluates rundown field definitions at import time via
+            // getVocabulary(RUNDOWN_ITEM_TYPES_VOCABULARY_ID).display_name; PesaCheck's
+            // vocabularies.json has no rundown vocabularies, so that read throws during
+            // extension load, the extensionsHaveLoaded event never fires, and the app is
+            // pinned on a blank loading screen. PesaCheck is a fact-checking newsroom and
+            // does not use broadcasting/rundowns. Re-enable only after seeding the
+            // rundown_item_types / rundown_subitem_types / cameras vocabularies.
 
             // extensions:start (managed by scripts/dev/extension.sh — do not edit by hand)
             {
@@ -35,10 +33,9 @@ setTimeout(() => {
                 id: 'datetimeField',
                 load: () => import('superdesk-core/scripts/extensions/datetimeField'),
             },
-            {
-                id: 'availability-manager',
-                load: () => import('superdesk-core/scripts/extensions/availability-manager'),
-            },
+            // 'availability-manager' (develop default) removed alongside 'broadcasting':
+            // it manages staff availability for broadcast shows/rundowns, which PesaCheck
+            // does not use. Re-enable together with broadcasting if rundowns are adopted.
             // extensions:end
         ],
         {},
