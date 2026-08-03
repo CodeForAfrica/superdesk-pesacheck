@@ -52,6 +52,17 @@ if env("REDIS_PORT"):
     REDIS_URL = env("REDIS_PORT").replace("tcp:", "redis:")
 BROKER_URL = env("CELERY_BROKER_URL", REDIS_URL)
 
+# celery-redbeat is a dependency and registers a ``beat_init`` signal handler at
+# import time; with the default PersistentScheduler that handler blows up with
+# ``'PersistentScheduler' object has no attribute 'lock_key'``. Use RedBeat as
+# the beat scheduler so the distributed lock works (and multiple beat replicas
+# can't double-fire scheduled tasks). RedBeat reads its Redis URL from
+# ``redbeat_redis_url`` and falls back to the broker URL, which is Redis here.
+# (Core loads config via ``config_from_object(app.config, namespace="CELERY")``,
+# so ``CELERY_BEAT_SCHEDULER`` maps to celery's ``beat_scheduler``.)
+CELERY_BEAT_SCHEDULER = env("CELERY_BEAT_SCHEDULER", "redbeat.RedBeatScheduler")
+CELERY_REDBEAT_REDIS_URL = env("REDBEAT_REDIS_URL", BROKER_URL)
+
 SECRET_KEY = env("SECRET_KEY", "")
 
 # Highcharts Export Server - default settings
