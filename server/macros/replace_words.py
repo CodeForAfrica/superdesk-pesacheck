@@ -64,9 +64,7 @@ def find_and_replace(item, **kwargs):
 
             while re.search(pattern, input_string, flags=re.IGNORECASE):
                 # get the original string from the input
-                original = re.search(pattern, input_string, flags=re.IGNORECASE).group(
-                    0
-                )
+                original = re.search(pattern, input_string, flags=re.IGNORECASE).group(0)
                 replacement = repl(word.get("replacement", ""), original)
                 if found_list.get(original):
                     break
@@ -94,7 +92,6 @@ def find_and_replace(item, **kwargs):
 
 
 name = "Replace_Words"
-replace_type = "editor_state"
 label = "Replace words in the article"
 order = 1
 shortcut = "a"

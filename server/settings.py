@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "apps.rundowns",
     "planning",
     "analytics",
+    "pesacheck.ingest",
 ]
 
 MODULES.append("planning")
