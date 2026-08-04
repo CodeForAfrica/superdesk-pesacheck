@@ -25,6 +25,19 @@ class GhostFeedingService(FileFeedingService):
     NAME = "ghost_file"
     label = "Ghost CMS file feed"
 
+    # Extend the base file-feed config (the "Server Folder" path) with the Ghost
+    # site URL, used by GhostParser to resolve the __GHOST_URL__ placeholder in
+    # exported image/body URLs so images can be fetched.
+    fields = FileFeedingService.fields + [
+        {
+            "id": "url",
+            "type": "text",
+            "label": "Ghost site URL",
+            "placeholder": "https://your-ghost-site",
+            "required": False,
+        }
+    ]
+
     async def _update(self, provider, update):
         """Yield ingested items in batches.
 
