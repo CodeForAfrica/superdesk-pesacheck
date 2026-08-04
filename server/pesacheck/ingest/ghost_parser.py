@@ -21,6 +21,14 @@ from superdesk.utc import utcnow
 
 logger = logging.getLogger(__name__)
 
+# Ghost exports replace the site URL with this portable placeholder in
+# feature_image, inline <img> src, and body links. It must be substituted with
+# the real site URL (provider config ``url``) before any image is fetched:
+# left as-is it has no http scheme, so core's download path treats it as a
+# relative URL and calls url_for(_external=True), which raises
+# "Unable to create a url adapter" in the Celery worker (no request context).
+GHOST_URL_PLACEHOLDER = "__GHOST_URL__"
+
 # bytes to peek at for fast can_parse check
 _PEEK_SIZE = 512
 _IMAGE_FETCH_RETRIES = 4
@@ -60,6 +68,31 @@ class GhostParser(FileFeedParser):
         super().__init__()
         self._last_image_fetch_ts = 0.0
         self._image_assoc_cache = {}
+        # Real Ghost site URL, taken from the provider config in iter_items and
+        # substituted for GHOST_URL_PLACEHOLDER in image/body URLs.
+        self._ghost_url = ""
+
+    def _resolve_url(self, url):
+        """Turn a Ghost export URL into a fetchable absolute URL.
+
+        Substitutes the ``__GHOST_URL__`` placeholder with the configured site
+        URL and returns the result only if it is now an absolute http(s) URL.
+        Anything still relative (no configured site URL, or a genuinely relative
+        link) is skipped rather than handed to the downloader, which would crash
+        in the worker trying to resolve it against the app host.
+        """
+        if not url:
+            return None
+        if self._ghost_url:
+            url = url.replace(GHOST_URL_PLACEHOLDER, self._ghost_url)
+        if GHOST_URL_PLACEHOLDER in url or not urlparse(url).scheme:
+            logger.warning(
+                "Skipping image with unresolved/relative URL %r "
+                "(set the provider config 'url' to the Ghost site to fetch these)",
+                url,
+            )
+            return None
+        return url
 
     def _is_medium_cdn_url(self, url):
         try:
@@ -209,7 +242,7 @@ class GhostParser(FileFeedParser):
         return association.get("renditions", {}).get("original", {}).get("href")
 
     def _parse_feature_image(self, item, post):
-        url = post.get("feature_image")
+        url = self._resolve_url(post.get("feature_image"))
         if url:
             try:
                 self._add_image(item, url, is_featured=True)
@@ -228,7 +261,8 @@ class GhostParser(FileFeedParser):
         url_rewrites = {}
         for img in root.xpath(".//img"):
             try:
-                src = img.get("src")
+                raw_src = img.get("src")
+                src = self._resolve_url(raw_src)
                 if not src:
                     continue
 
@@ -288,6 +322,8 @@ class GhostParser(FileFeedParser):
         versioncreated = self._parse_date(post.get("published_at") or post.get("updated_at"))
 
         html = post.get("html") or ""
+        if self._ghost_url and html:
+            html = html.replace(GHOST_URL_PLACEHOLDER, self._ghost_url)
 
         item = {
             ITEM_TYPE: CONTENT_TYPE.TEXT,
@@ -325,6 +361,7 @@ class GhostParser(FileFeedParser):
         """Parse a Ghost JSON export file and yield Superdesk items one at a time."""
         self._image_assoc_cache = {}
         self._last_image_fetch_ts = 0.0
+        self._ghost_url = ((provider or {}).get("config", {}).get("url") or "").rstrip("/")
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
