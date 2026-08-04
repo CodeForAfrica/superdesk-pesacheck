@@ -20,7 +20,6 @@ if init_data.exists():
 
 INSTALLED_APPS = [
     "apps.languages",
-    "apps.rundowns",
     "planning",
     "analytics",
     "pesacheck.ingest",
@@ -121,7 +120,7 @@ FTP_TIMEOUT = int(env("FTP_TIMEOUT", 10))
 
 PLANNING_EVENT_TEMPLATES_ENABLED = True
 
-PLANNING_AUTO_ASSIGN_TO_WORKFLOW = False
+PLANNING_AUTO_ASSIGN_TO_WORKFLOW = True
 
 # special characters that are disallowed
 DISALLOWED_CHARACTERS = [
@@ -163,63 +162,51 @@ ORGANIZATION_NAME_ABBREVIATION = env("ORGANIZATION_NAME_ABBREVIATION", "SoFab")
 
 SCHEMA = {
     "picture": {
-        "slugline": {"required": False},
-        "headline": {"required": False},
+        "headline": {"required": True},
+        "alt_text": {"required": False, "type": "string", "nullable": True},
         "description_text": {"required": True},
-        "byline": {"required": False},
-        "copyrightnotice": {"required": False},
+        "creditline": {"required": False},
+        "copyrightholder": {"required": False},
         "usageterms": {"required": False},
-        "ednote": {"required": False},
-    },
-    "video": {
-        "slugline": {"required": False},
-        "headline": {"required": False},
-        "description_text": {"required": True},
-        "byline": {"required": True},
         "copyrightnotice": {"required": False},
-        "usageterms": {"required": False},
-        "ednote": {"required": False},
     },
 }
 
 # editor for images, video, audio
 EDITOR = {
     "picture": {
-        "headline": {"order": 1, "sdWidth": "full"},
-        "description_text": {"order": 2, "sdWidth": "full", "textarea": True},
-        "byline": {"order": 3, "displayOnMediaEditor": True},
-        "copyrightnotice": {"order": 4, "displayOnMediaEditor": True},
-        "slugline": {"displayOnMediaEditor": True},
-        "ednote": {"displayOnMediaEditor": True},
-        "usageterms": {"order": 5, "displayOnMediaEditor": True},
-    },
-    "video": {
-        "headline": {"order": 1, "sdWidth": "full"},
-        "description_text": {"order": 2, "sdWidth": "full", "textarea": True},
-        "byline": {"order": 3, "displayOnMediaEditor": True},
-        "copyrightnotice": {"order": 4, "displayOnMediaEditor": True},
-        "slugline": {"displayOnMediaEditor": True},
-        "ednote": {"displayOnMediaEditor": True},
-        "usageterms": {"order": 5, "displayOnMediaEditor": True},
+        "headline": {"order": 1, "sdWidth": "full", "editor3": True},
+        "alt_text": {"order": 2, "sdWidth": "full", "textarea": True, "editor3": True},
+        "description_text": {"order": 3, "sdWidth": "full", "textarea": True, "editor3": True},
+        "creditline": {"order": 4, "sdWidth": "full", "displayOnMediaEditor": True, "editor3": True},
+        "copyrightholder": {"order": 5, "displayOnMediaEditor": True, "editor3": True},
+        "usageterms": {"order": 6, "displayOnMediaEditor": True},
+        "copyrightnotice": {"order": 7, "displayOnMediaEditor": True},
     },
 }
 
-SCHEMA["audio"] = SCHEMA["video"]
-EDITOR["audio"] = EDITOR["video"]
+SCHEMA["audio"] = SCHEMA["video"] = SCHEMA["picture"]
+EDITOR["audio"] = EDITOR["video"] = EDITOR["picture"]
 
 
 # media required fields for upload
 VALIDATOR_MEDIA_METADATA = {
-    "slugline": {
-        "required": False,
-    },
     "headline": {
+        "required": True,
+    },
+    "alt_text": {
         "required": False,
     },
     "description_text": {
         "required": True,
     },
-    "byline": {
+    "creditline": {
+        "required": False,
+    },
+    "copyrightholder": {
+        "required": False,
+    },
+    "usageterms": {
         "required": False,
     },
     "copyrightnotice": {
@@ -238,7 +225,5 @@ ARCHIVE_AUTOCOMPLETE_LIMIT = 2000
 
 # 2: reindex slugline
 SCHEMA_VERSION = 2
-
-RUNDOWNS_TIMEZONE = DEFAULT_TIMEZONE
 
 ANALYTICS_ENABLE_ARCHIVE_STATS = True
