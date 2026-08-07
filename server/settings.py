@@ -50,6 +50,8 @@ REDIS_URL = env("REDIS_URL", "redis://localhost:6379")
 if env("REDIS_PORT"):
     REDIS_URL = env("REDIS_PORT").replace("tcp:", "redis:")
 BROKER_URL = env("CELERY_BROKER_URL", REDIS_URL)
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", None)
+CELERY_TASK_IGNORE_RESULT = strtobool(env("CELERY_TASK_IGNORE_RESULT", "true"))
 
 # celery-redbeat is a dependency and registers a ``beat_init`` signal handler at
 # import time; with the default PersistentScheduler that handler blows up with
