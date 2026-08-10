@@ -1,16 +1,17 @@
-import os
 import json
+import os
 import tempfile
-
 from unittest.mock import patch
-from superdesk.tests import TestCase
-from pesacheck.ingest.ghost_parser import GhostParser
 
+from pesacheck.ingest.ghost_parser import GhostParser
+from pesacheck.language import SUPPORTED_LANGUAGES
+from superdesk.tests import TestCase
 
 FIXTURE_DIR = os.path.join(
     os.path.dirname(os.path.realpath(__file__)), "../fixtures/ghost_export"
 )
 FIXTURE_PATH = os.path.join(FIXTURE_DIR, "ghost_export.json")
+LANGUAGES_FIXTURE_PATH = os.path.join(FIXTURE_DIR, "ghost_export_languages.json")
 
 
 def _mock_update_renditions(item, url, old_item, **kwargs):
@@ -126,7 +127,47 @@ class GhostParserTestCase(TestCase):
         post2 = next(
             i for i in items if i["guid"] == "bbbbbbbb-0002-0002-0002-bbbbbbbbbbbb"
         )
-        self.assertIn("language", post2)
+        self.assertEqual(post2["language"], "en")
+
+    # ------------------------------------------------------------------
+    # parse — language detection
+    # ------------------------------------------------------------------
+
+    async def _languages_by_guid(self):
+        items = await self.parser.parse(LANGUAGES_FIXTURE_PATH)
+        return {item["guid"]: item["language"] for item in items}
+
+    async def test_parse_language_from_tag(self):
+        languages = await self._languages_by_guid()
+        self.assertEqual(languages["11111111-0001-0001-0001-111111111111"], "sw")
+        self.assertEqual(languages["33333333-0003-0003-0003-333333333333"], "om")
+        self.assertEqual(languages["66666666-0006-0006-0006-666666666666"], "en")
+
+    async def test_parse_language_falls_back_to_text_when_untagged(self):
+        # lang_002 predates the language-tag convention: only "Somalia" and
+        # "Short Form" are tagged, so the body has to carry the language.
+        languages = await self._languages_by_guid()
+        self.assertEqual(languages["22222222-0002-0002-0002-222222222222"], "so")
+
+    async def test_parse_language_falls_back_to_text_without_any_tags(self):
+        languages = await self._languages_by_guid()
+        self.assertEqual(languages["55555555-0005-0005-0005-555555555555"], "am")
+
+    async def test_parse_language_prefers_locale_and_normalises_it(self):
+        # locale "en-US" outranks the French tag and is reduced to "en".
+        languages = await self._languages_by_guid()
+        self.assertEqual(languages["44444444-0004-0004-0004-444444444444"], "en")
+
+    async def test_parse_language_ignores_adjacent_country_tag(self):
+        # lang_006 is tagged English + Somalia; "Somalia" must not read as Somali.
+        languages = await self._languages_by_guid()
+        self.assertEqual(languages["66666666-0006-0006-0006-666666666666"], "en")
+
+    async def test_parse_language_set_on_every_item(self):
+        items = await self.parser.parse(LANGUAGES_FIXTURE_PATH)
+        self.assertEqual(len(items), 6)
+        for item in items:
+            self.assertIn(item["language"], SUPPORTED_LANGUAGES)
 
     # ------------------------------------------------------------------
     # parse — authors → byline
