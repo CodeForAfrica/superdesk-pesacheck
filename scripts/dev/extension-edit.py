@@ -36,7 +36,9 @@ def main():
     mode, name, path = sys.argv[1], sys.argv[2], sys.argv[3]
 
     if mode not in ("enable", "disable"):
-        print(f"ERROR: mode must be 'enable' or 'disable', got '{mode}'", file=sys.stderr)
+        print(
+            f"ERROR: mode must be 'enable' or 'disable', got '{mode}'", file=sys.stderr
+        )
         sys.exit(2)
 
     with open(path) as f:
@@ -63,7 +65,9 @@ def main():
     # a line whose stripped content is '},'. Anything else (blank lines,
     # comments) is treated as a passthrough chunk between entries.
     region = lines[start_idx + 1 : end_idx]
-    entries = []  # list of (kind, value): kind is 'entry' (list of lines) or 'other' (single line)
+    entries = (
+        []
+    )  # list of (kind, value): kind is 'entry' (list of lines) or 'other' (single line)
     current = None
     for line in region:
         stripped = line.strip()
@@ -100,7 +104,9 @@ def main():
     if mode == "enable":
         for kind, value in entries:
             if kind == "entry" and entry_id(value) == name:
-                print(f"INFO: '{name}' is already enabled — no change.", file=sys.stderr)
+                print(
+                    f"INFO: '{name}' is already enabled — no change.", file=sys.stderr
+                )
                 sys.exit(0)
         # Build a fresh entry and insert before // extensions:end.
         new_entry = [

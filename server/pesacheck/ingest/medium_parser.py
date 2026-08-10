@@ -11,7 +11,14 @@ from superdesk.metadata.utils import generate_guid
 from superdesk.io.feed_parsers import FileFeedParser
 from superdesk.io.registry import register_feed_parser
 from superdesk.media.renditions import update_renditions
-from superdesk.metadata.item import FORMAT, GUID_FIELD, GUID_TAG, ITEM_TYPE, CONTENT_TYPE, FORMATS
+from superdesk.metadata.item import (
+    FORMAT,
+    GUID_FIELD,
+    GUID_TAG,
+    ITEM_TYPE,
+    CONTENT_TYPE,
+    FORMATS,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -54,10 +61,13 @@ class MediumParser(FileFeedParser):
                 html_content = f.read().decode("utf-8")
                 root = parse_html(html_content, "html")
 
-                exported_from_medium = 'Exported from <a href="https://medium.com">Medium</a>' in to_string(
-                    root.find(".//footer"), method="html"
+                exported_from_medium = (
+                    'Exported from <a href="https://medium.com">Medium</a>'
+                    in to_string(root.find(".//footer"), method="html")
                 )
-                article_body_found = root.find(".//section[@data-field='body']") is not None
+                article_body_found = (
+                    root.find(".//section[@data-field='body']") is not None
+                )
 
                 return exported_from_medium and article_body_found
         except Exception:
@@ -78,7 +88,9 @@ class MediumParser(FileFeedParser):
         guid_hash = hashlib.sha1(url.encode("utf8")).hexdigest()
         return generate_guid(type=GUID_TAG, id=guid_hash + "-image")
 
-    def _add_image(self, item, url, alt_text="", description_text="", is_featured=False):
+    def _add_image(
+        self, item, url, alt_text="", description_text="", is_featured=False
+    ):
         """Add an image to the item's associations.
 
         :param item: The item dictionary to add the image to
@@ -132,7 +144,9 @@ class MediumParser(FileFeedParser):
                 self._add_image(item, src, alt_text, description_text, is_featured)
 
             except Exception as e:
-                logger.warning(f"Failed to parse image {img.get('src', 'unknown')}: {e}")
+                logger.warning(
+                    f"Failed to parse image {img.get('src', 'unknown')}: {e}"
+                )
                 continue
 
     async def parse(self, file_path, provider=None):
@@ -168,7 +182,9 @@ class MediumParser(FileFeedParser):
                 firstcreated = utcnow()
 
             text_nodes = article.xpath(".//text()")
-            word_count = sum(len(text.strip().split()) for text in text_nodes if text.strip())
+            word_count = sum(
+                len(text.strip().split()) for text in text_nodes if text.strip()
+            )
 
             item = {
                 ITEM_TYPE: CONTENT_TYPE.TEXT,
