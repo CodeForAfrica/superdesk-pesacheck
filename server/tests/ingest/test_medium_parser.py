@@ -9,7 +9,9 @@ class MediumParserTestCase(TestCase):
         super().setUp()
 
         dirname = os.path.dirname(os.path.realpath(__file__))
-        fixture_path = os.path.normpath(os.path.join(dirname, "../fixtures/medium_export"))
+        fixture_path = os.path.normpath(
+            os.path.join(dirname, "../fixtures/medium_export")
+        )
         self.file_path = os.path.join(
             fixture_path,
             "2022-02-27_HOAX--This-UNAIDS-job-advert-in-Uganda-is-fake-f8d269a3d85d.html",
@@ -23,9 +25,12 @@ class MediumParserTestCase(TestCase):
     async def test_parse_medium_html(self):
         item = await self.parser.parse(self.file_path)
 
-        self.assertEqual(item["headline"], "HOAX: This UNAIDS job advert in Uganda is fake")
         self.assertEqual(
-            item["abstract"], "A UNAIDS Communications officer told PesaCheck that the job advertisement is fake."
+            item["headline"], "HOAX: This UNAIDS job advert in Uganda is fake"
+        )
+        self.assertEqual(
+            item["abstract"],
+            "A UNAIDS Communications officer told PesaCheck that the job advertisement is fake.",
         )
         self.assertTrue(item["body_html"].startswith("<section"))
         self.assertEqual(item["firstcreated"].isoformat(), "2022-02-27T07:26:36.217000")
@@ -63,7 +68,9 @@ class MediumParserTestCase(TestCase):
         featuremedia = item["associations"]["featuremedia"]
         self.assertEqual(featuremedia["type"], "picture")
 
-        embedded_count = sum(1 for key in item["associations"].keys() if key.startswith("embedded"))
+        embedded_count = sum(
+            1 for key in item["associations"].keys() if key.startswith("embedded")
+        )
         self.assertGreater(embedded_count, 0)
 
         # verify the image GUID is generated

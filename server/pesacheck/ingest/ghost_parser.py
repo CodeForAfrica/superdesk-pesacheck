@@ -1,23 +1,30 @@
-import json
 import hashlib
+import json
 import logging
 import random
 import time
-import unicodedata
 from copy import deepcopy
-from urllib.parse import urlparse
-
 from datetime import datetime, timezone
+from urllib.parse import urlparse
 
 from superdesk.errors import ParserError
 from superdesk.etree import parse_html
-from superdesk.metadata.utils import generate_guid
 from superdesk.io.feed_parsers import FileFeedParser
 from superdesk.io.registry import register_feed_parser
 from superdesk.media.renditions import update_renditions
-from superdesk.metadata.item import FORMAT, GUID_FIELD, GUID_TAG, ITEM_TYPE, CONTENT_TYPE, FORMATS
+from superdesk.metadata.item import (
+    CONTENT_TYPE,
+    FORMAT,
+    FORMATS,
+    GUID_FIELD,
+    GUID_TAG,
+    ITEM_TYPE,
+)
+from superdesk.metadata.utils import generate_guid
+from superdesk.text_utils import get_text
 from superdesk.utc import utcnow
 
+from pesacheck.language import detect_language, normalise_language_code
 
 logger = logging.getLogger(__name__)
 
@@ -127,28 +134,27 @@ class GhostParser(FileFeedParser):
     def _mark_fetch_done(self):
         self._last_image_fetch_ts = time.monotonic()
 
-    def _guess_language(self, text):
-        """Guess language from text: returns 'am', 'fr', or 'en'.
+    def _parse_language(self, post, tags, text):
+        """Resolve the item language from ``locale``, then tags, then body text.
 
-        Ethiopic script detection is used first (langdetect has no Amharic model).
-        langdetect is then used to distinguish English from French; anything
-        unrecognised falls back to English.
+        Ghost's own ``locale`` is authoritative when set, but PesaCheck's export
+        leaves it null on every post, so in practice the language comes from the
+        post's language tag. Posts predating that tagging convention fall
+        through to text classification.
         """
-        if not text:
-            return None
-        # Detect Amharic by Ethiopic Unicode block (U+1200–U+137F, etc.)
-        for ch in text:
-            if "ETHIOPIC" in unicodedata.name(ch, ""):
-                return "am"
-        try:
-            from langdetect import detect
+        locale = normalise_language_code(post.get("locale"))
+        if locale:
+            return locale
 
-            detected = detect(text)
-            if detected in ("en", "fr"):
-                return detected
-        except Exception:
-            pass
-        return "en"
+        # Offer both the display name and the slug: either may be the form that
+        # names the language ("Afaan Oromo" / "afaan-oromo").
+        tag_labels = [
+            (tag["sort_order"], label)
+            for tag in tags
+            for label in (tag["name"], tag["slug"])
+        ]
+
+        return detect_language(tag_labels, text)
 
     def can_parse(self, file_path):
         try:
@@ -203,7 +209,9 @@ class GhostParser(FileFeedParser):
                 if attempt == policy["retries"]:
                     break
 
-                delay = (policy["base_backoff"] * attempt) + random.uniform(0, _IMAGE_FETCH_JITTER_SECONDS)
+                delay = (policy["base_backoff"] * attempt) + random.uniform(
+                    0, _IMAGE_FETCH_JITTER_SECONDS
+                )
                 logger.warning(
                     "Image fetch failed for %s (attempt %s/%s), retrying in %.2fs: %s",
                     url,
@@ -216,11 +224,16 @@ class GhostParser(FileFeedParser):
 
         if policy["failure_cooldown"] > 0:
             # After exhausting retries, cool down before the next image to reduce cascading failures.
-            time.sleep(policy["failure_cooldown"] + random.uniform(0, _IMAGE_FETCH_JITTER_SECONDS))
+            time.sleep(
+                policy["failure_cooldown"]
+                + random.uniform(0, _IMAGE_FETCH_JITTER_SECONDS)
+            )
 
         raise last_error
 
-    def _add_image(self, item, url, alt_text="", description_text="", is_featured=False):
+    def _add_image(
+        self, item, url, alt_text="", description_text="", is_featured=False
+    ):
         """Fetch image, attach it as an association, and return the local storage href (or None)."""
         associations = item.setdefault("associations", {})
         association = {
@@ -283,7 +296,9 @@ class GhostParser(FileFeedParser):
                 if local_href:
                     url_rewrites[src] = local_href
             except Exception as e:
-                logger.warning("Failed to parse inline image %s: %s", img.get("src", "unknown"), e)
+                logger.warning(
+                    "Failed to parse inline image %s: %s", img.get("src", "unknown"), e
+                )
 
         if url_rewrites:
             body = item.get("body_html") or ""
@@ -312,14 +327,18 @@ class GhostParser(FileFeedParser):
     def _parse_post(self, post, authors_by_post, tags_by_post):
         post_id = post.get("id", "")
 
-        authors = sorted(authors_by_post.get(post_id, []), key=lambda x: x["sort_order"])
+        authors = sorted(
+            authors_by_post.get(post_id, []), key=lambda x: x["sort_order"]
+        )
         byline = ", ".join(a["name"] for a in authors if a.get("name"))
 
         tags = sorted(tags_by_post.get(post_id, []), key=lambda x: x["sort_order"])
         keywords = [t["name"] for t in tags if t.get("name")]
 
         firstcreated = self._parse_date(post.get("created_at"))
-        versioncreated = self._parse_date(post.get("published_at") or post.get("updated_at"))
+        versioncreated = self._parse_date(
+            post.get("published_at") or post.get("updated_at")
+        )
 
         html = post.get("html") or ""
         if self._ghost_url and html:
@@ -340,13 +359,12 @@ class GhostParser(FileFeedParser):
             "versioncreated": versioncreated,
         }
 
-        locale = post.get("locale")
-        if locale:
-            item["language"] = locale
-        else:
-            guessed = self._guess_language(html or post.get("title") or "")
-            if guessed:
-                item["language"] = guessed
+        # Ghost exports a markup-free rendering of the body; prefer it for
+        # language detection so HTML tag names don't dilute the word counts.
+        # Older exports omit it, so strip the markup ourselves in that case.
+        body_text = post.get("plaintext") or get_text(html, content="html")
+        sample = " ".join(part for part in (post.get("title") or "", body_text) if part)
+        item["language"] = self._parse_language(post, tags, sample)
 
         self._parse_feature_image(item, post)
         self._parse_inline_images(item, html)
@@ -361,7 +379,9 @@ class GhostParser(FileFeedParser):
         """Parse a Ghost JSON export file and yield Superdesk items one at a time."""
         self._image_assoc_cache = {}
         self._last_image_fetch_ts = 0.0
-        self._ghost_url = ((provider or {}).get("config", {}).get("url") or "").rstrip("/")
+        self._ghost_url = ((provider or {}).get("config", {}).get("url") or "").rstrip(
+            "/"
+        )
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
@@ -402,7 +422,12 @@ class GhostParser(FileFeedParser):
                 tags_by_post.setdefault(pid, []).append(
                     {
                         "name": tag.get("name", ""),
-                        "sort_order": pt.get("sort_order", 0),
+                        # Ghost slugs are the stable identifier, and the language
+                        # tag is matched on either form.
+                        "slug": tag.get("slug", ""),
+                        # Coerce a null sort_order so the sort below can't blow
+                        # up comparing None to an int.
+                        "sort_order": pt.get("sort_order") or 0,
                     }
                 )
 

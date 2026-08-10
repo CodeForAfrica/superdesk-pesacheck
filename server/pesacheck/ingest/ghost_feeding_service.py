@@ -57,7 +57,9 @@ class GhostFeedingService(FileFeedingService):
             )
             return
 
-        for filename in await get_sorted_files(self.path, sort_by=FileSortAttributes.created):
+        for filename in await get_sorted_files(
+            self.path, sort_by=FileSortAttributes.created
+        ):
             last_updated = None
             try:
                 file_path = os.path.join(self.path, filename)
@@ -66,8 +68,12 @@ class GhostFeedingService(FileFeedingService):
 
                 last_updated = self.get_last_updated(file_path)
 
-                if not self.is_latest_content(last_updated, provider.get("last_updated")):
-                    await self.move_file(self.path, filename, provider=provider, success=False)
+                if not self.is_latest_content(
+                    last_updated, provider.get("last_updated")
+                ):
+                    await self.move_file(
+                        self.path, filename, provider=provider, success=False
+                    )
                     continue
 
                 if await self.is_empty(file_path):
@@ -87,12 +93,18 @@ class GhostFeedingService(FileFeedingService):
                         break
                     yield batch
 
-                await self.move_file(self.path, filename, provider=provider, success=True)
+                await self.move_file(
+                    self.path, filename, provider=provider, success=True
+                )
 
             except Exception as ex:
                 if last_updated and self.is_old_content(last_updated):
-                    await self.move_file(self.path, filename, provider=provider, success=False)
-                raise ParserError.parseFileError("{}-{}".format(provider["name"], self.NAME), filename, ex, provider)
+                    await self.move_file(
+                        self.path, filename, provider=provider, success=False
+                    )
+                raise ParserError.parseFileError(
+                    "{}-{}".format(provider["name"], self.NAME), filename, ex, provider
+                )
 
         push_notification("ingest:update")
 

@@ -179,8 +179,18 @@ EDITOR = {
     "picture": {
         "headline": {"order": 1, "sdWidth": "full", "editor3": True},
         "alt_text": {"order": 2, "sdWidth": "full", "textarea": True, "editor3": True},
-        "description_text": {"order": 3, "sdWidth": "full", "textarea": True, "editor3": True},
-        "creditline": {"order": 4, "sdWidth": "full", "displayOnMediaEditor": True, "editor3": True},
+        "description_text": {
+            "order": 3,
+            "sdWidth": "full",
+            "textarea": True,
+            "editor3": True,
+        },
+        "creditline": {
+            "order": 4,
+            "sdWidth": "full",
+            "displayOnMediaEditor": True,
+            "editor3": True,
+        },
         "copyrightholder": {"order": 5, "displayOnMediaEditor": True, "editor3": True},
         "usageterms": {"order": 6, "displayOnMediaEditor": True},
         "copyrightnotice": {"order": 7, "displayOnMediaEditor": True},
