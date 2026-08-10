@@ -1,5 +1,10 @@
 name: "CI"
 
+# Actions are pinned to commit SHAs, not tags: a tag is mutable, so `@v7` means
+# "whatever the owner points it at today" — including after an account
+# compromise. The trailing `# vX.Y.Z` comment is not decoration; Dependabot
+# reads it to know which release the SHA corresponds to, and rewrites both the
+# SHA and the comment together when it opens a bump PR. Do not drop it.
 on:
   push:
     branches: [pesacheck]
@@ -38,9 +43,9 @@ jobs:
         working-directory: server
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-    - uses: actions/setup-python@v7
+    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: ${{ env.PYTHON_VERSION }}
         cache: pip
@@ -92,9 +97,9 @@ jobs:
             discovery.type: single-node
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-    - uses: actions/setup-python@v7
+    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: ${{ env.PYTHON_VERSION }}
         cache: pip
@@ -125,9 +130,9 @@ jobs:
         working-directory: client
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-    - uses: actions/setup-node@v7
+    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
       with:
         node-version: ${{ env.NODE_VERSION }}
         cache: npm
@@ -151,7 +156,7 @@ jobs:
         component: [server, client]
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
     - run: docker build .
       working-directory: ./${{ matrix.component }}
