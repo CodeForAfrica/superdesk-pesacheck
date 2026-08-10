@@ -1,0 +1,162 @@
+name: "CI"
+
+# Actions are pinned to commit SHAs, not tags: a tag is mutable, so `@v7` means
+# "whatever the owner points it at today" — including after an account
+# compromise. The trailing `# vX.Y.Z` comment is not decoration; Dependabot
+# reads it to know which release the SHA corresponds to, and rewrites both the
+# SHA and the comment together when it opens a bump PR. Do not drop it.
+on:
+  push:
+    branches: [pesacheck]
+  pull_request:
+
+permissions:
+  contents: read
+
+# Superseded runs are pointless: a newer commit on the same branch invalidates
+# them. pesacheck itself is exempt because its runs gate the image builds, and
+# cancelling those loses the only signal that main-line HEAD is buildable.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/pesacheck' }}
+
+env:
+  PYTHON_VERSION: "3.12"
+  NODE_VERSION: "22"
+
+jobs:
+  # black, flake8 and mypy used to be three jobs, each installing the whole of
+  # dev-requirements.txt (superdesk-core, lxml, xmlsec, …) to run one command.
+  # None of them need the application: black and flake8 never import it, and
+  # setup.cfg sets mypy's ignore_missing_imports, so unresolved third-party
+  # imports degrade to Any rather than erroring. Installing just the three
+  # tools takes seconds and needs none of the apt libraries.
+  #
+  # The trade-off is real but pre-existing: mypy sees external types as Any, so
+  # it checks less than a full install would. That is what ignore_missing_imports
+  # already opted into — this only makes it cheap.
+  lint:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: server
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: pip
+        cache-dependency-path: server/dev-requirements.txt
+
+    # Versions come from dev-requirements.txt so there is one place to bump.
+    - run: pip install $(grep -E '^(black|flake8|mypy)==' dev-requirements.txt)
+
+    # `!cancelled()` so one failing linter still reports the other two, instead
+    # of making you push a fix to find out what else is broken.
+    - run: black --check .
+
+    - run: flake8
+      if: ${{ !cancelled() }}
+
+    - run: mypy .
+      if: ${{ !cancelled() }}
+
+  # pytest and behave were separate jobs repeating an identical, expensive
+  # setup: three service containers, an apt install of the xmlsec/exempi
+  # headers, and all of dev-requirements.txt — to run a handful of parser tests
+  # and one smoke scenario. They share the environment, so they share the job.
+  #
+  # Service versions match docker-compose.yml (mongo 6, redis 8, elastic
+  # 7.17.29). CI previously tested against mongo 4 while the stack runs 6.
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: server
+
+    services:
+      redis:
+        image: redis:8
+        ports:
+            - "6379:6379"
+
+      mongo:
+        image: mongo:6
+        ports:
+            - "27017:27017"
+
+      elastic:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.29
+        ports:
+            - "9200:9200"
+        env:
+            discovery.type: single-node
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: pip
+        cache-dependency-path: server/dev-requirements.txt
+
+    - run: |
+        sudo apt-get update
+        sudo apt-get -y install libxml2-dev libxmlsec1-dev libxmlsec1-openssl libexempi-dev
+
+    - run: |
+        python -m pip install -U pip wheel setuptools
+        python -m pip install -Ur dev-requirements.txt
+
+    - run: pytest
+
+    # One scenario (GET / returns the auth link), but it is the only thing that
+    # proves the app boots with our settings.py and INSTALLED_APPS. Near-free
+    # now that it reuses the install above, and it runs even when pytest fails
+    # so a broken parser test cannot hide a boot failure.
+    - run: behave
+      if: ${{ !cancelled() }}
+
+  client:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: client
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: npm
+        cache-dependency-path: client/package-lock.json
+
+    - run: npm ci
+    - run: npm run build
+
+  # Gated behind the other three jobs: there is no point spending twenty
+  # minutes on an image whose code we already know is broken.
+  images:
+    needs: [lint, test, client]
+    if: github.event_name == 'push'
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        component: [server, client]
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - run: docker build .
+      working-directory: ./${{ matrix.component }}

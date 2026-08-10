@@ -1,34 +1,20 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
+#
+# This fork deliberately does NOT run npm or pip version updates.
+#
+# Upstream superdesk/superdesk owns the client and server dependency trees; we
+# take their bumps by merging upstream.
+# Running Dependabot on the same manifests here produced daily PRs against a very
+# large dependency graph — each one firing the full CI suite - and every merged
+# bump became another conflict to resolve on the next upstream merge. It cost
+# a lot of CI and moved nothing.
+#
+# Note that Dependabot *security* updates are a separate feature, configured in
+# the repository's Settings → Code security, and are unaffected by this file.
+# Leave those on — they are the reason dropping version updates is safe.
 version: 2
 updates:
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "client" # Location of package manifests
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "server" # Location of package manifests
-    schedule:
-      interval: "daily"
-
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-
-  # keep release/3 up to date
-  - package-ecosystem: "npm"
-    directory: "client"
-    target-branch: "release/3"
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "pip"
-    directory: "server"
-    target-branch: "release/3"
-    schedule:
-      interval: "daily"

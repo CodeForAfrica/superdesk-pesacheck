@@ -1,0 +1,37 @@
+name: "Publish images"
+
+on:
+  release:
+    types: [released]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        component: [server, client]
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+    - name: Build and push
+      env:
+        IMAGE: codeforafrica/superdesk-pesacheck-${{ matrix.component }}
+        TAG: ${{ github.event.release.tag_name }}
+      run: |
+        docker build \
+          --tag "$IMAGE:$TAG" \
+          --tag "$IMAGE:latest" \
+          ./${{ matrix.component }}
+        docker push --all-tags "$IMAGE"
