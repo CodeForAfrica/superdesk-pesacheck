@@ -1,6 +1,5 @@
 # Superdesk
-[![Test](https://github.com/superdesk/superdesk/actions/workflows/tests.yml/badge.svg)](https://github.com/superdesk/superdesk/actions/workflows/tests.yml)
-[![Lint](https://github.com/superdesk/superdesk/actions/workflows/lint.yml/badge.svg)](https://github.com/superdesk/superdesk/actions/workflows/lint.yml)
+[![CI](https://github.com/CodeForAfrica/superdesk-pesacheck/actions/workflows/ci.yml/badge.svg?branch=pesacheck)](https://github.com/CodeForAfrica/superdesk-pesacheck/actions/workflows/ci.yml)
 
 Superdesk is an open source end-to-end news creation, production, curation,
 distribution and publishing platform developed and maintained by Sourcefabric
@@ -36,7 +35,7 @@ $ docker compose exec superdesk-server python manage.py users:create -u admin -p
 
 Then you can login with admin:admin credentials.
 
-The Docker images are hosted on Dockerhub for the [client](https://hub.docker.com/r/sourcefabricoss/superdesk-client) and [server](https://hub.docker.com/r/sourcefabricoss/superdesk-server).
+This fork publishes its own images on release, to Dockerhub for the [client](https://hub.docker.com/r/codeforafrica/superdesk-pesacheck-client) and [server](https://hub.docker.com/r/codeforafrica/superdesk-pesacheck-server). Upstream's images (`sourcefabricoss/superdesk-client`, `sourcefabricoss/superdesk-server`) do not carry our ingest module or content config.
 
 ## Local development (frontend / extension work)
 
