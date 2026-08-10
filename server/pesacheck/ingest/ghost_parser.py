@@ -3,7 +3,6 @@ import json
 import logging
 import random
 import time
-import unicodedata
 from copy import deepcopy
 from datetime import datetime, timezone
 from urllib.parse import urlparse
@@ -22,7 +21,10 @@ from superdesk.metadata.item import (
     ITEM_TYPE,
 )
 from superdesk.metadata.utils import generate_guid
+from superdesk.text_utils import get_text
 from superdesk.utc import utcnow
+
+from pesacheck.language import detect_language, normalise_language_code
 
 logger = logging.getLogger(__name__)
 
@@ -132,28 +134,27 @@ class GhostParser(FileFeedParser):
     def _mark_fetch_done(self):
         self._last_image_fetch_ts = time.monotonic()
 
-    def _guess_language(self, text):
-        """Guess language from text: returns 'am', 'fr', or 'en'.
+    def _parse_language(self, post, tags, text):
+        """Resolve the item language from ``locale``, then tags, then body text.
 
-        Ethiopic script detection is used first (langdetect has no Amharic model).
-        langdetect is then used to distinguish English from French; anything
-        unrecognised falls back to English.
+        Ghost's own ``locale`` is authoritative when set, but PesaCheck's export
+        leaves it null on every post, so in practice the language comes from the
+        post's language tag. Posts predating that tagging convention fall
+        through to text classification.
         """
-        if not text:
-            return None
-        # Detect Amharic by Ethiopic Unicode block (U+1200–U+137F, etc.)
-        for ch in text:
-            if "ETHIOPIC" in unicodedata.name(ch, ""):
-                return "am"
-        try:
-            from langdetect import detect
+        locale = normalise_language_code(post.get("locale"))
+        if locale:
+            return locale
 
-            detected = detect(text)
-            if detected in ("en", "fr"):
-                return detected
-        except Exception:
-            pass
-        return "en"
+        # Offer both the display name and the slug: either may be the form that
+        # names the language ("Afaan Oromo" / "afaan-oromo").
+        tag_labels = [
+            (tag["sort_order"], label)
+            for tag in tags
+            for label in (tag["name"], tag["slug"])
+        ]
+
+        return detect_language(tag_labels, text)
 
     def can_parse(self, file_path):
         try:
@@ -358,13 +359,12 @@ class GhostParser(FileFeedParser):
             "versioncreated": versioncreated,
         }
 
-        locale = post.get("locale")
-        if locale:
-            item["language"] = locale
-        else:
-            guessed = self._guess_language(html or post.get("title") or "")
-            if guessed:
-                item["language"] = guessed
+        # Ghost exports a markup-free rendering of the body; prefer it for
+        # language detection so HTML tag names don't dilute the word counts.
+        # Older exports omit it, so strip the markup ourselves in that case.
+        body_text = post.get("plaintext") or get_text(html, content="html")
+        sample = " ".join(part for part in (post.get("title") or "", body_text) if part)
+        item["language"] = self._parse_language(post, tags, sample)
 
         self._parse_feature_image(item, post)
         self._parse_inline_images(item, html)
@@ -422,7 +422,12 @@ class GhostParser(FileFeedParser):
                 tags_by_post.setdefault(pid, []).append(
                     {
                         "name": tag.get("name", ""),
-                        "sort_order": pt.get("sort_order", 0),
+                        # Ghost slugs are the stable identifier, and the language
+                        # tag is matched on either form.
+                        "slug": tag.get("slug", ""),
+                        # Coerce a null sort_order so the sort below can't blow
+                        # up comparing None to an int.
+                        "sort_order": pt.get("sort_order") or 0,
                     }
                 )
 

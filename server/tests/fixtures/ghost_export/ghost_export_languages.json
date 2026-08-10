@@ -1,0 +1,133 @@
+{
+  "db": [
+    {
+      "data": {
+        "posts": [
+          {
+            "id": "lang_001",
+            "uuid": "11111111-0001-0001-0001-111111111111",
+            "title": "UONGO: Chapisho hili la Facebook ni la uongo",
+            "slug": "uongo-chapisho-hili",
+            "html": "<p>Chapisho hili la Facebook linalodai kuwa serikali imetangaza siku ya mapumziko ni la uongo.</p>",
+            "plaintext": "Chapisho hili la Facebook linalodai kuwa serikali imetangaza siku ya mapumziko ni la uongo. Uchunguzi wetu umeonyesha kwamba picha hiyo ilikuwa imechapishwa mwaka 2019 na haihusiani na madai hayo. Taarifa hiyo haikuwa kwenye mitandao ya kijamii ya serikali.",
+            "feature_image": null,
+            "type": "post",
+            "status": "published",
+            "locale": null,
+            "created_at": "2026-01-05T10:00:00.000Z",
+            "updated_at": "2026-01-05T11:00:00.000Z",
+            "published_at": "2026-01-05T11:00:00.000Z",
+            "custom_excerpt": null
+          },
+          {
+            "id": "lang_002",
+            "uuid": "22222222-0002-0002-0002-222222222222",
+            "title": "BEEN: Muuqaalkan ma aha hub lagu qabtay",
+            "slug": "been-muuqaalkan-ma-aha",
+            "html": "<p>Xayeysiintan lagu baahiyay Facebook waa KHIYAANO.</p>",
+            "plaintext": "Xayeysiintan lagu baahiyay Facebook ee lagu sheegay in shirkadda Hormuud ay bixinayso deyn ayaa ah KHIYAANO. Warbaahinta ayaa xaqiijiyay in sawirkan been abuur yahay, laakiin qoraalka wali waa la wadaagayaa oo waxaa lagu sheegay iyo midabada shirkadda.",
+            "feature_image": null,
+            "type": "post",
+            "status": "published",
+            "locale": null,
+            "created_at": "2026-01-06T10:00:00.000Z",
+            "updated_at": "2026-01-06T11:00:00.000Z",
+            "published_at": "2026-01-06T11:00:00.000Z",
+            "custom_excerpt": null
+          },
+          {
+            "id": "lang_003",
+            "uuid": "33333333-0003-0003-0003-333333333333",
+            "title": "SOBA: Maxxansi Facebook kun soba",
+            "slug": "soba-maxxansi-facebook-kun",
+            "html": "<p>Maxxansi Facebook kun SOBA.</p>",
+            "plaintext": "Maxxansi Facebook viidiyoo haleellaa ummata Oromoo irratti raawwatame agarsiisa jedhu kun SOBA. Barreeffamni Afaan Oromoo akkana jedha, garuu odeeffannoon kun dhugaa hin qabu. Viidiyoon kun naannoo Oromiyaa keessatti waraabame kan jedhu mirkaneeffame hin jiru.",
+            "feature_image": null,
+            "type": "post",
+            "status": "published",
+            "locale": null,
+            "created_at": "2026-01-07T10:00:00.000Z",
+            "updated_at": "2026-01-07T11:00:00.000Z",
+            "published_at": "2026-01-07T11:00:00.000Z",
+            "custom_excerpt": null
+          },
+          {
+            "id": "lang_004",
+            "uuid": "44444444-0004-0004-0004-444444444444",
+            "title": "FAUX : Cette video ne montre pas des billets",
+            "slug": "faux-cette-video",
+            "html": "<p>Cette video ne montre pas les faits allegues.</p>",
+            "plaintext": "Cette video qui montrerait des soldats tues par l'armee est PARTIELLEMENT FAUSSE. La sequence, publiee sur les reseaux sociaux, ne montre pas les faits allegues selon nos verifications.",
+            "feature_image": null,
+            "type": "post",
+            "status": "published",
+            "locale": "en-US",
+            "created_at": "2026-01-08T10:00:00.000Z",
+            "updated_at": "2026-01-08T11:00:00.000Z",
+            "published_at": "2026-01-08T11:00:00.000Z",
+            "custom_excerpt": null
+          },
+          {
+            "id": "lang_005",
+            "uuid": "55555555-0005-0005-0005-555555555555",
+            "title": "የተቀየረ: ይህ ምስል የተቀየረ ነው",
+            "slug": "yetekeyere-yih-mesel",
+            "html": "<p>ይህ ልጥፍ የተቀየረ ነው።</p>",
+            "plaintext": "የኢትዮጵያ ኦርቶዶክስ ተዋህዶ ቤተክርስቲያን የሃይማኖት አባት በምርጫ ዘመቻ ላይ ሲሳተፉ ያሳያል በሚል ፌስቡክ ላይ ከምስል ጋር የተጋራው ይህ ልጥፍ የተቀየረ ነው። ጉግልን በመጠቀም የተደረገው የምስል ፍለጋ በመጣራት ላይ ያለው ፎቶ እንደተቀየረ አረጋግጧል።",
+            "feature_image": null,
+            "type": "post",
+            "status": "published",
+            "locale": null,
+            "created_at": "2026-01-09T10:00:00.000Z",
+            "updated_at": "2026-01-09T11:00:00.000Z",
+            "published_at": "2026-01-09T11:00:00.000Z",
+            "custom_excerpt": null
+          },
+          {
+            "id": "lang_006",
+            "uuid": "66666666-0006-0006-0006-666666666666",
+            "title": "HOAX: This poster offering instant loans is fake",
+            "slug": "hoax-this-poster",
+            "html": "<p>This poster claiming instant loans is a HOAX.</p>",
+            "plaintext": "This poster claiming Hormuud Telecom is offering instant loans is a HOAX. The advert, shared on Facebook, shows amounts ranging from $50 to $200,000. However, a reverse image search shows that the poster was fabricated and the company has confirmed it did not issue any such offer.",
+            "feature_image": null,
+            "type": "post",
+            "status": "published",
+            "locale": null,
+            "created_at": "2026-01-10T10:00:00.000Z",
+            "updated_at": "2026-01-10T11:00:00.000Z",
+            "published_at": "2026-01-10T11:00:00.000Z",
+            "custom_excerpt": null
+          }
+        ],
+        "users": [],
+        "posts_authors": [],
+        "tags": [
+          {"id": "tag_sw", "name": "Kiswahili", "slug": "kiswahili"},
+          {"id": "tag_om", "name": "Afaan Oromo", "slug": "afaan-oromo"},
+          {"id": "tag_en", "name": "English", "slug": "english"},
+          {"id": "tag_fr", "name": "French", "slug": "french"},
+          {"id": "tag_kenya", "name": "Kenya", "slug": "kenya"},
+          {"id": "tag_somalia", "name": "Somalia", "slug": "somalia"},
+          {"id": "tag_ethiopia", "name": "Ethiopia", "slug": "ethiopia"},
+          {"id": "tag_short", "name": "Short Form", "slug": "short-form"}
+        ],
+        "posts_tags": [
+          {"post_id": "lang_001", "tag_id": "tag_sw", "sort_order": 0},
+          {"post_id": "lang_001", "tag_id": "tag_kenya", "sort_order": 1},
+
+          {"post_id": "lang_002", "tag_id": "tag_somalia", "sort_order": 0},
+          {"post_id": "lang_002", "tag_id": "tag_short", "sort_order": 1},
+
+          {"post_id": "lang_003", "tag_id": "tag_om", "sort_order": 0},
+          {"post_id": "lang_003", "tag_id": "tag_ethiopia", "sort_order": 1},
+
+          {"post_id": "lang_004", "tag_id": "tag_fr", "sort_order": 0},
+
+          {"post_id": "lang_006", "tag_id": "tag_en", "sort_order": 0},
+          {"post_id": "lang_006", "tag_id": "tag_somalia", "sort_order": 1}
+        ]
+      }
+    }
+  ]
+}
