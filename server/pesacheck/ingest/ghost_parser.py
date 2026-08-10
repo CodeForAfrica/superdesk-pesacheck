@@ -15,7 +15,14 @@ from superdesk.metadata.utils import generate_guid
 from superdesk.io.feed_parsers import FileFeedParser
 from superdesk.io.registry import register_feed_parser
 from superdesk.media.renditions import update_renditions
-from superdesk.metadata.item import FORMAT, GUID_FIELD, GUID_TAG, ITEM_TYPE, CONTENT_TYPE, FORMATS
+from superdesk.metadata.item import (
+    FORMAT,
+    GUID_FIELD,
+    GUID_TAG,
+    ITEM_TYPE,
+    CONTENT_TYPE,
+    FORMATS,
+)
 from superdesk.utc import utcnow
 
 
@@ -203,7 +210,9 @@ class GhostParser(FileFeedParser):
                 if attempt == policy["retries"]:
                     break
 
-                delay = (policy["base_backoff"] * attempt) + random.uniform(0, _IMAGE_FETCH_JITTER_SECONDS)
+                delay = (policy["base_backoff"] * attempt) + random.uniform(
+                    0, _IMAGE_FETCH_JITTER_SECONDS
+                )
                 logger.warning(
                     "Image fetch failed for %s (attempt %s/%s), retrying in %.2fs: %s",
                     url,
@@ -216,11 +225,16 @@ class GhostParser(FileFeedParser):
 
         if policy["failure_cooldown"] > 0:
             # After exhausting retries, cool down before the next image to reduce cascading failures.
-            time.sleep(policy["failure_cooldown"] + random.uniform(0, _IMAGE_FETCH_JITTER_SECONDS))
+            time.sleep(
+                policy["failure_cooldown"]
+                + random.uniform(0, _IMAGE_FETCH_JITTER_SECONDS)
+            )
 
         raise last_error
 
-    def _add_image(self, item, url, alt_text="", description_text="", is_featured=False):
+    def _add_image(
+        self, item, url, alt_text="", description_text="", is_featured=False
+    ):
         """Fetch image, attach it as an association, and return the local storage href (or None)."""
         associations = item.setdefault("associations", {})
         association = {
@@ -283,7 +297,9 @@ class GhostParser(FileFeedParser):
                 if local_href:
                     url_rewrites[src] = local_href
             except Exception as e:
-                logger.warning("Failed to parse inline image %s: %s", img.get("src", "unknown"), e)
+                logger.warning(
+                    "Failed to parse inline image %s: %s", img.get("src", "unknown"), e
+                )
 
         if url_rewrites:
             body = item.get("body_html") or ""
@@ -312,14 +328,18 @@ class GhostParser(FileFeedParser):
     def _parse_post(self, post, authors_by_post, tags_by_post):
         post_id = post.get("id", "")
 
-        authors = sorted(authors_by_post.get(post_id, []), key=lambda x: x["sort_order"])
+        authors = sorted(
+            authors_by_post.get(post_id, []), key=lambda x: x["sort_order"]
+        )
         byline = ", ".join(a["name"] for a in authors if a.get("name"))
 
         tags = sorted(tags_by_post.get(post_id, []), key=lambda x: x["sort_order"])
         keywords = [t["name"] for t in tags if t.get("name")]
 
         firstcreated = self._parse_date(post.get("created_at"))
-        versioncreated = self._parse_date(post.get("published_at") or post.get("updated_at"))
+        versioncreated = self._parse_date(
+            post.get("published_at") or post.get("updated_at")
+        )
 
         html = post.get("html") or ""
         if self._ghost_url and html:
@@ -361,7 +381,9 @@ class GhostParser(FileFeedParser):
         """Parse a Ghost JSON export file and yield Superdesk items one at a time."""
         self._image_assoc_cache = {}
         self._last_image_fetch_ts = 0.0
-        self._ghost_url = ((provider or {}).get("config", {}).get("url") or "").rstrip("/")
+        self._ghost_url = ((provider or {}).get("config", {}).get("url") or "").rstrip(
+            "/"
+        )
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
