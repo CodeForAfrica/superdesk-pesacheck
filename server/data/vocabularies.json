@@ -58,11 +58,12 @@
         "init_version": 1,
         "service": { "all": 1 },
         "items": [
-            {"name": "Nederlands", "qcode": "nl", "is_active": true },
-            {"name": "Français", "qcode": "fr", "is_active": true },
+            {"name": "Afaan Oromo", "qcode": "om", "is_active": true },
+            {"name": "Amharic", "qcode": "am", "is_active": true },
             {"name": "English", "qcode": "en", "is_active": true },
-            {"name": "Deutsch", "qcode": "de", "is_active": true },
-            {"name": "Español", "qcode": "es", "is_active": true }
+            {"name": "Français", "qcode": "fr", "is_active": true },
+            {"name": "Kiswahili", "qcode": "sw", "is_active": true },
+            {"name": "Somali", "qcode": "so", "is_active": true }
         ]
     },
     {
