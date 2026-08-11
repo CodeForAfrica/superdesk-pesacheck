@@ -2444,7 +2444,7 @@
     {
         "_id": "Debunk",
         "field_type": null,
-        "items": [{"is_active": true, "name": "Altered", "qcode": "altered"}, {"is_active": true, "name": "False", "qcode": "false"}, {"is_active": true, "name": "False headline", "qcode": "falsehead"}, {"is_active": true, "name": "Hoax", "qcode": "hoax"}, {"is_active": true, "name": "Missing context", "qcode": "context"}, {"is_active": true, "name": "Partly false", "qcode": "partfalse"}, {"is_active": true, "name": "Satire", "qcode": "satire"}],
+        "items": [{"is_active": true, "name": "Altered", "qcode": "altered"}, {"is_active": true, "name": "False", "qcode": "false"}, {"is_active": true, "name": "False headline", "qcode": "falsehead"}, {"is_active": true, "name": "Hoax", "qcode": "hoax"}, {"is_active": true, "name": "Missing context", "qcode": "context"}, {"is_active": true, "name": "Partly false", "qcode": "partfalse"}, {"is_active": true, "name": "Satire", "qcode": "satire"}, {"is_active": true, "name": "Misleading", "qcode": "misleading"}, {"is_active": true, "name": "True", "qcode": "true"}, {"is_active": true, "name": "Scam", "qcode": "scam"}, {"is_active": true, "name": "Mixture", "qcode": "mixture"}],
         "type": "manageable",
         "schema": {"name": {}, "qcode": {}, "parent": {}},
         "service": {"all": 1},
