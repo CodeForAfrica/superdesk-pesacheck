@@ -108,10 +108,12 @@ _RATING_BY_PREFIX = {
     "ሐሰት": "false",
     "ሐስት": "false",  # spelling variant
     "ሐሰተኛ": "false",
+    "ውሸት": "false",  # synonym of ሐሰት
     "ሐሰተኛ አርዕስት": "falsehead",
     "በከፊል ሐሰት": "partfalse",
     "በከፊል ሀሰት": "partfalse",  # spelling variant
     "በከፊል ሐሰተኛ": "partfalse",
+    "በከፊል ውሸት": "partfalse",  # synonym of በከፊል ሐሰት
     "ከአውድ ውጪ": "context",
     "ከዓውድ ውጪ": "context",  # spelling variant
     "ከአውድ ውጭ": "context",  # spelling variant
@@ -132,11 +134,11 @@ _RATING_BY_PREFIX = {
 
 # A headline's verdict is the text before the first colon. Accept the ASCII colon,
 # the fullwidth colon (turns up in exports), and the Ethiopic wordspace ``፡`` /
-# preface colon ``፦`` / full stop ``።`` — Amharic headlines delimit the verdict
-# with these rather than ``:``, so without them the whole Amharic set reads as
-# "no prefix". Cap the length so a stray colon deep in a sentence can't be read as
-# an enormous "prefix".
-_PREFIX_RE = re.compile(r"^\s*(.{1,40}?)\s*[:：፡፦።]")
+# preface colon ``፦`` / full stop ``።`` / semicolon ``፤`` / comma ``፣`` — Amharic
+# headlines delimit the verdict with any of these rather than ``:``, so without
+# them Amharic verdicts read as "no prefix". Cap the length so a stray colon deep
+# in a sentence can't be read as an enormous "prefix".
+_PREFIX_RE = re.compile(r"^\s*(.{1,40}?)\s*[:：፡፦።፤፣]")
 
 
 def _normalise_prefix(prefix):

@@ -101,6 +101,18 @@ class DebunkRatingTestCase(unittest.TestCase):
         self.assertEqual(debunk_rating("በከፊል ሐሰት፡ ይህ ምስል")["qcode"], "partfalse")
         self.assertEqual(debunk_rating("የተቀየረ፡ ይህ ቪዲዮ ተለውጧል")["qcode"], "altered")
 
+    def test_ethiopic_semicolon_and_comma_delimit_the_verdict(self) -> None:
+        # The export also sets the verdict off with the Ethiopic semicolon ``፤``
+        # (U+1364) and comma ``፣`` (U+1363), sometimes with a space before it.
+        self.assertEqual(debunk_rating("የተጭበረበረ፤ ካናዳ ኤምባሲ")["qcode"], "hoax")
+        self.assertEqual(debunk_rating("የተቀየረ ፤ ይህ ጽሁፍ")["qcode"], "altered")
+        self.assertEqual(debunk_rating("በከፊል ሐሰተኛ፣ ይህ ቪዲዮ")["qcode"], "partfalse")
+
+    def test_wishet_is_a_synonym_for_false(self) -> None:
+        # ``ውሸት`` is an Amharic synonym of ``ሐሰት`` (false).
+        self.assertEqual(debunk_rating("ውሸት፡ ይህ ምስል")["qcode"], "false")
+        self.assertEqual(debunk_rating("በከፊል ውሸት፡ ይህ ምስል")["qcode"], "partfalse")
+
     def test_fake_maps_to_hoax(self) -> None:
         # "Fake" has no exact Debunk rating; the posts it prefixes are scams.
         self.assertEqual(debunk_rating("FAKE: This poster is a scam")["qcode"], "hoax")
