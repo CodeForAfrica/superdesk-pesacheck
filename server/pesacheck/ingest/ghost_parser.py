@@ -24,6 +24,7 @@ from superdesk.metadata.utils import generate_guid
 from superdesk.text_utils import get_text
 from superdesk.utc import utcnow
 
+from pesacheck.debunk import debunk_rating
 from pesacheck.language import detect_language, normalise_language_code
 
 logger = logging.getLogger(__name__)
@@ -365,6 +366,12 @@ class GhostParser(FileFeedParser):
         body_text = post.get("plaintext") or get_text(html, content="html")
         sample = " ".join(part for part in (post.get("title") or "", body_text) if part)
         item["language"] = self._parse_language(post, tags, sample)
+
+        # The verdict is carried in the headline prefix; record it as the Debunk
+        # rating. Unknown or absent prefixes leave the item without a rating.
+        rating = debunk_rating(item["headline"])
+        if rating:
+            item.setdefault("subject", []).append(rating)
 
         self._parse_feature_image(item, post)
         self._parse_inline_images(item, html)
