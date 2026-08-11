@@ -111,6 +111,21 @@ class GhostParserTestCase(TestCase):
         "pesacheck.ingest.ghost_parser.update_renditions",
         side_effect=_mock_update_renditions,
     )
+    async def test_parse_attaches_debunk_rating_from_headline(self, _mock):
+        items = await self.parser.parse(FIXTURE_PATH)
+        post1 = next(
+            i for i in items if i["guid"] == "aaaaaaaa-0001-0001-0001-aaaaaaaaaaaa"
+        )
+        # Headline is "FAUX: This claim is false" — the French "false" verdict.
+        self.assertIn(
+            {"name": "False", "qcode": "false", "scheme": "Debunk"},
+            post1.get("subject", []),
+        )
+
+    @patch(
+        "pesacheck.ingest.ghost_parser.update_renditions",
+        side_effect=_mock_update_renditions,
+    )
     async def test_parse_locale_mapped_to_language(self, _mock):
         items = await self.parser.parse(FIXTURE_PATH)
         post1 = next(
