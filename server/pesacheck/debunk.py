@@ -32,7 +32,6 @@ _RATING_NAMES = {
     "satire": "Satire",
     "misleading": "Misleading",
     "true": "True",
-    "scam": "Scam",
     "mixture": "Mixture",
 }
 
@@ -54,7 +53,7 @@ _RATING_BY_PREFIX = {
     "SATIRE": "satire",
     "SATIRICAL": "satire",
     "MISLEADING": "misleading",
-    "SCAM": "scam",
+    "SCAM": "false",  # scams are a kind of false claim; no separate qcode
     "TRUE": "true",
     "MIXTURE": "mixture",
     # French

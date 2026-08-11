@@ -44,7 +44,7 @@ class DebunkRatingTestCase(unittest.TestCase):
             ("DOCTORED: This tweet is fabricated", "altered"),
             ("SATIRICAL: This directive is fabricated", "satire"),
             ("MISLEADING: This video does not show bandits", "misleading"),
-            ("SCAM: This website claiming jobs is a hoax", "scam"),
+            ("SCAM: This website claiming jobs is a hoax", "false"),
             ("TRUE: Wildfire breaks out on Mount Kilimanjaro", "true"),
             ("MIXTURE: The World Bank did not fully withdraw", "mixture"),
             # French
