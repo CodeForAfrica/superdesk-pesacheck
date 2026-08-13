@@ -34,5 +34,15 @@ ENV TZ=Europe/Prague
 
 COPY . .
 
+# Bake the bootstrap/seed entrypoints so the image is self-contained (no host
+# bind mounts): the ECS RunTask one-shots and the local bootstrap compose
+# services both run these baked copies. bootstrap-superdesk.sh execs
+# bootstrap_superdesk.py by absolute path, so the .py lives in /usr/local/bin too.
+COPY docker/bootstrap/bootstrap-superdesk.sh    /usr/local/bin/bootstrap-superdesk.sh
+COPY docker/bootstrap/bootstrap_superdesk.py    /usr/local/bin/bootstrap_superdesk.py
+COPY docker/bootstrap/bootstrap-ghost-ingest.sh /usr/local/bin/bootstrap-ghost-ingest.sh
+RUN chmod +x /usr/local/bin/bootstrap-superdesk.sh /usr/local/bin/bootstrap-ghost-ingest.sh
+COPY docker/bootstrap/superdesk-content-config.tgz /opt/superdesk/local-content-config/superdesk-content-config.tgz
+
 ENTRYPOINT [ "/opt/superdesk/docker/start.sh" ]
 CMD ["honcho", "start"]
