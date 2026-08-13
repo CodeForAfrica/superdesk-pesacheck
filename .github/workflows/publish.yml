@@ -3,7 +3,14 @@ name: "Publish images"
 on:
   release:
     types: [released]
-
+  # Manual on-demand build/push without cutting a release. `tag` is the Docker
+  # tag to push (in addition to `latest`), e.g. a branch name or a test tag.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Image tag to push (also tags latest)"
+        required: true
+        default: "manual"
 permissions:
   contents: read
 
@@ -28,7 +35,7 @@ jobs:
     - name: Build and push
       env:
         IMAGE: codeforafrica/superdesk-pesacheck-${{ matrix.component }}
-        TAG: ${{ github.event.release.tag_name }}
+        TAG: ${{ github.event.release.tag_name || inputs.tag }}
       run: |
         docker build \
           --tag "$IMAGE:$TAG" \
