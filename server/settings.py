@@ -239,3 +239,17 @@ ARCHIVE_AUTOCOMPLETE_LIMIT = 2000
 SCHEMA_VERSION = 2
 
 ANALYTICS_ENABLE_ARCHIVE_STATS = True
+
+# S3 media storage credentials.
+#
+# AmazonMediaStorage passes these straight into boto3.client("s3", ...). Core
+# defaults them to "" (empty string), and boto3 treats an empty-string key as an
+# *explicit* credential — it does NOT fall back to the credential provider chain,
+# so on ECS the request is signed with a blank AKID and S3 rejects it with
+# "AuthorizationHeaderMalformed: a non-empty Access Key (AKID) must be provided".
+#
+# Coerce empty/missing keys to None so boto3 uses its normal chain — on ECS that
+# resolves to the task role (which has the media-bucket S3 perms). Explicit keys
+# are still honoured when set (e.g. local minio/dev).
+AMAZON_ACCESS_KEY_ID = env("AMAZON_ACCESS_KEY_ID", "") or None
+AMAZON_SECRET_ACCESS_KEY = env("AMAZON_SECRET_ACCESS_KEY", "") or None
