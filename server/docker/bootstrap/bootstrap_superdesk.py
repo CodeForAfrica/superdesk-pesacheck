@@ -93,8 +93,16 @@ AVAILABILITY_MANAGER_TAGS = {
 
 PUBLISHER_PRODUCT_NAME = "Local Publisher Product"
 PUBLISHER_SUBSCRIBER_NAME = "Local Publisher Subscriber"
-PUBLISHER_PUSH_URL = "http://publisher-nginx/api/v2/content/push"
-PUBLISHER_ASSETS_URL = "http://publisher-nginx/api/v2/assets/push"
+# The seeded HTTP-push destination for the Local Publisher subscriber. The
+# Compose default targets the `publisher-nginx` service name; deployments where
+# that name does not resolve (e.g. AWS ECS bridge networking) override these with
+# an in-VPC address such as http://publisher.<env>.internal.
+PUBLISHER_PUSH_URL = os.environ.get(
+    "PUBLISHER_PUSH_URL", "http://publisher-nginx/api/v2/content/push"
+)
+PUBLISHER_ASSETS_URL = os.environ.get(
+    "PUBLISHER_ASSETS_URL", "http://publisher-nginx/api/v2/assets/push"
+)
 
 DEMO_SLUGLINE_PREFIX = "LOCAL-PUBLISHER"
 DEMO_STORIES = [
