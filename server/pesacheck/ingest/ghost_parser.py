@@ -240,6 +240,25 @@ class GhostParser(FileFeedParser):
         association = {
             ITEM_TYPE: CONTENT_TYPE.PICTURE,
             GUID_FIELD: self._generate_image_guid(url),
+            # Version metadata is what lets core's is_new_version() recognise an
+            # already-ingested image as unchanged. Without it, is_new_version
+            # falls back to a field-by-field content comparison that never
+            # matches (freshly-generated renditions differ byte-for-byte from
+            # the stored ones), so on EVERY ingest cycle core re-transfers —
+            # re-downloads and re-renders — every rendition of every image. That
+            # rendition churn consumes the whole update_provider soft-time-limit
+            # before auto-publish is reached, so on a small (2-vCPU) worker the
+            # run is killed and nothing ever publishes. The guid is stable
+            # (sha1 of the source URL), so a constant version is correct: same
+            # URL == same immutable image. versioncreated is the post's own
+            # version time — for images already stored under the old, version-less
+            # path it is older than their stored (ingest-time) versioncreated, so
+            # is_new_version short-circuits to False without a transitional
+            # re-transfer. These fields are also what a normal ingested picture
+            # item carries, so this is strictly more correct.
+            "version": 1,
+            "versioncreated": item.get("versioncreated"),
+            "firstcreated": item.get("firstcreated"),
             "headline": item.get("headline", ""),
             "alt_text": alt_text,
             "description_text": description_text,
