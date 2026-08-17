@@ -54,10 +54,14 @@ _MEDIUM_FETCH_MIN_INTERVAL_SECONDS = 3.0
 _MEDIUM_FETCH_FAILURE_COOLDOWN_SECONDS = 8.0
 
 _IMAGE_FETCH_HEADERS = {
-    # Some CDNs are strict about clients and may reject default python user-agent.
+    # Some CDNs are strict about clients and may reject the default python
+    # user-agent. The Referer is deliberately NOT hardcoded here: it must match
+    # each image's OWN origin and is set per-request in _build_fetch_headers.
+    # A hardcoded cross-site Referer (this used to be "https://medium.com/",
+    # a leftover from when images were Medium-hosted) makes PesaCheck's own
+    # Ghost site 403 every image — see _build_fetch_headers for the full story.
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) GhostIngest/1.0",
     "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
-    "Referer": "https://medium.com/",
 }
 
 
@@ -173,6 +177,30 @@ class GhostParser(FileFeedParser):
         guid_hash = hashlib.sha1(url.encode("utf8")).hexdigest()
         return generate_guid(type=GUID_TAG, id=guid_hash + "-image")
 
+    def _build_fetch_headers(self, url):
+        """Return image-fetch headers with a same-origin Referer.
+
+        The Referer must match the image's OWN origin. PesaCheck's Ghost site
+        (pesacheck.org) sits behind Cloudflare with a hotlink rule that returns
+        403 to any request carrying a cross-site Referer. The parser used to
+        send a fixed ``Referer: https://medium.com/`` (from when images were
+        Medium-hosted), so EVERY pesacheck.org image 403'd; each failure then
+        burned its full retry ladder (~12s), and a ~245-image export could never
+        finish parsing within the ``update_provider`` soft-time-limit (1800s).
+        The file was therefore never moved and re-failed every ingest cycle —
+        nothing past the first dozen posts was ever ingested or published.
+
+        Sending a Referer equal to the image's own scheme+host satisfies the
+        hotlink rule for any source (pesacheck.org and the few remaining Medium
+        CDN images alike). A relative/hostless URL never reaches here (see
+        _resolve_url), but guard anyway and omit the Referer if we can't build one.
+        """
+        headers = dict(_IMAGE_FETCH_HEADERS)
+        parsed = urlparse(url)
+        if parsed.scheme and parsed.hostname:
+            headers["Referer"] = "{}://{}/".format(parsed.scheme, parsed.hostname)
+        return headers
+
     def _fetch_renditions_with_retry(self, association, url):
         if url in self._image_assoc_cache:
             cached = self._image_assoc_cache[url]
@@ -190,7 +218,7 @@ class GhostParser(FileFeedParser):
                     None,
                     request_kwargs={
                         "timeout": _IMAGE_FETCH_TIMEOUT,
-                        "headers": _IMAGE_FETCH_HEADERS,
+                        "headers": self._build_fetch_headers(url),
                     },
                 )
                 self._mark_fetch_done()
