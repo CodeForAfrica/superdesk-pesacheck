@@ -25,12 +25,13 @@ CONFIG_FILE=${CONFIG_FILE:-config.js}
 : "${SUPERDESK_PUBLISHER_PROTOCOL:=https}"
 : "${SUPERDESK_PUBLISHER_DOMAIN:=}"
 : "${SUPERDESK_PUBLISHER_TENANT:=}"
+: "${SUPERDESK_PUBLISHER_BASE:=api/v2}"
 : "${SUPERDESK_PUBLISHER_WS_PROTOCOL:=wss}"
 : "${SUPERDESK_PUBLISHER_WS_DOMAIN:=}"
 : "${SUPERDESK_PUBLISHER_WS_PORT:=443}"
 : "${IFRAMELY_KEY:=}"
 
-cat > "$CONFIG_FILE" <<EOF
+cat >"$CONFIG_FILE" <<EOF
 window.superdeskConfig = {
     server: {
         url: '${SUPERDESK_URL}',
@@ -40,6 +41,7 @@ window.superdeskConfig = {
         protocol: '${SUPERDESK_PUBLISHER_PROTOCOL}',
         domain: '${SUPERDESK_PUBLISHER_DOMAIN}',
         tenant: '${SUPERDESK_PUBLISHER_TENANT}',
+        base: '${SUPERDESK_PUBLISHER_BASE}',
         wsProtocol: '${SUPERDESK_PUBLISHER_WS_PROTOCOL}',
         wsDomain: '${SUPERDESK_PUBLISHER_WS_DOMAIN}',
         wsPort: '${SUPERDESK_PUBLISHER_WS_PORT}'
