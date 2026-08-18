@@ -36,6 +36,12 @@ def get_app(config=None):
 
     media_patch.apply()
 
+    # Fix the stale-etag 412 that orphans publish-queue items in IN_PROGRESS after a
+    # successful transmit (see pesacheck/publish_patch.py).
+    from pesacheck import publish_patch
+
+    publish_patch.apply()
+
     app = superdesk_app(config)
     return app
 
