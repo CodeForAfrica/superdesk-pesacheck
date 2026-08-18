@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8; -*-
 #
 # This file is part of Superdesk.
 #
@@ -10,7 +9,8 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from pathlib import Path
-from superdesk.default_settings import strtobool, env, MODULES
+
+from superdesk.default_settings import MODULES, env, strtobool
 
 ABS_PATH = str(Path(__file__).resolve().parent)
 
@@ -253,3 +253,18 @@ ANALYTICS_ENABLE_ARCHIVE_STATS = True
 # are still honoured when set (e.g. local minio/dev).
 AMAZON_ACCESS_KEY_ID = env("AMAZON_ACCESS_KEY_ID", "") or None
 AMAZON_SECRET_ACCESS_KEY = env("AMAZON_SECRET_ACCESS_KEY", "") or None
+
+# Media URL prefix rewriting.
+#
+# Rendition hrefs are absolute URLs built from MEDIA_PREFIX (core default:
+# SUPERDESK_URL/upload-raw) and persisted onto the item. Server processes point
+# SUPERDESK_URL at the in-VPC internal ALB, so items ingested before MEDIA_PREFIX
+# was pinned to the public host carry hrefs like
+# http://superdesk.<env>.internal/api/upload-raw/... which the browser cannot
+# resolve. Core's after_request hook rewrites any prefix listed here to the
+# current MEDIA_PREFIX on the way out; default_settings leaves it None, so wire
+# it from the (comma-separated) env var. MEDIA_PREFIX itself is read from env by
+# default_settings and needs no override here.
+MEDIA_PREFIXES_TO_FIX = [
+    p.strip() for p in env("MEDIA_PREFIXES_TO_FIX", "").split(",") if p.strip()
+] or None
