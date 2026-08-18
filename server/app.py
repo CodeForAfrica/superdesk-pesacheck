@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8; -*-
 #
 # This file is part of Superdesk.
 #
@@ -10,8 +9,8 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import os
-import settings
 
+import settings
 from superdesk.factory import get_app as superdesk_app
 
 
@@ -29,6 +28,13 @@ def get_app(config=None):
     for key in dir(settings):
         if key.isupper():
             config.setdefault(key, getattr(settings, key))
+
+    # Harden AmazonMediaStorage against the aioboto3 S3 get_object hang that freezes
+    # ghost ingest (see pesacheck/media_patch.py). Must run before superdesk_app builds
+    # the media-storage singleton.
+    from pesacheck import media_patch
+
+    media_patch.apply()
 
     app = superdesk_app(config)
     return app
