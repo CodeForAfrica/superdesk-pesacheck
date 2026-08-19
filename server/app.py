@@ -42,6 +42,12 @@ def get_app(config=None):
 
     publish_patch.apply()
 
+    # On publish, promote feature-media renditions out of the self-deleting temp/
+    # folder to their permanent S3 location (see pesacheck/promote_media_patch.py).
+    from pesacheck import promote_media_patch
+
+    promote_media_patch.apply()
+
     app = superdesk_app(config)
     return app
 
