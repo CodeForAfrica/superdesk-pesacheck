@@ -198,7 +198,7 @@ class GhostParser(FileFeedParser):
         headers = dict(_IMAGE_FETCH_HEADERS)
         parsed = urlparse(url)
         if parsed.scheme and parsed.hostname:
-            headers["Referer"] = "{}://{}/".format(parsed.scheme, parsed.hostname)
+            headers["Referer"] = f"{parsed.scheme}://{parsed.hostname}/"
         return headers
 
     def _fetch_renditions_with_retry(self, association, url):
@@ -384,8 +384,12 @@ class GhostParser(FileFeedParser):
         keywords = [t["name"] for t in tags if t.get("name")]
 
         firstcreated = self._parse_date(post.get("created_at"))
-        versioncreated = self._parse_date(
-            post.get("published_at") or post.get("updated_at")
+        published_at = post.get("published_at") or post.get("updated_at")
+        versioncreated = self._parse_date(published_at)
+        firstpublished = (
+            self._parse_date(post.get("published_at"))
+            if post.get("published_at")
+            else None
         )
 
         html = post.get("html") or ""
@@ -405,6 +409,7 @@ class GhostParser(FileFeedParser):
             "source": "Ghost",
             "firstcreated": firstcreated,
             "versioncreated": versioncreated,
+            "firstpublished": firstpublished,
         }
 
         # Ghost exports a markup-free rendering of the body; prefer it for
