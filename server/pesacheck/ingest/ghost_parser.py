@@ -84,6 +84,22 @@ _IMAGE_FETCH_FAILURE_COOLDOWN_SECONDS = env_float(
 # twice within one window — see GhostRun.payloads.
 _IMAGE_CACHE_MAX_ENTRIES = env_int("GHOST_IMAGE_CACHE_MAX", 50000)
 
+# ``version`` on a ghost text item doubles as a completeness marker, because it
+# is the field core's ``is_new_version`` consults first when deciding whether a
+# re-ingested guid supersedes the stored one.
+#
+# A post whose images all resolved is COMPLETE; one where any image fetch failed
+# is PROVISIONAL — its body still points at the source CDN for the image we could
+# not localise. COMPLETE > PROVISIONAL is what lets a later, luckier run replace
+# a hotlinked body with a localised one; the reverse comparison is what stops a
+# degraded run overwriting a good item with a worse one.
+#
+# Only the relative order matters. They are ints because ``version`` is an int
+# everywhere else in superdesk, and ``is_new_version`` compares them directly
+# once its int(str, 10) attempt raises.
+ITEM_VERSION_PROVISIONAL = 1
+ITEM_VERSION_COMPLETE = 2
+
 # Medium hosts ~91% of PesaCheck's images, not a stray tail, so its policy governs
 # the whole run. min_interval is now an AGGREGATE rate (RateLimiter schedules per
 # host across all workers), so the old 3.0s cap meant 0.33 req/s total no matter
@@ -117,7 +133,10 @@ class GhostRun:
     bytes, so keeping a whole file's worth is cheap.
 
     ``inflight`` maps a URL to the future fetching it, so a URL appearing in
-    both queued windows is fetched once rather than raced for twice. It exists so the
+    both queued windows is fetched once rather than raced for twice.
+
+    ``provisional`` collects the guids of posts that ended up with an image we
+    could not localise, so the file's summary can report them. It exists so the
     prefetch never depends on the shared cache accepting an entry: once the cache
     hits its cap, ``_cache_put`` stops storing, and without this the serial pass
     would miss and re-fetch — every prefetched image downloaded, resized and
@@ -135,6 +154,7 @@ class GhostRun:
         "ghost_url",
         "inflight",
         "payloads",
+        "provisional",
         "pool",
         "tracker",
         "warm",
@@ -147,6 +167,7 @@ class GhostRun:
         self.tracker = tracker
         self.payloads = {}
         self.inflight = {}
+        self.provisional = []
         self.warm = warm or {}
 
 
@@ -434,14 +455,21 @@ class GhostParser(FileFeedParser):
         return html
 
     def _parse_images(self, run, item, post):
-        """Attach every image in ``post`` and rewrite the body to point at them."""
+        """Attach every image in ``post``, rewriting the body to point at them.
+
+        Returns the number of images that could not be localised. Each one leaves
+        a source-CDN URL in ``body_html``, which is why the count decides the
+        item's version — see ``_parse_post``.
+        """
         url_rewrites = {}
+        failed = 0
         for url, alt_text, description_text in self._iter_image_refs(run, post):
             try:
                 local_href = self._add_image(run, item, url, alt_text, description_text)
                 if local_href:
                     url_rewrites[url] = local_href
             except Exception as ex:
+                failed += 1
                 logger.warning("Failed to fetch Ghost image %s: %s", url, ex)
 
         if url_rewrites:
@@ -449,6 +477,8 @@ class GhostParser(FileFeedParser):
             for external_url, local_href in url_rewrites.items():
                 body = body.replace(external_url, local_href)
             item["body_html"] = body
+
+        return failed
 
     def _parse_language(self, post, tags, text):
         """Resolve the item language from ``locale``, then tags, then body text.
@@ -537,7 +567,26 @@ class GhostParser(FileFeedParser):
         if rating:
             item.setdefault("subject", []).append(rating)
 
-        self._parse_images(run, item, post)
+        unresolved = self._parse_images(run, item, post)
+
+        # Marks the item provisional so a later run that does localise those
+        # images is accepted as a new version instead of being deduplicated away.
+        # Without this the first parse wins permanently: is_new_version finds
+        # matching versioncreated values (both derive from the post's own
+        # published_at, which does not change) and skips the update, so one
+        # transient image timeout leaves a hotlinked body forever.
+        item["version"] = (
+            ITEM_VERSION_PROVISIONAL if unresolved else ITEM_VERSION_COMPLETE
+        )
+        if unresolved:
+            run.provisional.append(item[GUID_FIELD])
+            logger.warning(
+                "Ghost post %s (%s) is provisional: %d image(s) left pointing at "
+                "the source CDN. A later run that fetches them will supersede it.",
+                item[GUID_FIELD],
+                post.get("slug") or "?",
+                unresolved,
+            )
 
         return item
 
@@ -820,11 +869,12 @@ class GhostParser(FileFeedParser):
             tracker.set_context(f"{basename} shutting down")
             run.pool.shutdown(wait=True)
             tracker.stop_heartbeat()
+            provisional = list(run.provisional)
             run.payloads = {}
             run.inflight = {}
             logger.info(
                 "Ghost parse done: %s — %d/%d posts yielded in %.1fs. %s. "
-                "Image cache holds %d entries%s",
+                "Image cache holds %d entries%s. %s",
                 basename,
                 parsed,
                 len(candidates),
@@ -832,6 +882,13 @@ class GhostParser(FileFeedParser):
                 tracker.summary(),
                 len(self._image_cache),
                 " (capped)" if self._cache_capped else "",
+                (
+                    "All posts fully localised"
+                    if not provisional
+                    else "%d post(s) PROVISIONAL (an image still points at the "
+                    "source CDN); re-run this file to repair them: %s"
+                    % (len(provisional), ", ".join(provisional[:10]))
+                ),
             )
 
     async def parse(self, file_path, provider=None):

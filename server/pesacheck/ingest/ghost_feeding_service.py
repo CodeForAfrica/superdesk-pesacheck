@@ -16,7 +16,8 @@ from superdesk.notification import push_notification
 from superdesk.resource_fields import ID_FIELD
 from superdesk.utils import FileSortAttributes, get_sorted_files
 
-from pesacheck.ingest.util import env_float, env_int
+from pesacheck.ingest.ghost_parser import ITEM_VERSION_PROVISIONAL
+from pesacheck.ingest.util import env_bool, env_float, env_int
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +47,17 @@ INGEST_TIME_BUDGET = env_float("GHOST_INGEST_TIME_BUDGET", 1500)
 # INGEST_EXPIRY_MINUTES (2 days by default) has ingest:gc purge ingest items, and a
 # multi-day backfill would otherwise start re-fetching its own earlier images.
 WARM_CACHE_RESOURCES = ("ingest", "archive")
+
+# Whether to auto-publish a post that still has an image pointing at the source
+# CDN (see GhostParser's ITEM_VERSION_PROVISIONAL). Withholding it is the default
+# because publishing is a one-way door for this pipeline: ``_publish_guids`` skips
+# any item already stamped ``archived``, so once a hotlinked body is published the
+# repaired re-ingest can never reach the published copy — it would need a manual
+# correction. Left in ingest instead, the item is picked up and published by
+# whichever later run finally localises its images. The cost is that an image
+# which is permanently dead holds its article back until someone looks; the
+# per-file summary and the warning per post name exactly which ones.
+PUBLISH_PROVISIONAL = env_bool("GHOST_PUBLISH_PROVISIONAL", False)
 
 
 class GhostFeedingService(FileFeedingService):
@@ -172,9 +184,7 @@ class GhostFeedingService(FileFeedingService):
                         if pending_guids:
                             await _dispatch_publish(provider_config, pending_guids)
 
-                        pending_guids = [
-                            item[GUID_FIELD] for item in batch if item.get(GUID_FIELD)
-                        ]
+                        pending_guids = _publishable_guids(batch)
                         yield batch
 
                     # The final batch was stored when the consumer resumed us past
@@ -314,6 +324,37 @@ class GhostFeedingService(FileFeedingService):
             os.path.basename(file_path),
         )
         return warm
+
+
+def _publishable_guids(batch):
+    """Guids from ``batch`` that are ready to publish.
+
+    Filters out provisional items — those whose body still points at the source
+    CDN for an image we could not fetch — unless GHOST_PUBLISH_PROVISIONAL says
+    otherwise. They stay in ingest, unfetched and unpublished, so the run that
+    finally localises their images can supersede them and publish the repaired
+    version. See PUBLISH_PROVISIONAL for why this is the default.
+    """
+    guids, withheld = [], []
+    for item in batch:
+        guid = item.get(GUID_FIELD)
+        if not guid:
+            continue
+        provisional = item.get("version") == ITEM_VERSION_PROVISIONAL
+        if provisional and not PUBLISH_PROVISIONAL:
+            withheld.append(guid)
+            continue
+        guids.append(guid)
+
+    if withheld:
+        logger.warning(
+            "Ghost auto-publish: withholding %d provisional item(s) until their "
+            "images localise (re-run the file to repair; set "
+            "GHOST_PUBLISH_PROVISIONAL=1 to publish them hotlinked): %s",
+            len(withheld),
+            ", ".join(withheld[:10]),
+        )
+    return guids
 
 
 def _touch_pending(path, filenames):
