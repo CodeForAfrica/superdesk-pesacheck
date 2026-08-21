@@ -81,36 +81,37 @@ class RateLimiter:
     blocks another thread.
     """
 
-    def __init__(self):
+    def __init__(self, max_penalty=float("inf")):
         self._lock = threading.Lock()
         self._next_allowed = {}
+        # A ceiling on how far ahead of now any penalty may push a host, held by
+        # the limiter rather than passed per call. Penalties compound: when a host
+        # starts refusing, every worker fails at once and each adds its own
+        # delay, so 16 workers asking 5s each would put the host 80s out and the
+        # next round would add to that without limit. As a constructor invariant
+        # no caller can forget it — as a per-call argument, one already had.
+        self._max_penalty = max_penalty
 
     def acquire(self, host, min_interval):
         """Block until this caller's slot for ``host`` arrives. Returns the wait.
 
         A zero ``min_interval`` means "no pacing", not "ignore the schedule": a
         penalty from ``penalise`` must still be served, or backing off a throttled
-        host would silently do nothing whenever pacing was turned off.
+        host would silently do nothing whenever pacing was turned off. That is the
+        only thing the zero case changes — it reserves nothing, so it never pushes
+        the schedule out on its own.
         """
         now = time.monotonic()
-        if min_interval <= 0:
-            with self._lock:
-                slot = self._next_allowed.get(host, 0.0)
-            wait = slot - now
-            if wait > 0:
-                time.sleep(wait)
-                return wait
-            return 0.0
-
         with self._lock:
             slot = max(now, self._next_allowed.get(host, 0.0))
-            self._next_allowed[host] = slot + min_interval
+            if min_interval > 0:
+                self._next_allowed[host] = slot + min_interval
         wait = slot - now
         if wait > 0:
             time.sleep(wait)
         return max(0.0, wait)
 
-    def penalise(self, host, seconds, cap=None):
+    def penalise(self, host, seconds):
         """Push ``host``'s schedule back, slowing every worker bound for it.
 
         Sleeping in the failing worker instead would hold a pool slot for the
@@ -119,21 +120,19 @@ class RateLimiter:
         whole prefetch window. Advancing the schedule applies the backoff where it
         belongs: to the next requests, whoever makes them.
 
-        ``cap`` bounds how far ahead of *now* the schedule may be pushed, and
-        matters more than it looks. Penalties compound: when a host starts
-        refusing, every worker in the pool fails at roughly the same moment and
-        each adds its own delay, so 16 workers asking for 5s each would put the
-        host 80s out — and the next round would add to that, without limit. The
-        cap turns that into a ceiling the pool converges on instead of a spiral.
+        Bounded by ``max_penalty`` (see ``__init__``) so concurrent failures
+        converge on a ceiling instead of spiralling.
         """
         if seconds <= 0:
             return
         with self._lock:
             now = time.monotonic()
-            current = max(self._next_allowed.get(host, 0.0), now)
-            slot = current + seconds
-            if cap is not None:
-                slot = min(slot, now + cap)
+            slot = min(
+                max(self._next_allowed.get(host, 0.0), now) + seconds,
+                now + self._max_penalty,
+            )
+            # Never move a schedule backwards: a clamp must not undo a longer
+            # penalty another worker already applied.
             self._next_allowed[host] = max(self._next_allowed.get(host, 0.0), slot)
 
 

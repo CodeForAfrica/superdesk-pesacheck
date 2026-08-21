@@ -7,6 +7,8 @@ import time
 from copy import deepcopy
 from datetime import datetime, timezone
 
+from urllib3.util.retry import Retry
+
 from superdesk.errors import ParserError
 from superdesk.etree import parse_html
 from superdesk.io.feed_parsers import FileFeedParser
@@ -70,13 +72,8 @@ _IMAGE_FETCH_RETRIES = env_int("GHOST_IMAGE_FETCH_RETRIES", 4)
 # failing on our impatience alone and then burning its retry ladder. A long read
 # timeout costs nothing when the host is healthy; it is only ever reached when the
 # alternative is losing the image.
-#
-# GHOST_IMAGE_FETCH_TIMEOUT is still honoured as the read-timeout default, since
-# that is effectively what it controlled and it may be set in a deployed stack.
 _IMAGE_FETCH_CONNECT_TIMEOUT = env_float("GHOST_IMAGE_FETCH_CONNECT_TIMEOUT", 10)
-_IMAGE_FETCH_READ_TIMEOUT = env_float(
-    "GHOST_IMAGE_FETCH_READ_TIMEOUT", env_float("GHOST_IMAGE_FETCH_TIMEOUT", 90)
-)
+_IMAGE_FETCH_READ_TIMEOUT = env_float("GHOST_IMAGE_FETCH_READ_TIMEOUT", 90)
 _IMAGE_FETCH_TIMEOUT = (_IMAGE_FETCH_CONNECT_TIMEOUT, _IMAGE_FETCH_READ_TIMEOUT)
 # Doubles per attempt from here, so 5s gives 5 / 10 / 20 across a 4-attempt
 # ladder — tens of seconds of patience rather than the ~2s the old linear 0.75
@@ -84,37 +81,101 @@ _IMAGE_FETCH_TIMEOUT = (_IMAGE_FETCH_CONNECT_TIMEOUT, _IMAGE_FETCH_READ_TIMEOUT)
 _IMAGE_FETCH_BASE_BACKOFF_SECONDS = env_float("GHOST_IMAGE_FETCH_BASE_BACKOFF", 5.0)
 _IMAGE_FETCH_JITTER_SECONDS = env_float("GHOST_IMAGE_FETCH_JITTER", 0.25)
 
-# Ceiling for one backoff wait. Backoff is exponential now, not linear: linear
-# 0.75*attempt over 4 attempts spends ~2.25s in total, which against a host that
-# is deliberately slowing a bulk ingest is indistinguishable from not waiting at
-# all — the ladder is spent in seconds and the image is written off. Doubling
-# from base_backoff reaches minutes, where a throttle window actually closes.
+# Ceiling for any single backoff wait, including one a host asks for by
+# Retry-After. Not per-policy: a cap on how long the run will ever stall is a
+# property of the run, not of which CDN is misbehaving.
 _IMAGE_FETCH_MAX_BACKOFF_SECONDS = env_float("GHOST_IMAGE_FETCH_MAX_BACKOFF", 120)
 
 # How a response status is treated when a fetch fails.
 #
-# THROTTLE: the host is refusing load right now, so wait and try again. 403 is
-# here deliberately — a CDN under a WAF or rate-limit rule answers 403, not 429,
-# far more often than it answers honestly, and treating it as permanent would
-# discard a recoverable image. 5xx is the origin struggling, which is the same
-# situation from our side.
+# THROTTLE: the host is refusing load right now, so wait and hold the whole host
+# back — every other worker is about to hit the same wall. 403 is here
+# deliberately: a CDN under a WAF or rate-limit rule answers 403 far more often
+# than it answers honestly, and treating it as permanent would discard a
+# recoverable image. 5xx is the origin struggling, which is the same situation
+# from our side.
 #
 # PERMANENT: the image is not coming back, so stop immediately rather than spend
 # a ladder and a host-wide penalty discovering it four more times.
-_THROTTLE_STATUSES = frozenset({408, 429, 500, 502, 503, 504, 403})
+#
+# Anything else — an unclassified status, a timeout, a connection reset — is
+# retried but does NOT hold the host back, because we have no evidence the
+# problem is the host's rather than this one URL's.
+_THROTTLE_STATUSES = frozenset({403, 408, 429, 500, 502, 503, 504})
 _PERMANENT_STATUSES = frozenset({400, 401, 404, 410, 451})
+
+
+class ImageFetchError(Exception):
+    """An image URL answered with an error status.
+
+    Raised from a ``requests`` response hook (see ``_classify_response``) rather
+    than left to core, which collapses every non-2xx into one generic 500 with
+    the status, reason and ``Retry-After`` discarded — so a rate-limit, a block,
+    an outage and a deleted file all arrived identical and the retry ladder could
+    not tell them apart.
+    """
+
+    def __init__(self, url, status, reason=None, retry_after=None, headers=None):
+        detail = "HTTP %s" % status
+        if reason:
+            detail += " %s" % reason
+        if retry_after is not None:
+            detail += " (Retry-After=%gs)" % retry_after
+        super().__init__("%s for %s" % (detail, url))
+        self.status = status
+        self.retry_after = retry_after
+        self.headers = headers or {}
+
+
+def _parse_retry_after(raw):
+    """``Retry-After`` in seconds, or None.
+
+    Delegates the awkward case to ``urllib3.util.retry.Retry.parse_retry_after``,
+    which is already in the dependency tree and handles the HTTP-date form via
+    ``email.utils``. The plain-number path is tried first because urllib3 rejects
+    a fractional value like ``45.5``, which is legal enough that some CDNs send
+    it — so this accepts a strict superset of what either would alone.
+    """
+    if raw is None:
+        return None
+    try:
+        seconds = float(str(raw).strip())
+    except (TypeError, ValueError):
+        try:
+            seconds = Retry().parse_retry_after(str(raw).strip())
+        except Exception:
+            logger.debug("Ignoring unparseable Retry-After %r", raw)
+            return None
+    return seconds if seconds >= 0 else None
+
+
+def _classify_response(response, **_kwargs):
+    """``requests`` response hook: turn an error status into ImageFetchError.
+
+    Installed per request via ``request_kwargs["hooks"]``, which core forwards to
+    ``session.get`` untouched. That is the whole reason this needs no monkeypatch
+    of core's downloader: the hook runs inside ``Session.send``, while the
+    response still exists, and before core reaches its own status check.
+
+    Only ``>= 400`` raises. Redirects must fall through — Medium answers a 301
+    before serving an image, so a hook that rejected every non-2xx would fail
+    every fetch on the redirect rather than on the image.
+    """
+    if response.status_code < 400:
+        return response
+    raise ImageFetchError(
+        response.url,
+        response.status_code,
+        reason=getattr(response, "reason", None),
+        retry_after=_parse_retry_after(response.headers.get("Retry-After")),
+        headers=response.headers,
+    )
+
+
 _IMAGE_FETCH_SUCCESS_THROTTLE_SECONDS = env_float(
     "GHOST_IMAGE_FETCH_SUCCESS_THROTTLE", 0.0
 )
 _IMAGE_FETCH_MIN_INTERVAL_SECONDS = env_float("GHOST_IMAGE_FETCH_MIN_INTERVAL", 0.05)
-# Cooldowns default to off. They existed to pace a single-threaded fetcher after
-# a failure; RateLimiter now paces every request from every worker, and per-image
-# retry backoff still handles the individual failure. Set these if a host needs
-# adaptive backoff on top — note they now delay ALL workers, not just one.
-_IMAGE_FETCH_FAILURE_COOLDOWN_SECONDS = env_float(
-    "GHOST_IMAGE_FETCH_FAILURE_COOLDOWN", 0.0
-)
-
 # Images repeat heavily across a corpus (PesaCheck: ~18% of refs are duplicates,
 # mostly avatars and logos), so rendition metadata is cached across files for the
 # life of the run rather than reset per file. Capped because a payload is ~3.5KB
@@ -149,9 +210,6 @@ ITEM_VERSION_COMPLETE = 2
 _MEDIUM_FETCH_RETRIES = env_int("GHOST_MEDIUM_FETCH_RETRIES", 4)
 _MEDIUM_FETCH_BASE_BACKOFF_SECONDS = env_float("GHOST_MEDIUM_FETCH_BASE_BACKOFF", 5.0)
 _MEDIUM_FETCH_MIN_INTERVAL_SECONDS = env_float("GHOST_MEDIUM_FETCH_MIN_INTERVAL", 0.05)
-_MEDIUM_FETCH_FAILURE_COOLDOWN_SECONDS = env_float(
-    "GHOST_MEDIUM_FETCH_FAILURE_COOLDOWN", 0.0
-)
 
 
 class GhostRun:
@@ -234,22 +292,24 @@ class GhostParser(FileFeedParser):
     # ------------------------------------------------------------------
 
     def _get_fetch_policy(self, url):
-        if is_medium_cdn_url(url):
-            return {
-                "retries": _MEDIUM_FETCH_RETRIES,
-                "base_backoff": _MEDIUM_FETCH_BASE_BACKOFF_SECONDS,
-                "min_interval": _MEDIUM_FETCH_MIN_INTERVAL_SECONDS,
-                "failure_cooldown": _MEDIUM_FETCH_FAILURE_COOLDOWN_SECONDS,
-                "max_backoff": _IMAGE_FETCH_MAX_BACKOFF_SECONDS,
-            }
+        """Per-host fetch policy. One list of keys, overridden where Medium differs.
 
-        return {
+        Built as defaults-then-override rather than two parallel dicts: with a
+        dict per branch, adding a dimension means two edits and a one-sided edit
+        looks deliberate.
+        """
+        policy = {
             "retries": _IMAGE_FETCH_RETRIES,
             "base_backoff": _IMAGE_FETCH_BASE_BACKOFF_SECONDS,
             "min_interval": _IMAGE_FETCH_MIN_INTERVAL_SECONDS,
-            "failure_cooldown": _IMAGE_FETCH_FAILURE_COOLDOWN_SECONDS,
-            "max_backoff": _IMAGE_FETCH_MAX_BACKOFF_SECONDS,
         }
+        if is_medium_cdn_url(url):
+            policy.update(
+                retries=_MEDIUM_FETCH_RETRIES,
+                base_backoff=_MEDIUM_FETCH_BASE_BACKOFF_SECONDS,
+                min_interval=_MEDIUM_FETCH_MIN_INTERVAL_SECONDS,
+            )
+        return policy
 
     def _backoff_delay(self, policy, attempt, retry_after):
         """Seconds to hold a host back after a failed attempt.
@@ -259,14 +319,14 @@ class GhostParser(FileFeedParser):
         is still capped, so a header asking for an hour cannot park the run.
 
         Otherwise the wait doubles per attempt from ``base_backoff``, capped at
-        ``max_backoff``. Jitter keeps a pool of workers that all failed at once
-        from re-converging on the same instant.
+        ``_IMAGE_FETCH_MAX_BACKOFF_SECONDS``. Jitter keeps a pool of workers that
+        all failed at once from re-converging on the same instant.
         """
         if retry_after is not None:
             delay = retry_after
         else:
             delay = policy["base_backoff"] * (2 ** (attempt - 1))
-        delay = min(delay, policy["max_backoff"])
+        delay = min(delay, _IMAGE_FETCH_MAX_BACKOFF_SECONDS)
         return delay + random.uniform(0, _IMAGE_FETCH_JITTER_SECONDS)
 
     # ------------------------------------------------------------------
@@ -284,7 +344,7 @@ class GhostParser(FileFeedParser):
         # duplicate fetch, so this needs no lock.
         self._image_cache = {}
         self._cache_capped = False
-        self._rate_limiter = RateLimiter()
+        self._rate_limiter = RateLimiter(max_penalty=_IMAGE_FETCH_MAX_BACKOFF_SECONDS)
 
     def _cache_lookup(self, url):
         """Cached payload, a cached Exception, or None if unseen.
@@ -343,6 +403,7 @@ class GhostParser(FileFeedParser):
         """
         policy = self._get_fetch_policy(url)
         host = fetch_host(url)
+        headers = build_fetch_headers(url)
         last_error = None
 
         for attempt in range(1, policy["retries"] + 1):
@@ -357,7 +418,10 @@ class GhostParser(FileFeedParser):
                     None,
                     request_kwargs={
                         "timeout": _IMAGE_FETCH_TIMEOUT,
-                        "headers": build_fetch_headers(url),
+                        "headers": headers,
+                        # Classifies the response where it still exists; see
+                        # _classify_response for why this replaces patching core.
+                        "hooks": {"response": _classify_response},
                     },
                 )
                 # No deepcopy: holder is a fresh local that nothing else reads,
@@ -386,11 +450,10 @@ class GhostParser(FileFeedParser):
                 if run.tracker:
                     run.tracker.finish(token, ok=False)
                 last_error = ex
-                # Set by pesacheck.image_fetch_patch; None for a timeout or a
-                # connection error, which never had a response to read a status
-                # from.
-                status = getattr(ex, "pesacheck_status", None)
-                retry_after = getattr(ex, "pesacheck_retry_after", None)
+                # None for a timeout or a connection reset, which never had a
+                # response to read a status from.
+                status = getattr(ex, "status", None)
+                retry_after = getattr(ex, "retry_after", None)
 
                 if status in _PERMANENT_STATUSES:
                     logger.warning(
@@ -405,14 +468,17 @@ class GhostParser(FileFeedParser):
 
                 delay = self._backoff_delay(policy, attempt, retry_after)
 
-                # A throttle is a property of the HOST, not of this URL: every
-                # other worker is about to hit the same wall. Pushing the host's
-                # schedule out makes them all wait, instead of each thread
-                # discovering the limit alone and multiplying the load we are
-                # being punished for. It also means we must NOT sleep here — the
-                # acquire() at the top of the next attempt serves the wait, so
-                # sleeping too would count the same backoff twice.
-                self._rate_limiter.penalise(host, delay, cap=policy["max_backoff"])
+                # A throttle is a property of the HOST, so hold the whole host
+                # back: every other worker is about to hit the same wall, and
+                # each one discovering that alone multiplies the load we are
+                # being punished for. Anything else stays this URL's problem.
+                # Either way we must NOT sleep here — acquire() at the top of the
+                # next attempt serves the wait, and sleeping too would count the
+                # same backoff twice.
+                if status in _THROTTLE_STATUSES:
+                    self._rate_limiter.penalise(host, delay)
+                else:
+                    time.sleep(delay)
 
                 logger.warning(
                     "Image fetch failed for %s after %.2fs (attempt %s/%s, "
@@ -427,17 +493,6 @@ class GhostParser(FileFeedParser):
                     delay,
                     ex,
                 )
-
-        if policy["failure_cooldown"] > 0:
-            # Back off after exhausting retries, to avoid a retry storm against a
-            # host that has started failing. Applied to that host's schedule
-            # rather than slept here: parking this worker would hold a pool slot
-            # doing nothing and let one dead image stall the whole window.
-            self._rate_limiter.penalise(
-                host,
-                policy["failure_cooldown"]
-                + random.uniform(0, _IMAGE_FETCH_JITTER_SECONDS),
-            )
 
         logger.error(
             "Ghost image FAILED after %d attempts: %s (%s)",

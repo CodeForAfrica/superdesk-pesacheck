@@ -37,9 +37,8 @@ def get_app(config=None):
 
     celery_eager_patch.apply()
 
-    # Keep the HTTP status of a failed image download instead of collapsing every
-    # non-2xx into one generic 500 (see pesacheck/image_fetch_patch.py). Ghost
-    # ingest branches its backoff on 429 vs 403 vs 404.
+    # Give image downloads HTTP keep-alive; core builds a fresh session, and so a
+    # fresh TLS handshake, for every image (see pesacheck/image_fetch_patch.py).
     from pesacheck import image_fetch_patch
 
     image_fetch_patch.apply()
