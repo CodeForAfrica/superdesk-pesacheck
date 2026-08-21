@@ -8,19 +8,48 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+# NOTE on the `root:` key below: it must stay at the TOP LEVEL, not inside
+# `loggers:`. logging.dictConfig treats an entry under `loggers:` as a logger
+# with that literal name, so a `root:` nested there configures a logger *called*
+# "root" and leaves the real root logger untouched — default level WARNING, no
+# handler. That is what this file used to do, which silently dropped every
+# INFO record from any logger that was not superdesk's own (superdesk installs
+# its handlers in code). Ghost ingest logs its progress, per-window throughput
+# and stall heartbeats at INFO, so none of it reached the container log.
+
 version: 1
 disable_existing_loggers: False
+
+formatters:
+  standard:
+    format: "%(asctime)s %(levelname)-7s %(name)s: %(message)s"
+    datefmt: "%H:%M:%S"
+
 handlers:
   console:
     class: logging.StreamHandler
-    stream  : ext://sys.stdout
+    stream: ext://sys.stdout
+    formatter: standard
+
 loggers:
   # superdesk.ws - used for debug message can be removed later on.
   superdesk.ws:
     handlers: [console]
     level: DEBUG
+    propagate: False
   worker:
     handlers: [console]
     level: WARN
-  root:
-    handlers: [console]
+    propagate: False
+  # Ghost ingest progress, prefetch throughput and the stall heartbeat are all
+  # INFO. Without this they are invisible: root sits at WARNING (below) to keep
+  # chatty third-party libraries quiet.
+  pesacheck:
+    level: INFO
+    propagate: True
+
+# The real root logger. Everything not named above inherits this, so
+# third-party libraries stay at WARNING.
+root:
+  handlers: [console]
+  level: WARNING
