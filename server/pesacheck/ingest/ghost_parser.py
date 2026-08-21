@@ -25,6 +25,7 @@ from superdesk.text_utils import get_text
 from superdesk.utc import utcnow
 
 from pesacheck.debunk import debunk_rating
+from pesacheck.ingest.util import env_float, env_int
 from pesacheck.language import detect_language, normalise_language_code
 
 logger = logging.getLogger(__name__)
@@ -39,19 +40,32 @@ GHOST_URL_PLACEHOLDER = "__GHOST_URL__"
 
 # bytes to peek at for fast can_parse check
 _PEEK_SIZE = 512
-_IMAGE_FETCH_RETRIES = 4
-_IMAGE_FETCH_TIMEOUT = 20
-_IMAGE_FETCH_BASE_BACKOFF_SECONDS = 0.75
-_IMAGE_FETCH_JITTER_SECONDS = 0.25
-_IMAGE_FETCH_SUCCESS_THROTTLE_SECONDS = 0.1
-_IMAGE_FETCH_MIN_INTERVAL_SECONDS = 1.25
-_IMAGE_FETCH_FAILURE_COOLDOWN_SECONDS = 3.0
+
+# Image-fetch throttle. These pace/space downloads to keep the Ghost site and
+# CDNs from 403-ing or rate-limiting a bulk import — see _build_fetch_headers
+# and _fetch_renditions_with_retry. Every value is overridable via env so a
+# one-off backfill from an origin you control can turn the spacing way down
+# (e.g. GHOST_IMAGE_FETCH_MIN_INTERVAL=0.1) without a code change, then be
+# restored to polite defaults for steady-state ingest.
+_IMAGE_FETCH_RETRIES = env_int("GHOST_IMAGE_FETCH_RETRIES", 4)
+_IMAGE_FETCH_TIMEOUT = env_float("GHOST_IMAGE_FETCH_TIMEOUT", 20)
+_IMAGE_FETCH_BASE_BACKOFF_SECONDS = env_float("GHOST_IMAGE_FETCH_BASE_BACKOFF", 0.75)
+_IMAGE_FETCH_JITTER_SECONDS = env_float("GHOST_IMAGE_FETCH_JITTER", 0.25)
+_IMAGE_FETCH_SUCCESS_THROTTLE_SECONDS = env_float(
+    "GHOST_IMAGE_FETCH_SUCCESS_THROTTLE", 0.0
+)
+_IMAGE_FETCH_MIN_INTERVAL_SECONDS = env_float("GHOST_IMAGE_FETCH_MIN_INTERVAL", 0.1)
+_IMAGE_FETCH_FAILURE_COOLDOWN_SECONDS = env_float(
+    "GHOST_IMAGE_FETCH_FAILURE_COOLDOWN", 3.0
+)
 
 # Medium CDN is the problematic source in current imports, so use a slower policy there.
-_MEDIUM_FETCH_RETRIES = 10
-_MEDIUM_FETCH_BASE_BACKOFF_SECONDS = 2.5
-_MEDIUM_FETCH_MIN_INTERVAL_SECONDS = 3.0
-_MEDIUM_FETCH_FAILURE_COOLDOWN_SECONDS = 8.0
+_MEDIUM_FETCH_RETRIES = env_int("GHOST_MEDIUM_FETCH_RETRIES", 10)
+_MEDIUM_FETCH_BASE_BACKOFF_SECONDS = env_float("GHOST_MEDIUM_FETCH_BASE_BACKOFF", 2.5)
+_MEDIUM_FETCH_MIN_INTERVAL_SECONDS = env_float("GHOST_MEDIUM_FETCH_MIN_INTERVAL", 3.0)
+_MEDIUM_FETCH_FAILURE_COOLDOWN_SECONDS = env_float(
+    "GHOST_MEDIUM_FETCH_FAILURE_COOLDOWN", 8.0
+)
 
 _IMAGE_FETCH_HEADERS = {
     # Some CDNs are strict about clients and may reject the default python
