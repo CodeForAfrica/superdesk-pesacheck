@@ -86,76 +86,124 @@ class GhostFeedingService(FileFeedingService):
             )
             return
 
-        for filename in await get_sorted_files(
+        filenames = await get_sorted_files(
             self.path, sort_by=FileSortAttributes.created
-        ):
-            last_updated = None
-            try:
-                file_path = os.path.join(self.path, filename)
-                if not os.path.isfile(file_path):
-                    continue
+        )
 
-                last_updated = self.get_last_updated(file_path)
+        # Index of the first file this run has not started yet. Kept up to date so
+        # the ``finally`` below knows which files are still untouched if we exit
+        # early. See ``_touch_pending`` for why they need their mtime refreshed.
+        pending_from = 0
 
-                if not self.is_latest_content(
-                    last_updated, provider.get("last_updated")
-                ):
-                    await self.move_file(
-                        self.path, filename, provider=provider, success=False
-                    )
-                    continue
+        try:
+            for index, filename in enumerate(filenames):
+                pending_from = index + 1
+                last_updated = None
+                try:
+                    file_path = os.path.join(self.path, filename)
+                    if not os.path.isfile(file_path):
+                        continue
 
-                if await self.is_empty(file_path):
-                    logger.info("Ignoring empty file %s", filename)
-                    continue
+                    last_updated = self.get_last_updated(file_path)
 
-                parser = await self.get_feed_parser(provider, file_path)
-                if not parser.can_parse(file_path):
-                    logger.info("Skipping non-Ghost file %s", filename)
-                    continue
+                    if not self.is_latest_content(
+                        last_updated, provider.get("last_updated")
+                    ):
+                        await self.move_file(
+                            self.path, filename, provider=provider, success=False
+                        )
+                        continue
 
-                items_gen = parser.iter_items(file_path, provider)
+                    if await self.is_empty(file_path):
+                        logger.info("Ignoring empty file %s", filename)
+                        continue
 
-                pending_guids = []
-                while True:
-                    batch = list(islice(items_gen, BATCH_SIZE))
-                    if not batch:
-                        break
+                    parser = await self.get_feed_parser(provider, file_path)
+                    if not parser.can_parse(file_path):
+                        logger.info("Skipping non-Ghost file %s", filename)
+                        continue
 
-                    # The consumer stores each yielded batch before resuming us
-                    # for the next one, so by the time we're back here the
-                    # PREVIOUS batch is already in the ingest collection and its
-                    # guids are safe to hand off for publishing. Dispatching one
-                    # step behind the yield guarantees the task never races ahead
-                    # of storage.
+                    items_gen = parser.iter_items(file_path, provider)
+
+                    pending_guids = []
+                    while True:
+                        batch = list(islice(items_gen, BATCH_SIZE))
+                        if not batch:
+                            break
+
+                        # The consumer stores each yielded batch before resuming us
+                        # for the next one, so by the time we're back here the
+                        # PREVIOUS batch is already in the ingest collection and its
+                        # guids are safe to hand off for publishing. Dispatching one
+                        # step behind the yield guarantees the task never races ahead
+                        # of storage.
+                        if pending_guids:
+                            await _dispatch_publish(provider_config, pending_guids)
+
+                        pending_guids = [
+                            item[GUID_FIELD] for item in batch if item.get(GUID_FIELD)
+                        ]
+                        yield batch
+
+                    # The final batch was stored when the consumer resumed us past
+                    # the last yield (the break above), so dispatch it before moving
+                    # the file.
                     if pending_guids:
                         await _dispatch_publish(provider_config, pending_guids)
 
-                    pending_guids = [
-                        item[GUID_FIELD] for item in batch if item.get(GUID_FIELD)
-                    ]
-                    yield batch
-
-                # The final batch was stored when the consumer resumed us past
-                # the last yield (the break above), so dispatch it before moving
-                # the file.
-                if pending_guids:
-                    await _dispatch_publish(provider_config, pending_guids)
-
-                await self.move_file(
-                    self.path, filename, provider=provider, success=True
-                )
-
-            except Exception as ex:
-                if last_updated and self.is_old_content(last_updated):
                     await self.move_file(
-                        self.path, filename, provider=provider, success=False
+                        self.path, filename, provider=provider, success=True
                     )
-                raise ParserError.parseFileError(
-                    "{}-{}".format(provider["name"], self.NAME), filename, ex, provider
-                )
+
+                except Exception as ex:
+                    if last_updated and self.is_old_content(last_updated):
+                        await self.move_file(
+                            self.path, filename, provider=provider, success=False
+                        )
+                    raise ParserError.parseFileError(
+                        "{}-{}".format(provider["name"], self.NAME),
+                        filename,
+                        ex,
+                        provider,
+                    )
+
+        finally:
+            # Refresh the mtime of every file this run never started. ``update_provider``
+            # stamps ``provider.last_updated`` each run, and the next run drops any file
+            # older than ``INGEST_OLD_CONTENT_MINUTES`` (10, and settable only in global
+            # app config) straight into ``_ERROR/`` unparsed. Without this, a backlog
+            # that takes more than one run to drain — several files, or one file that
+            # trips ``update_provider``'s 1800s soft time limit — loses its tail
+            # silently. Deliberately excludes the file we were working on: it keeps
+            # ageing, so a file that fails every run still reaches the age check and
+            # gets quarantined instead of blocking the folder forever.
+            _touch_pending(self.path, filenames[pending_from:])
 
         push_notification("ingest:update")
+
+
+def _touch_pending(path, filenames):
+    """Set the mtime of each named file to now; never raise.
+
+    Synchronous on purpose. This runs from a ``finally`` in an async generator, so
+    it also has to work while a ``GeneratorExit`` is unwinding us (the consumer
+    abandoning the generator when its provider lock expires) — awaiting there is
+    not allowed. ``os.utime`` is a cheap stat-level call, so a plain loop is fine.
+    """
+    for filename in filenames:
+        file_path = os.path.join(path, filename)
+        try:
+            os.utime(file_path, None)
+        except OSError as ex:
+            # Already moved, or a permissions problem. Not worth failing over: the
+            # only cost is that this file may age out into ``_ERROR/`` later.
+            logger.warning("Could not refresh timestamp on %s: %s", filename, ex)
+
+    if filenames:
+        logger.info(
+            "Ghost ingest: refreshed timestamps on %d unprocessed file(s)",
+            len(filenames),
+        )
 
 
 async def _dispatch_publish(provider_config, guids):
