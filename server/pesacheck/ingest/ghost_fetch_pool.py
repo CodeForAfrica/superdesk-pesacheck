@@ -37,12 +37,18 @@ from pesacheck.ingest.util import env_float, env_int
 
 logger = logging.getLogger(__name__)
 
-# Threads fetching images. Defaults low enough to be sane on a laptop; raise it
-# for a real backfill once you know what the source host tolerates.
-IMAGE_FETCH_WORKERS = env_int("GHOST_IMAGE_FETCH_WORKERS", 8)
+# Threads fetching images. Profiling a 250-post run put 95% of all thread time
+# in the download itself (5.3s average per image) against 3.8% in renditions and
+# 0.3% in rate-limiting, so throughput here is latency x concurrency and nothing
+# else — 8 workers averaged 0.88 images/s. Raise it for a real backfill: the host
+# probe (scripts/ghost/probe_image_host.py) measured Medium serving 25.7 req/s at
+# concurrency 32 with zero errors.
+IMAGE_FETCH_WORKERS = env_int("GHOST_IMAGE_FETCH_WORKERS", 16)
 
 # Posts whose images are prefetched together. Wants to be big enough to keep
-# every worker busy: at ~7.7 images per post, 20 posts is ~150 images.
+# every worker busy: at ~14.6 images per post, 20 posts is ~290 images, and two
+# windows are queued at once (see GhostParser._submit_window), so the pool has
+# roughly 580 images of work available at any moment.
 PREFETCH_WINDOW_POSTS = env_int("GHOST_PREFETCH_WINDOW_POSTS", 20)
 
 # How often the heartbeat reports. 0 disables it.
@@ -280,14 +286,6 @@ class ContextPool:
     def submit(self, fn, *args, **kwargs):
         ctx = contextvars.copy_context()
         return self._pool.submit(ctx.run, lambda: fn(*args, **kwargs))
-
-    def map(self, fn, items):
-        """Run fn over every item concurrently and return the results.
-
-        ``fn`` is expected to absorb its own failures and report them in its
-        return value; nothing here converts an exception into a result.
-        """
-        return [future.result() for future in [self.submit(fn, item) for item in items]]
 
     def shutdown(self, wait=True):
         self._pool.shutdown(wait=wait)

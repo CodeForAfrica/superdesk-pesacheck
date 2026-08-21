@@ -110,7 +110,14 @@ class GhostRun:
     would ``shutdown()`` the pool the other was still submitting to. Keeping this
     in a run object handed down the call chain makes that structurally impossible.
 
-    ``payloads`` holds this window's fetched renditions. It exists so the
+    ``payloads`` holds every rendition fetched for this file. It used to be
+    reset per window; it is not any more, because two windows are in flight at
+    once and the reset would drop results belonging to the window that had not
+    been parsed yet. It holds metadata (hrefs, media ids, exif), not image
+    bytes, so keeping a whole file's worth is cheap.
+
+    ``inflight`` maps a URL to the future fetching it, so a URL appearing in
+    both queued windows is fetched once rather than raced for twice. It exists so the
     prefetch never depends on the shared cache accepting an entry: once the cache
     hits its cap, ``_cache_put`` stops storing, and without this the serial pass
     would miss and re-fetch — every prefetched image downloaded, resized and
@@ -123,7 +130,15 @@ class GhostRun:
     what makes resuming a part-consumed file cheap instead of a full re-fetch.
     """
 
-    __slots__ = ("basename", "ghost_url", "payloads", "pool", "tracker", "warm")
+    __slots__ = (
+        "basename",
+        "ghost_url",
+        "inflight",
+        "payloads",
+        "pool",
+        "tracker",
+        "warm",
+    )
 
     def __init__(self, basename, ghost_url, pool, tracker, warm=None):
         self.basename = basename
@@ -131,6 +146,7 @@ class GhostRun:
         self.pool = pool
         self.tracker = tracker
         self.payloads = {}
+        self.inflight = {}
         self.warm = warm or {}
 
 
@@ -569,47 +585,96 @@ class GhostParser(FileFeedParser):
     # Prefetch
     # ------------------------------------------------------------------
 
-    def _prefetch_window(self, run, posts, label):
-        """Fetch every not-yet-known image in ``posts`` concurrently.
+    def _submit_window(self, run, posts, label):
+        """Queue every not-yet-known image in ``posts`` on the pool, without waiting.
+
+        Returns ``(label, urls, futures)`` for ``_await_window``. Submitting and
+        waiting are separate so the caller can keep two windows in flight: the
+        tail of one window drains while the head of the next is already running,
+        which is what stops the pool sagging to a fraction of its width every
+        time a window empties out.
 
         Purely an optimisation: results land in ``run.payloads`` and the serial
         pass reads them from there. Failures are recorded, never raised — the
         serial pass surfaces them per image with its own error handling.
         """
-        run.payloads = {}
         wanted, seen = [], set()
         for post in posts:
             for url, _alt, _desc in self._iter_image_refs(run, post):
                 if url in seen:
                     continue
                 seen.add(url)
-                if url not in run.warm and self._cache_lookup(url) is None:
+                # ``inflight`` is the reason this is not just a cache check: with
+                # two windows queued at once, a URL shared between them is not in
+                # the cache yet (its fetch has not finished), so without this it
+                # would be downloaded twice concurrently.
+                if (
+                    url not in run.warm
+                    and url not in run.payloads
+                    and url not in run.inflight
+                    and self._cache_lookup(url) is None
+                ):
                     wanted.append(url)
 
         logger.info(
-            "Ghost prefetch %s: %d posts, %d images to fetch (%d already known) "
-            "on %d workers",
+            "Ghost prefetch %s: %d posts, %d images to fetch (%d already known "
+            "or in flight) on %d workers",
             label,
             len(posts),
             len(wanted),
             len(seen) - len(wanted),
             run.pool.workers,
         )
-        if not wanted:
-            return
+        futures = []
+        for url in wanted:
+            future = run.pool.submit(self._prefetch_one, run, url)
+            run.inflight[url] = future
+            futures.append(future)
+        return label, wanted, futures
 
+    def _await_window(self, run, label, wanted, futures):
+        """Block until ``futures`` are done, then report the window's throughput.
+
+        The elapsed time here is wall time from the caller's point of view, not
+        the window's own fetch time: by the time we wait, some of these have been
+        running while the previous window was being parsed. That is the point —
+        it is the number that shows the overlap paying off.
+        """
+        if not futures:
+            return
         started = time.monotonic()
-        results = run.pool.map(lambda url: self._prefetch_one(run, url), wanted)
-        done = sum(1 for ok in results if ok)
+        done = 0
+        for future in futures:
+            try:
+                if future.result():
+                    done += 1
+            except Exception:
+                # _prefetch_one absorbs its own failures; anything escaping is a
+                # pool-level surprise and must not kill the parse.
+                logger.exception("Ghost prefetch %s: worker raised", label)
+        for url in wanted:
+            run.inflight.pop(url, None)
         elapsed = time.monotonic() - started
-        logger.info(
-            "Ghost prefetch %s done: %d ok, %d failed in %.1fs (%.2f images/s)",
-            label,
-            done,
-            len(results) - done,
-            elapsed,
-            done / elapsed if elapsed else 0.0,
-        )
+        if elapsed < 0.05:
+            # Nothing left to wait for: the previous window's parse covered this
+            # window's whole fetch. Dividing by ~0 here reports a nonsense rate.
+            logger.info(
+                "Ghost prefetch %s done: %d ok, %d failed, fully absorbed by the "
+                "overlap (no wait)",
+                label,
+                done,
+                len(futures) - done,
+            )
+        else:
+            logger.info(
+                "Ghost prefetch %s done: %d ok, %d failed, %.1fs still to wait "
+                "after the overlap (%.2f images/s)",
+                label,
+                done,
+                len(futures) - done,
+                elapsed,
+                done / elapsed,
+            )
 
     def _prefetch_one(self, run, url):
         try:
@@ -701,10 +766,35 @@ class GhostParser(FileFeedParser):
         position = parsed = 0
 
         try:
+            # Two windows are kept queued at all times: the one about to be
+            # parsed and the one after it. Submitting the next window *before*
+            # draining the current one is what creates the overlap — the current
+            # window's slow tail and the next window's fetches share the pool,
+            # instead of the pool idling down to one or two live fetches at the
+            # end of every window and again during the serial parse.
+            pending = (
+                self._submit_window(
+                    run, windows[0], f"{basename} window 1/{len(windows)}"
+                )
+                if windows
+                else None
+            )
+
             for window_no, chunk in enumerate(windows, 1):
                 label = f"{basename} window {window_no}/{len(windows)}"
                 tracker.set_context(label)
-                self._prefetch_window(run, chunk, label)
+
+                nxt = None
+                if window_no < len(windows):
+                    nxt = self._submit_window(
+                        run,
+                        windows[window_no],
+                        f"{basename} window {window_no + 1}/{len(windows)}",
+                    )
+
+                if pending:
+                    self._await_window(run, *pending)
+                pending = nxt
 
                 for post in chunk:
                     position += 1
@@ -731,6 +821,7 @@ class GhostParser(FileFeedParser):
             run.pool.shutdown(wait=True)
             tracker.stop_heartbeat()
             run.payloads = {}
+            run.inflight = {}
             logger.info(
                 "Ghost parse done: %s — %d/%d posts yielded in %.1fs. %s. "
                 "Image cache holds %d entries%s",
