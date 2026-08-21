@@ -1,11 +1,11 @@
 import hashlib
 import json
 import logging
+import os
 import random
 import time
 from copy import deepcopy
 from datetime import datetime, timezone
-from urllib.parse import urlparse
 
 from superdesk.errors import ParserError
 from superdesk.etree import parse_html
@@ -25,6 +25,20 @@ from superdesk.text_utils import get_text
 from superdesk.utc import utcnow
 
 from pesacheck.debunk import debunk_rating
+from pesacheck.ghost_urls import (
+    GHOST_URL_PLACEHOLDER,
+    build_fetch_headers,
+    fetch_host,
+    is_ingestable_post,
+    is_medium_cdn_url,
+    resolve_url,
+)
+from pesacheck.ingest.ghost_fetch_pool import (
+    PREFETCH_WINDOW_POSTS,
+    ContextPool,
+    InFlightTracker,
+    RateLimiter,
+)
 from pesacheck.ingest.util import env_float, env_int
 from pesacheck.language import detect_language, normalise_language_code
 
@@ -36,7 +50,6 @@ logger = logging.getLogger(__name__)
 # left as-is it has no http scheme, so core's download path treats it as a
 # relative URL and calls url_for(_external=True), which raises
 # "Unable to create a url adapter" in the Celery worker (no request context).
-GHOST_URL_PLACEHOLDER = "__GHOST_URL__"
 
 # bytes to peek at for fast can_parse check
 _PEEK_SIZE = 512
@@ -54,29 +67,71 @@ _IMAGE_FETCH_JITTER_SECONDS = env_float("GHOST_IMAGE_FETCH_JITTER", 0.25)
 _IMAGE_FETCH_SUCCESS_THROTTLE_SECONDS = env_float(
     "GHOST_IMAGE_FETCH_SUCCESS_THROTTLE", 0.0
 )
-_IMAGE_FETCH_MIN_INTERVAL_SECONDS = env_float("GHOST_IMAGE_FETCH_MIN_INTERVAL", 0.1)
+_IMAGE_FETCH_MIN_INTERVAL_SECONDS = env_float("GHOST_IMAGE_FETCH_MIN_INTERVAL", 0.05)
+# Cooldowns default to off. They existed to pace a single-threaded fetcher after
+# a failure; RateLimiter now paces every request from every worker, and per-image
+# retry backoff still handles the individual failure. Set these if a host needs
+# adaptive backoff on top — note they now delay ALL workers, not just one.
 _IMAGE_FETCH_FAILURE_COOLDOWN_SECONDS = env_float(
-    "GHOST_IMAGE_FETCH_FAILURE_COOLDOWN", 3.0
+    "GHOST_IMAGE_FETCH_FAILURE_COOLDOWN", 0.0
 )
 
-# Medium CDN is the problematic source in current imports, so use a slower policy there.
-_MEDIUM_FETCH_RETRIES = env_int("GHOST_MEDIUM_FETCH_RETRIES", 10)
-_MEDIUM_FETCH_BASE_BACKOFF_SECONDS = env_float("GHOST_MEDIUM_FETCH_BASE_BACKOFF", 2.5)
-_MEDIUM_FETCH_MIN_INTERVAL_SECONDS = env_float("GHOST_MEDIUM_FETCH_MIN_INTERVAL", 3.0)
+# Images repeat heavily across a corpus (PesaCheck: ~18% of refs are duplicates,
+# mostly avatars and logos), so rendition metadata is cached across files for the
+# life of the run rather than reset per file. Capped because a payload is ~3.5KB
+# and a 92k-image corpus would hold ~320MB resident in the worker; past the cap
+# duplicates are simply re-fetched. The cap cannot cause an image to be fetched
+# twice within one window — see GhostRun.payloads.
+_IMAGE_CACHE_MAX_ENTRIES = env_int("GHOST_IMAGE_CACHE_MAX", 50000)
+
+# Medium hosts ~91% of PesaCheck's images, not a stray tail, so its policy governs
+# the whole run. min_interval is now an AGGREGATE rate (RateLimiter schedules per
+# host across all workers), so the old 3.0s cap meant 0.33 req/s total no matter
+# how many workers ran — 84k distinct Medium URLs x 3.0s is ~70h, i.e. the thread
+# pool bought nothing. 0.05s = 20 req/s, inside the rate measured clean (zero
+# errors to 32-way, 25.7 req/s) by scripts/ghost/probe_image_host.py. Re-probe
+# before raising it; the ladder never found the host's actual ceiling.
+_MEDIUM_FETCH_RETRIES = env_int("GHOST_MEDIUM_FETCH_RETRIES", 4)
+_MEDIUM_FETCH_BASE_BACKOFF_SECONDS = env_float("GHOST_MEDIUM_FETCH_BASE_BACKOFF", 0.75)
+_MEDIUM_FETCH_MIN_INTERVAL_SECONDS = env_float("GHOST_MEDIUM_FETCH_MIN_INTERVAL", 0.05)
 _MEDIUM_FETCH_FAILURE_COOLDOWN_SECONDS = env_float(
-    "GHOST_MEDIUM_FETCH_FAILURE_COOLDOWN", 8.0
+    "GHOST_MEDIUM_FETCH_FAILURE_COOLDOWN", 0.0
 )
 
-_IMAGE_FETCH_HEADERS = {
-    # Some CDNs are strict about clients and may reject the default python
-    # user-agent. The Referer is deliberately NOT hardcoded here: it must match
-    # each image's OWN origin and is set per-request in _build_fetch_headers.
-    # A hardcoded cross-site Referer (this used to be "https://medium.com/",
-    # a leftover from when images were Medium-hosted) makes PesaCheck's own
-    # Ghost site 403 every image — see _build_fetch_headers for the full story.
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) GhostIngest/1.0",
-    "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
-}
+
+class GhostRun:
+    """State for one ``iter_items`` call.
+
+    ``GhostParser`` is registered as a module-level singleton
+    (``register_feed_parser(GhostParser.NAME, GhostParser())``), so anything
+    per-run stored on it is shared by every call. Two overlapping runs — a second
+    ghost provider, or ``parse()`` entered while another generator is live —
+    would clobber each other's pool and tracker, and whichever finished first
+    would ``shutdown()`` the pool the other was still submitting to. Keeping this
+    in a run object handed down the call chain makes that structurally impossible.
+
+    ``payloads`` holds this window's fetched renditions. It exists so the
+    prefetch never depends on the shared cache accepting an entry: once the cache
+    hits its cap, ``_cache_put`` stops storing, and without this the serial pass
+    would miss and re-fetch — every prefetched image downloaded, resized and
+    uploaded twice, the second time serially on the generator thread.
+
+    ``warm`` holds renditions recovered from the database for images this corpus
+    has already ingested, keyed by URL (see GhostFeedingService._warm_image_cache).
+    Unlike ``payloads`` it spans the whole file, and unlike the parser's in-process
+    cache it survives a worker restart and a different prefork child — which is
+    what makes resuming a part-consumed file cheap instead of a full re-fetch.
+    """
+
+    __slots__ = ("basename", "ghost_url", "payloads", "pool", "tracker", "warm")
+
+    def __init__(self, basename, ghost_url, pool, tracker, warm=None):
+        self.basename = basename
+        self.ghost_url = ghost_url
+        self.pool = pool
+        self.tracker = tracker
+        self.payloads = {}
+        self.warm = warm or {}
 
 
 class GhostParser(FileFeedParser):
@@ -90,45 +145,20 @@ class GhostParser(FileFeedParser):
     NAME = "ghost"
     label = "Ghost CMS Parser"
 
-    def __init__(self):
-        super().__init__()
-        self._last_image_fetch_ts = 0.0
-        self._image_assoc_cache = {}
-        # Real Ghost site URL, taken from the provider config in iter_items and
-        # substituted for GHOST_URL_PLACEHOLDER in image/body URLs.
-        self._ghost_url = ""
-
-    def _resolve_url(self, url):
-        """Turn a Ghost export URL into a fetchable absolute URL.
-
-        Substitutes the ``__GHOST_URL__`` placeholder with the configured site
-        URL and returns the result only if it is now an absolute http(s) URL.
-        Anything still relative (no configured site URL, or a genuinely relative
-        link) is skipped rather than handed to the downloader, which would crash
-        in the worker trying to resolve it against the app host.
-        """
-        if not url:
-            return None
-        if self._ghost_url:
-            url = url.replace(GHOST_URL_PLACEHOLDER, self._ghost_url)
-        if GHOST_URL_PLACEHOLDER in url or not urlparse(url).scheme:
-            logger.warning(
-                "Skipping image with unresolved/relative URL %r "
-                "(set the provider config 'url' to the Ghost site to fetch these)",
-                url,
-            )
-            return None
-        return url
-
-    def _is_medium_cdn_url(self, url):
+    def can_parse(self, file_path):
         try:
-            host = (urlparse(url).hostname or "").lower()
+            with open(file_path, "rb") as f:
+                head = f.read(_PEEK_SIZE).decode("utf-8", errors="ignore").strip()
+            return head.startswith("{") and '"db"' in head
         except Exception:
             return False
-        return "medium.com" in host
+
+    # ------------------------------------------------------------------
+    # Image helpers — same pattern as MediumParser
+    # ------------------------------------------------------------------
 
     def _get_fetch_policy(self, url):
-        if self._is_medium_cdn_url(url):
+        if is_medium_cdn_url(url):
             return {
                 "retries": _MEDIUM_FETCH_RETRIES,
                 "base_backoff": _MEDIUM_FETCH_BASE_BACKOFF_SECONDS,
@@ -143,111 +173,122 @@ class GhostParser(FileFeedParser):
             "failure_cooldown": _IMAGE_FETCH_FAILURE_COOLDOWN_SECONDS,
         }
 
-    def _sleep_before_next_fetch(self, min_interval):
-        elapsed = time.monotonic() - self._last_image_fetch_ts
-        wait_for = min_interval - elapsed
-        if wait_for > 0:
-            # Pace all fetches (not just retries) to avoid hammering remote CDN endpoints.
-            time.sleep(wait_for + random.uniform(0, _IMAGE_FETCH_JITTER_SECONDS))
+    # ------------------------------------------------------------------
+    # Shared state. The parser is registered as a module-level singleton, and
+    # image fetches now run on a thread pool, so everything mutable here is
+    # guarded. Set up in __init__ rather than in iter_items so the cache and the
+    # rate limiter outlive a single file.
+    # ------------------------------------------------------------------
 
-    def _mark_fetch_done(self):
-        self._last_image_fetch_ts = time.monotonic()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Shared across runs on purpose: rendition metadata for a URL is
+        # immutable (the guid is a sha1 of the URL), so a hit is always valid.
+        # Plain dict ops are atomic under the GIL and a lost race only costs a
+        # duplicate fetch, so this needs no lock.
+        self._image_cache = {}
+        self._cache_capped = False
+        self._rate_limiter = RateLimiter()
 
-    def _parse_language(self, post, tags, text):
-        """Resolve the item language from ``locale``, then tags, then body text.
+    def _cache_lookup(self, url):
+        """Cached payload, a cached Exception, or None if unseen.
 
-        Ghost's own ``locale`` is authoritative when set, but PesaCheck's export
-        leaves it null on every post, so in practice the language comes from the
-        post's language tag. Posts predating that tagging convention fall
-        through to text classification.
+        One dict for both outcomes: a URL that already exhausted its retry
+        ladder must not be retried inline, or every dead image costs its ladder
+        twice.
         """
-        locale = normalise_language_code(post.get("locale"))
-        if locale:
-            return locale
+        return self._image_cache.get(url)
 
-        # Offer both the display name and the slug: either may be the form that
-        # names the language ("Afaan Oromo" / "afaan-oromo").
-        tag_labels = [
-            (tag["sort_order"], label)
-            for tag in tags
-            for label in (tag["name"], tag["slug"])
-        ]
-
-        return detect_language(tag_labels, text)
-
-    def can_parse(self, file_path):
-        try:
-            with open(file_path, "rb") as f:
-                head = f.read(_PEEK_SIZE).decode("utf-8", errors="ignore").strip()
-            return head.startswith("{") and '"db"' in head
-        except Exception:
-            return False
-
-    # ------------------------------------------------------------------
-    # Image helpers — same pattern as MediumParser
-    # ------------------------------------------------------------------
+    def _cache_store(self, url, payload_or_error):
+        if len(self._image_cache) >= _IMAGE_CACHE_MAX_ENTRIES:
+            if not self._cache_capped:
+                self._cache_capped = True
+                logger.warning(
+                    "Ghost image cache full at %d entries; cross-file duplicates "
+                    "will be re-fetched. Raise GHOST_IMAGE_CACHE_MAX to avoid.",
+                    _IMAGE_CACHE_MAX_ENTRIES,
+                )
+            return
+        self._image_cache[url] = payload_or_error
 
     def _generate_image_guid(self, url):
         guid_hash = hashlib.sha1(url.encode("utf8")).hexdigest()
         return generate_guid(type=GUID_TAG, id=guid_hash + "-image")
 
-    def _build_fetch_headers(self, url):
-        """Return image-fetch headers with a same-origin Referer.
+    def _fetch_renditions_with_retry(self, run, association, url):
+        """Attach renditions for ``url`` to ``association``.
 
-        The Referer must match the image's OWN origin. PesaCheck's Ghost site
-        (pesacheck.org) sits behind Cloudflare with a hotlink rule that returns
-        403 to any request carrying a cross-site Referer. The parser used to
-        send a fixed ``Referer: https://medium.com/`` (from when images were
-        Medium-hosted), so EVERY pesacheck.org image 403'd; each failure then
-        burned its full retry ladder (~12s), and a ~245-image export could never
-        finish parsing within the ``update_provider`` soft-time-limit (1800s).
-        The file was therefore never moved and re-failed every ingest cycle —
-        nothing past the first dozen posts was ever ingested or published.
-
-        Sending a Referer equal to the image's own scheme+host satisfies the
-        hotlink rule for any source (pesacheck.org and the few remaining Medium
-        CDN images alike). A relative/hostless URL never reaches here (see
-        _resolve_url), but guard anyway and omit the Referer if we can't build one.
+        Served from this window's payloads first, then the cross-run cache;
+        after ``_prefetch_window`` has run that is the common path. A miss falls
+        through to fetching inline, so correctness never depends on the prefetch
+        having succeeded.
         """
-        headers = dict(_IMAGE_FETCH_HEADERS)
-        parsed = urlparse(url)
-        if parsed.scheme and parsed.hostname:
-            headers["Referer"] = f"{parsed.scheme}://{parsed.hostname}/"
-        return headers
+        payload = run.payloads.get(url) or run.warm.get(url)
+        if payload is None:
+            payload = self._cache_lookup(url)
 
-    def _fetch_renditions_with_retry(self, association, url):
-        if url in self._image_assoc_cache:
-            cached = self._image_assoc_cache[url]
-            association.update(deepcopy(cached))
+        if isinstance(payload, Exception):
+            # Already exhausted its retry ladder during the prefetch.
+            raise payload
+        if payload is not None:
+            association.update(deepcopy(payload))
+            if run.tracker:
+                run.tracker.note_cache_hit()
             return
 
+        association.update(deepcopy(self._fetch_payload(run, url)))
+
+    def _fetch_payload(self, run, url):
+        """Download and render ``url``, record the result, and return it.
+
+        Thread-safe: ``holder`` is a local, core's ``update_renditions`` only
+        writes into the dict it is handed, and the caches are plain dicts whose
+        item assignment is atomic. Raises the last error if every attempt fails.
+        """
         policy = self._get_fetch_policy(url)
+        host = fetch_host(url)
         last_error = None
+
         for attempt in range(1, policy["retries"] + 1):
+            waited = self._rate_limiter.acquire(host, policy["min_interval"])
+            token = run.tracker.start(url) if run.tracker else None
+            started = time.monotonic()
+            holder = {}
             try:
-                self._sleep_before_next_fetch(policy["min_interval"])
                 update_renditions(
-                    association,
+                    holder,
                     url,
                     None,
                     request_kwargs={
                         "timeout": _IMAGE_FETCH_TIMEOUT,
-                        "headers": self._build_fetch_headers(url),
+                        "headers": build_fetch_headers(url),
                     },
                 )
-                self._mark_fetch_done()
+                # No deepcopy: holder is a fresh local that nothing else reads,
+                # and callers deepcopy on the way out.
+                payload = {
+                    "renditions": holder.get("renditions"),
+                    "mimetype": holder.get("mimetype"),
+                    "filemeta": holder.get("filemeta"),
+                    "filemeta_json": holder.get("filemeta_json"),
+                }
+                run.payloads[url] = payload
+                self._cache_store(url, payload)
+                if run.tracker:
+                    run.tracker.finish(token, ok=True)
+                logger.debug(
+                    "Ghost image ok in %.2fs (waited %.2fs, attempt %d): %s",
+                    time.monotonic() - started,
+                    waited,
+                    attempt,
+                    url,
+                )
                 if _IMAGE_FETCH_SUCCESS_THROTTLE_SECONDS > 0:
                     time.sleep(_IMAGE_FETCH_SUCCESS_THROTTLE_SECONDS)
-
-                self._image_assoc_cache[url] = {
-                    "renditions": deepcopy(association.get("renditions")),
-                    "mimetype": association.get("mimetype"),
-                    "filemeta": deepcopy(association.get("filemeta")),
-                    "filemeta_json": deepcopy(association.get("filemeta_json")),
-                }
-                return
+                return payload
             except Exception as ex:
-                self._mark_fetch_done()
+                if run.tracker:
+                    run.tracker.finish(token, ok=False)
                 last_error = ex
                 if attempt == policy["retries"]:
                     break
@@ -256,8 +297,10 @@ class GhostParser(FileFeedParser):
                     0, _IMAGE_FETCH_JITTER_SECONDS
                 )
                 logger.warning(
-                    "Image fetch failed for %s (attempt %s/%s), retrying in %.2fs: %s",
+                    "Image fetch failed for %s after %.2fs (attempt %s/%s), "
+                    "retrying in %.2fs: %s",
                     url,
+                    time.monotonic() - started,
                     attempt,
                     policy["retries"],
                     delay,
@@ -266,18 +309,27 @@ class GhostParser(FileFeedParser):
                 time.sleep(delay)
 
         if policy["failure_cooldown"] > 0:
-            # After exhausting retries, cool down before the next image to reduce cascading failures.
-            time.sleep(
+            # Back off after exhausting retries, to avoid a retry storm against a
+            # host that has started failing. Applied to that host's schedule
+            # rather than slept here: parking this worker would hold a pool slot
+            # doing nothing and let one dead image stall the whole window.
+            self._rate_limiter.penalise(
+                host,
                 policy["failure_cooldown"]
-                + random.uniform(0, _IMAGE_FETCH_JITTER_SECONDS)
+                + random.uniform(0, _IMAGE_FETCH_JITTER_SECONDS),
             )
 
+        logger.error(
+            "Ghost image FAILED after %d attempts: %s (%s)",
+            policy["retries"],
+            url,
+            last_error,
+        )
+        self._cache_store(url, last_error)
         raise last_error
 
-    def _add_image(
-        self, item, url, alt_text="", description_text="", is_featured=False
-    ):
-        """Fetch image, attach it as an association, and return the local storage href (or None)."""
+    def _add_image(self, run, item, url, alt_text="", description_text=""):
+        """Attach ``url`` as an association and return its local storage href."""
         associations = item.setdefault("associations", {})
         association = {
             ITEM_TYPE: CONTENT_TYPE.PICTURE,
@@ -305,7 +357,7 @@ class GhostParser(FileFeedParser):
             "alt_text": alt_text,
             "description_text": description_text,
         }
-        self._fetch_renditions_with_retry(association, url)
+        self._fetch_renditions_with_retry(run, association, url)
 
         if "featuremedia" not in associations:
             key = "featuremedia"
@@ -316,51 +368,65 @@ class GhostParser(FileFeedParser):
 
         return association.get("renditions", {}).get("original", {}).get("href")
 
-    def _parse_feature_image(self, item, post):
-        url = self._resolve_url(post.get("feature_image"))
-        if url:
-            try:
-                self._add_image(item, url, is_featured=True)
-            except Exception as e:
-                logger.warning("Failed to fetch feature_image %s: %s", url, e)
+    def _iter_image_refs(self, run, post):
+        """Yield ``(url, alt_text, description_text)`` for every image in ``post``.
 
-    def _parse_inline_images(self, item, html):
+        Single definition of "which images does this post contribute", driven by
+        both the prefetch and the parse. They used to extract this separately,
+        and the two could not diverge loudly: a mismatch would leave the prefetch
+        warming the wrong URLs, which shows up only as a slow run.
+
+        Document order, feature image first, matching the association naming in
+        ``_add_image`` (featuremedia, then embedded0..n).
+        """
+        feature = resolve_url(post.get("feature_image"), run.ghost_url)
+        if feature:
+            yield feature, "", ""
+
+        html = self._post_html(run, post)
         if not html:
             return
         try:
             root = parse_html(html, "html")
-        except Exception as e:
-            logger.warning("Failed to parse HTML for inline images: %s", e)
+        except Exception as ex:
+            logger.warning("Failed to parse HTML for inline images: %s", ex)
             return
 
-        url_rewrites = {}
         for img in root.xpath(".//img"):
+            url = resolve_url(img.get("src"), run.ghost_url)
+            if not url:
+                logger.debug("Skipping image with relative URL %r", img.get("src"))
+                continue
+
+            description_text = ""
+            parent = img.getparent()
+            if parent is not None and parent.tag == "figure":
+                figcaption = parent.find(".//figcaption")
+                if figcaption is not None:
+                    description_text = (
+                        figcaption.text_content()
+                        if hasattr(figcaption, "text_content")
+                        else (figcaption.text or "")
+                    ).strip()
+
+            yield url, img.get("alt") or "", description_text
+
+    def _post_html(self, run, post):
+        html = post.get("html") or ""
+        if run.ghost_url and html:
+            html = html.replace(GHOST_URL_PLACEHOLDER, run.ghost_url)
+        return html
+
+    def _parse_images(self, run, item, post):
+        """Attach every image in ``post`` and rewrite the body to point at them."""
+        url_rewrites = {}
+        for url, alt_text, description_text in self._iter_image_refs(run, post):
             try:
-                raw_src = img.get("src")
-                src = self._resolve_url(raw_src)
-                if not src:
-                    continue
-
-                alt_text = img.get("alt") or ""
-                description_text = ""
-
-                parent = img.getparent()
-                if parent is not None and parent.tag == "figure":
-                    figcaption = parent.find(".//figcaption")
-                    if figcaption is not None:
-                        description_text = (
-                            figcaption.text_content()
-                            if hasattr(figcaption, "text_content")
-                            else (figcaption.text or "")
-                        ).strip()
-
-                local_href = self._add_image(item, src, alt_text, description_text)
+                local_href = self._add_image(run, item, url, alt_text, description_text)
                 if local_href:
-                    url_rewrites[src] = local_href
-            except Exception as e:
-                logger.warning(
-                    "Failed to parse inline image %s: %s", img.get("src", "unknown"), e
-                )
+                    url_rewrites[url] = local_href
+            except Exception as ex:
+                logger.warning("Failed to fetch Ghost image %s: %s", url, ex)
 
         if url_rewrites:
             body = item.get("body_html") or ""
@@ -368,9 +434,27 @@ class GhostParser(FileFeedParser):
                 body = body.replace(external_url, local_href)
             item["body_html"] = body
 
-    # ------------------------------------------------------------------
-    # Date parsing
-    # ------------------------------------------------------------------
+    def _parse_language(self, post, tags, text):
+        """Resolve the item language from ``locale``, then tags, then body text.
+
+        Ghost's own ``locale`` is authoritative when set, but PesaCheck's export
+        leaves it null on every post, so in practice the language comes from the
+        post's language tag. Posts predating that tagging convention fall
+        through to text classification.
+        """
+        locale = normalise_language_code(post.get("locale"))
+        if locale:
+            return locale
+
+        # Offer both the display name and the slug: either may be the form that
+        # names the language ("Afaan Oromo" / "afaan-oromo").
+        tag_labels = [
+            (tag["sort_order"], label)
+            for tag in tags
+            for label in (tag["name"], tag["slug"])
+        ]
+
+        return detect_language(tag_labels, text)
 
     def _parse_date(self, value):
         if not value:
@@ -386,7 +470,7 @@ class GhostParser(FileFeedParser):
     # Single post → Superdesk item
     # ------------------------------------------------------------------
 
-    def _parse_post(self, post, authors_by_post, tags_by_post):
+    def _parse_post(self, run, post, authors_by_post, tags_by_post):
         post_id = post.get("id", "")
 
         authors = sorted(
@@ -406,9 +490,7 @@ class GhostParser(FileFeedParser):
             else None
         )
 
-        html = post.get("html") or ""
-        if self._ghost_url and html:
-            html = html.replace(GHOST_URL_PLACEHOLDER, self._ghost_url)
+        html = self._post_html(run, post)
 
         item = {
             ITEM_TYPE: CONTENT_TYPE.TEXT,
@@ -439,22 +521,119 @@ class GhostParser(FileFeedParser):
         if rating:
             item.setdefault("subject", []).append(rating)
 
-        self._parse_feature_image(item, post)
-        self._parse_inline_images(item, html)
+        self._parse_images(run, item, post)
 
         return item
+
+    def image_guid(self, url):
+        """Public alias for the stable per-URL image guid.
+
+        The feeding service needs the same rule to look these images up in the
+        database, and the two must not drift — a mismatch would silently disable
+        the warm cache and re-fetch everything.
+
+        Note the guid embeds the current year (``tag:{domain}:{year}:{sha1}-image``
+        via ``generate_guid``), so a run spanning 31 December stops matching its
+        own earlier images. Harmless for a single backfill; worth knowing.
+        """
+        return self._generate_image_guid(url)
+
+    def iter_image_urls(self, file_path, provider=None):
+        """Yield every fetchable image URL in a file, without fetching anything.
+
+        A deliberately cheap pass (~1s on a 5MB export) so the feeding service can
+        ask the database which of these it already holds before the expensive pass
+        starts. Uses the same _iter_image_refs as the real parse, so coverage
+        cannot drift.
+        """
+        ghost_url = ((provider or {}).get("config", {}).get("url") or "").rstrip("/")
+        run = GhostRun(os.path.basename(file_path), ghost_url, None, None)
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            posts = data["db"][0]["data"].get("posts", [])
+        except Exception as ex:
+            logger.warning("Could not scan %s for image URLs: %s", file_path, ex)
+            return
+
+        seen = set()
+        for post in posts:
+            if not is_ingestable_post(post):
+                continue
+            for url, _alt, _desc in self._iter_image_refs(run, post):
+                if url not in seen:
+                    seen.add(url)
+                    yield url
+
+    # ------------------------------------------------------------------
+    # Prefetch
+    # ------------------------------------------------------------------
+
+    def _prefetch_window(self, run, posts, label):
+        """Fetch every not-yet-known image in ``posts`` concurrently.
+
+        Purely an optimisation: results land in ``run.payloads`` and the serial
+        pass reads them from there. Failures are recorded, never raised — the
+        serial pass surfaces them per image with its own error handling.
+        """
+        run.payloads = {}
+        wanted, seen = [], set()
+        for post in posts:
+            for url, _alt, _desc in self._iter_image_refs(run, post):
+                if url in seen:
+                    continue
+                seen.add(url)
+                if url not in run.warm and self._cache_lookup(url) is None:
+                    wanted.append(url)
+
+        logger.info(
+            "Ghost prefetch %s: %d posts, %d images to fetch (%d already known) "
+            "on %d workers",
+            label,
+            len(posts),
+            len(wanted),
+            len(seen) - len(wanted),
+            run.pool.workers,
+        )
+        if not wanted:
+            return
+
+        started = time.monotonic()
+        results = run.pool.map(lambda url: self._prefetch_one(run, url), wanted)
+        done = sum(1 for ok in results if ok)
+        elapsed = time.monotonic() - started
+        logger.info(
+            "Ghost prefetch %s done: %d ok, %d failed in %.1fs (%.2f images/s)",
+            label,
+            done,
+            len(results) - done,
+            elapsed,
+            done / elapsed if elapsed else 0.0,
+        )
+
+    def _prefetch_one(self, run, url):
+        try:
+            self._fetch_payload(run, url)
+            return True
+        except Exception:
+            # Already logged with the URL and cause by _fetch_payload.
+            return False
 
     # ------------------------------------------------------------------
     # Main entry point
     # ------------------------------------------------------------------
 
-    def iter_items(self, file_path, provider=None):
-        """Parse a Ghost JSON export file and yield Superdesk items one at a time."""
-        self._image_assoc_cache = {}
-        self._last_image_fetch_ts = 0.0
-        self._ghost_url = ((provider or {}).get("config", {}).get("url") or "").rstrip(
-            "/"
-        )
+    def iter_items(self, file_path, provider=None, warm_cache=None):
+        """Parse a Ghost JSON export file and yield Superdesk items one at a time.
+
+        Images are fetched a window of posts at a time on a thread pool before
+        those posts are parsed, so the ~1s of network + resize + upload per image
+        overlaps instead of accumulating. The parse itself stays serial and in
+        document order — only fetching is concurrent — so items are yielded
+        exactly as before.
+        """
+        ghost_url = ((provider or {}).get("config", {}).get("url") or "").rstrip("/")
+
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
@@ -469,15 +648,13 @@ class GhostParser(FileFeedParser):
         except Exception as ex:
             raise ParserError.parseFileError(file_path, ex)
 
-        # build lookup dicts
         users_by_id = {u["id"]: u for u in users}
         tags_by_id = {t["id"]: t for t in tags}
 
         authors_by_post = {}
         for pa in posts_authors:
             pid = pa.get("post_id")
-            uid = pa.get("author_id")
-            user = users_by_id.get(uid)
+            user = users_by_id.get(pa.get("author_id"))
             if pid and user:
                 authors_by_post.setdefault(pid, []).append(
                     {
@@ -489,14 +666,11 @@ class GhostParser(FileFeedParser):
         tags_by_post = {}
         for pt in posts_tags:
             pid = pt.get("post_id")
-            tid = pt.get("tag_id")
-            tag = tags_by_id.get(tid)
+            tag = tags_by_id.get(pt.get("tag_id"))
             if pid and tag:
                 tags_by_post.setdefault(pid, []).append(
                     {
                         "name": tag.get("name", ""),
-                        # Ghost slugs are the stable identifier, and the language
-                        # tag is matched on either form.
                         "slug": tag.get("slug", ""),
                         # Coerce a null sort_order so the sort below can't blow
                         # up comparing None to an int.
@@ -504,13 +678,70 @@ class GhostParser(FileFeedParser):
                     }
                 )
 
-        for post in posts:
-            if post.get("status") != "published" or post.get("type") != "post":
-                continue
-            try:
-                yield self._parse_post(post, authors_by_post, tags_by_post)
-            except Exception as ex:
-                logger.warning("Failed to parse Ghost post %s: %s", post.get("id"), ex)
+        candidates = [post for post in posts if is_ingestable_post(post)]
+        basename = os.path.basename(file_path)
+        size = max(1, PREFETCH_WINDOW_POSTS)
+        windows = [candidates[i : i + size] for i in range(0, len(candidates), size)]
+
+        logger.info(
+            "Ghost parse start: %s — %d posts in export, %d to ingest, "
+            "%d windows of %d, %d images pre-warmed from the database",
+            basename,
+            len(posts),
+            len(candidates),
+            len(windows),
+            size,
+            len(warm_cache or {}),
+        )
+
+        tracker = InFlightTracker(label=f"ghost:{basename}")
+        run = GhostRun(basename, ghost_url, ContextPool(), tracker, warm=warm_cache)
+        tracker.start_heartbeat()
+        file_started = time.monotonic()
+        position = parsed = 0
+
+        try:
+            for window_no, chunk in enumerate(windows, 1):
+                label = f"{basename} window {window_no}/{len(windows)}"
+                tracker.set_context(label)
+                self._prefetch_window(run, chunk, label)
+
+                for post in chunk:
+                    position += 1
+                    tracker.set_context(
+                        f"{basename} post {position}/{len(candidates)} "
+                        f"(id={post.get('id')})"
+                    )
+                    try:
+                        item = self._parse_post(
+                            run, post, authors_by_post, tags_by_post
+                        )
+                    except Exception as ex:
+                        logger.warning(
+                            "Failed to parse Ghost post %s: %s", post.get("id"), ex
+                        )
+                        continue
+                    parsed += 1
+                    yield item
+        finally:
+            # Runs on normal exhaustion, on an exception, and on the consumer
+            # abandoning the generator (GeneratorExit) — the pool must not be
+            # left with live threads in any of those cases.
+            tracker.set_context(f"{basename} shutting down")
+            run.pool.shutdown(wait=True)
+            tracker.stop_heartbeat()
+            run.payloads = {}
+            logger.info(
+                "Ghost parse done: %s — %d/%d posts yielded in %.1fs. %s. "
+                "Image cache holds %d entries%s",
+                basename,
+                parsed,
+                len(candidates),
+                time.monotonic() - file_started,
+                tracker.summary(),
+                len(self._image_cache),
+                " (capped)" if self._cache_capped else "",
+            )
 
     async def parse(self, file_path, provider=None):
         """Parse a Ghost JSON export file and return a list of Superdesk items.
