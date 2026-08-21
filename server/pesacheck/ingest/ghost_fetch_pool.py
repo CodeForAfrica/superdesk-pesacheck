@@ -86,10 +86,22 @@ class RateLimiter:
         self._next_allowed = {}
 
     def acquire(self, host, min_interval):
-        """Block until this caller's slot for ``host`` arrives. Returns the wait."""
-        if min_interval <= 0:
-            return 0.0
+        """Block until this caller's slot for ``host`` arrives. Returns the wait.
+
+        A zero ``min_interval`` means "no pacing", not "ignore the schedule": a
+        penalty from ``penalise`` must still be served, or backing off a throttled
+        host would silently do nothing whenever pacing was turned off.
+        """
         now = time.monotonic()
+        if min_interval <= 0:
+            with self._lock:
+                slot = self._next_allowed.get(host, 0.0)
+            wait = slot - now
+            if wait > 0:
+                time.sleep(wait)
+                return wait
+            return 0.0
+
         with self._lock:
             slot = max(now, self._next_allowed.get(host, 0.0))
             self._next_allowed[host] = slot + min_interval
@@ -98,21 +110,31 @@ class RateLimiter:
             time.sleep(wait)
         return max(0.0, wait)
 
-    def penalise(self, host, seconds):
+    def penalise(self, host, seconds, cap=None):
         """Push ``host``'s schedule back, slowing every worker bound for it.
 
-        Used after a fetch exhausts its retries. Sleeping in the failing worker
-        instead would hold a pool slot for the whole cooldown while doing nothing
-        — with N workers that is N times the intended penalty in lost capacity,
-        and it lets one dead image stall a whole prefetch window. Advancing the
-        schedule applies the backoff where it belongs: to the next requests,
-        whoever makes them.
+        Sleeping in the failing worker instead would hold a pool slot for the
+        whole cooldown while doing nothing — with N workers that is N times the
+        intended penalty in lost capacity, and it lets one dead image stall a
+        whole prefetch window. Advancing the schedule applies the backoff where it
+        belongs: to the next requests, whoever makes them.
+
+        ``cap`` bounds how far ahead of *now* the schedule may be pushed, and
+        matters more than it looks. Penalties compound: when a host starts
+        refusing, every worker in the pool fails at roughly the same moment and
+        each adds its own delay, so 16 workers asking for 5s each would put the
+        host 80s out — and the next round would add to that, without limit. The
+        cap turns that into a ceiling the pool converges on instead of a spiral.
         """
         if seconds <= 0:
             return
         with self._lock:
-            current = max(self._next_allowed.get(host, 0.0), time.monotonic())
-            self._next_allowed[host] = current + seconds
+            now = time.monotonic()
+            current = max(self._next_allowed.get(host, 0.0), now)
+            slot = current + seconds
+            if cap is not None:
+                slot = min(slot, now + cap)
+            self._next_allowed[host] = max(self._next_allowed.get(host, 0.0), slot)
 
 
 class InFlightTracker:
