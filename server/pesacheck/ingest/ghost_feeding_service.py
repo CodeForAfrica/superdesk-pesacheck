@@ -2,7 +2,9 @@ import asyncio
 import logging
 import os
 from itertools import islice
+from time import monotonic
 
+from celery.exceptions import SoftTimeLimitExceeded, TimeLimitExceeded
 from celery.result import allow_join_result
 from superdesk import get_resource_service
 from superdesk.celery_app import celery
@@ -30,6 +32,20 @@ DEFAULT_PUBLISH_DESK = "Newsdesk"
 # ingest (see below), but a stuck publish must still be bounded so one bad item
 # cannot pin a worker slot forever — it is logged and skipped instead.
 PUBLISH_ITEM_TIMEOUT = env_float("GHOST_PUBLISH_ITEM_TIMEOUT", 120)
+
+# Stop starting new files once a run has been going this long. ``update_provider``
+# carries soft_time_limit=UPDATE_TTL (1800s, a core constant we cannot raise), and
+# being killed mid-file is expensive: the parser has no resume offset, so the next
+# run re-reads that file from post 0. Declining to start a file we probably cannot
+# finish keeps every kill on a file boundary, where the completed files are already
+# moved to _PROCESSED and the rest are simply left for the next tick.
+INGEST_TIME_BUDGET = env_float("GHOST_INGEST_TIME_BUDGET", 1500)
+
+# Collections searched, in order, for renditions of an image this corpus already
+# holds. ``ingest`` is the fast hit; ``archive`` is the fallback because
+# INGEST_EXPIRY_MINUTES (2 days by default) has ingest:gc purge ingest items, and a
+# multi-day backfill would otherwise start re-fetching its own earlier images.
+WARM_CACHE_RESOURCES = ("ingest", "archive")
 
 
 class GhostFeedingService(FileFeedingService):
@@ -94,11 +110,28 @@ class GhostFeedingService(FileFeedingService):
         # the ``finally`` below knows which files are still untouched if we exit
         # early. See ``_touch_pending`` for why they need their mtime refreshed.
         pending_from = 0
+        run_started = monotonic()
 
         try:
             for index, filename in enumerate(filenames):
+                # Not started yet: if we bail here the file belongs to the next run.
+                pending_from = index
+
+                elapsed = monotonic() - run_started
+                if elapsed >= INGEST_TIME_BUDGET:
+                    logger.warning(
+                        "Ghost ingest: %.0fs spent, at or over the %.0fs budget — "
+                        "leaving %d file(s) for the next run rather than risk being "
+                        "killed mid-file",
+                        elapsed,
+                        INGEST_TIME_BUDGET,
+                        len(filenames) - index,
+                    )
+                    break
+
                 pending_from = index + 1
                 last_updated = None
+                pending_guids = []
                 try:
                     file_path = os.path.join(self.path, filename)
                     if not os.path.isfile(file_path):
@@ -123,9 +156,8 @@ class GhostFeedingService(FileFeedingService):
                         logger.info("Skipping non-Ghost file %s", filename)
                         continue
 
-                    items_gen = parser.iter_items(file_path, provider)
-
-                    pending_guids = []
+                    warm = await self._warm_image_cache(parser, file_path, provider)
+                    items_gen = parser.iter_items(file_path, provider, warm_cache=warm)
                     while True:
                         batch = list(islice(items_gen, BATCH_SIZE))
                         if not batch:
@@ -150,12 +182,37 @@ class GhostFeedingService(FileFeedingService):
                     # the file.
                     if pending_guids:
                         await _dispatch_publish(provider_config, pending_guids)
+                        # Cleared so a later failure (a move_file error, say) cannot
+                        # re-dispatch this batch from the except branch below.
+                        pending_guids = []
 
                     await self.move_file(
                         self.path, filename, provider=provider, success=True
                     )
 
                 except Exception as ex:
+                    # Whatever went wrong, the batch we last yielded was stored
+                    # before we were resumed, so its guids are publishable. Hand
+                    # them off before unwinding or they are stranded: ingested,
+                    # never published, and invisible until someone counts rows.
+                    if pending_guids:
+                        await _dispatch_publish(provider_config, pending_guids)
+                        pending_guids = []
+
+                    if isinstance(ex, (SoftTimeLimitExceeded, TimeLimitExceeded)):
+                        # Out of clock, not a bad file. Quarantining it would throw
+                        # away every post we had not reached yet, so leave it in
+                        # place and refresh its mtime so next run's
+                        # is_latest_content check does not drop it instead.
+                        _touch_pending(self.path, [filename])
+                        logger.warning(
+                            "Ghost ingest: time limit hit inside %s; leaving it in "
+                            "place to resume next run (already-ingested images will "
+                            "be served from the database, not re-fetched)",
+                            filename,
+                        )
+                        return
+
                     if last_updated and self.is_old_content(last_updated):
                         await self.move_file(
                             self.path, filename, provider=provider, success=False
@@ -180,6 +237,83 @@ class GhostFeedingService(FileFeedingService):
             _touch_pending(self.path, filenames[pending_from:])
 
         push_notification("ingest:update")
+
+    async def _warm_image_cache(self, parser, file_path, provider):
+        """Recover renditions for images this corpus already holds.
+
+        Returns ``{url: payload}`` for every image in ``file_path`` that has been
+        ingested before, so the parser can attach it without touching the network
+        or the media store.
+
+        This is what makes a resumed file cheap. The parser has no resume offset,
+        so a file killed at post 140 of 200 is re-read from post 0 next run — and
+        without this every one of those 140 posts' images would be downloaded,
+        resized and re-uploaded again, minting fresh media ids and orphaning the
+        old ones. Measured at ~6.2s per post, re-doing 140 posts costs ~870s of a
+        1500s budget, which is how a single file can fail to make progress at all.
+
+        The parser's own ``_image_cache`` does not help here: it lives on the
+        parser singleton inside one prefork child, and the next run may land on
+        any of them (concurrency 3) or on a restarted worker. This lookup is
+        durable because the database is.
+
+        Two guid subtleties, both load-bearing:
+
+        * the guid comes from ``parser.image_guid`` rather than being rebuilt here,
+          so the two definitions cannot drift apart — a mismatch would silently
+          disable the whole cache and just re-fetch everything;
+        * it is only a hit if ``renditions.original.media`` is present, which is
+          exactly the condition core's ``update_renditions`` tests before reusing
+          an ``old_item``.
+        """
+        try:
+            urls = list(parser.iter_image_urls(file_path, provider))
+        except Exception:
+            logger.exception("Ghost warm cache: could not scan %s", file_path)
+            return {}
+        if not urls:
+            return {}
+
+        by_guid = {parser.image_guid(url): url for url in urls}
+        warm = {}
+        started = monotonic()
+
+        for resource in WARM_CACHE_RESOURCES:
+            outstanding = [guid for guid, url in by_guid.items() if url not in warm]
+            if not outstanding:
+                break
+            try:
+                service = get_resource_service(resource)
+                cursor = await service.get_from_mongo_async(
+                    req=None, lookup={GUID_FIELD: {"$in": outstanding}}
+                )
+                async for doc in cursor:
+                    renditions = doc.get("renditions") or {}
+                    if not (renditions.get("original") or {}).get("media"):
+                        continue
+                    url = by_guid.get(doc.get(GUID_FIELD))
+                    if url and url not in warm:
+                        warm[url] = {
+                            "renditions": renditions,
+                            "mimetype": doc.get("mimetype"),
+                            "filemeta": doc.get("filemeta"),
+                            "filemeta_json": doc.get("filemeta_json"),
+                        }
+            except Exception:
+                # An unavailable lookup only costs speed: the parser falls back to
+                # fetching. Never let it stop an ingest.
+                logger.exception(
+                    "Ghost warm cache: %s lookup failed, will re-fetch", resource
+                )
+
+        logger.info(
+            "Ghost warm cache: %d/%d images already held (%.2fs) for %s",
+            len(warm),
+            len(by_guid),
+            monotonic() - started,
+            os.path.basename(file_path),
+        )
+        return warm
 
 
 def _touch_pending(path, filenames):
