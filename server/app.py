@@ -37,6 +37,13 @@ def get_app(config=None):
 
     celery_eager_patch.apply()
 
+    # Keep the HTTP status of a failed image download instead of collapsing every
+    # non-2xx into one generic 500 (see pesacheck/image_fetch_patch.py). Ghost
+    # ingest branches its backoff on 429 vs 403 vs 404.
+    from pesacheck import image_fetch_patch
+
+    image_fetch_patch.apply()
+
     # Harden AmazonMediaStorage against the aioboto3 S3 get_object hang that freezes
     # ghost ingest (see pesacheck/media_patch.py). Must run before superdesk_app builds
     # the media-storage singleton.
