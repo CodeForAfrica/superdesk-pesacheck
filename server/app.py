@@ -29,6 +29,14 @@ def get_app(config=None):
         if key.isupper():
             config.setdefault(key, getattr(settings, key))
 
+    # Stop apply_async blocking on subtasks it just queued, which deadlocked
+    # auto-publish against its own enqueue_published cascade
+    # (see pesacheck/celery_eager_patch.py). First, so it is in place before
+    # anything dispatches a task.
+    from pesacheck import celery_eager_patch
+
+    celery_eager_patch.apply()
+
     # Harden AmazonMediaStorage against the aioboto3 S3 get_object hang that freezes
     # ghost ingest (see pesacheck/media_patch.py). Must run before superdesk_app builds
     # the media-storage singleton.
