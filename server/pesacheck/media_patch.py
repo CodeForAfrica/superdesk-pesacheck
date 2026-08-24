@@ -1,6 +1,8 @@
 """Harden ``AmazonMediaStorage`` so a stalled aioboto3 S3 call cannot freeze ingest.
 
-Root cause (proven 2026-08-18, see GHOST_INGEST_PUBLISH_INVESTIGATION.md 6A):
+Root cause (proven 2026-08-18, see the superproject's
+docs/postmortems/ghost-ingest-freeze.md, or Section 6A of the archived session log
+alongside it for the full working):
 ~8% of aioboto3 S3 ``get_object`` calls hang **forever** on a stale keep-alive
 connection, because superdesk-core builds the async S3 client with no read timeout
 (``Config(signature_version="s3v4")``) and ``update_provider`` has no per-operation
