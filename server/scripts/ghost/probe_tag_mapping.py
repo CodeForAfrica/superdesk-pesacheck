@@ -212,8 +212,8 @@ def main():
     if skipped_files:
         # Never silent: a truncated corpus reads as coverage if it is not said.
         print(f"\nSKIPPED {len(skipped_files)} unreadable file(s):")
-        for name, error in skipped_files:
-            print(f"    {name}: {type(error).__name__}: {error}")
+        for name, err in skipped_files:
+            print(f"    {name}: {type(err).__name__}: {err}")
 
     return 0
 

@@ -1,4 +1,5 @@
 import unittest
+from typing import Any
 
 from pesacheck import tag_vocabularies as tv
 from pesacheck.debunk import _RATING_NAMES, DEBUNK_SCHEME
@@ -159,7 +160,7 @@ class VocabularyConformanceTestCase(unittest.TestCase):
         # Phase 0.3: the dump spells this "CÃ´te d'Ivoire".
         self.assertEqual(tv.COUNTRIES["CIV"], "Côte d'Ivoire")
         subjects, _ = tag_subjects(tags("Ivory Coast"))
-        entry = [e for e in subjects if e["scheme"] == COUNTRIES_SCHEME][0]
+        entry = next(e for e in subjects if e["scheme"] == COUNTRIES_SCHEME)
         self.assertEqual(entry["name"], "Côte d'Ivoire")
 
 
@@ -170,7 +171,8 @@ class NormaliseTagTestCase(unittest.TestCase):
                 self.assertEqual(normalise_tag(text), "cotedivoire")
 
     def test_returns_empty_for_non_strings_and_blanks(self) -> None:
-        for value in [None, 0, [], "", "   ", "!!!"]:
+        values: list[Any] = [None, 0, [], "", "   ", "!!!"]
+        for value in values:
             with self.subTest(value=value):
                 self.assertEqual(normalise_tag(value), "")
 
@@ -268,7 +270,7 @@ class TagSubjectsTestCase(unittest.TestCase):
 
     def test_twitter_maps_onto_the_x_twitter_item(self) -> None:
         subjects, _ = tag_subjects(tags("Twitter"))
-        entry = [e for e in subjects if e["scheme"] == PLATFORM][0]
+        entry = next(e for e in subjects if e["scheme"] == PLATFORM)
         self.assertEqual((entry["qcode"], entry["name"]), ("xtwit", "X/Twitter"))
 
     def test_duplicate_tags_yield_one_entry(self) -> None:
@@ -292,7 +294,8 @@ class TagSubjectsTestCase(unittest.TestCase):
         self.assertEqual(qcode_for(subjects, COUNTRIES_SCHEME), "KEN")
 
     def test_handles_empty_and_malformed_input(self) -> None:
-        for value in [None, [], [{}], [{"name": None, "slug": None}]]:
+        values: list[Any] = [None, [], [{}], [{"name": None, "slug": None}]]
+        for value in values:
             with self.subTest(value=value):
                 self.assertEqual(tag_subjects(value), ([], []))
 
