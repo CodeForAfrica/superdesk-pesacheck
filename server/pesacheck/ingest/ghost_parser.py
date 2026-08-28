@@ -7,8 +7,6 @@ import time
 from copy import deepcopy
 from datetime import datetime, timezone
 
-from urllib3.util.retry import Retry
-
 from superdesk.errors import ParserError
 from superdesk.etree import parse_html
 from superdesk.io.feed_parsers import FileFeedParser
@@ -25,6 +23,7 @@ from superdesk.metadata.item import (
 from superdesk.metadata.utils import generate_guid
 from superdesk.text_utils import get_text
 from superdesk.utc import utcnow
+from urllib3.util.retry import Retry
 
 from pesacheck.debunk import debunk_rating
 from pesacheck.ghost_urls import (
@@ -43,6 +42,7 @@ from pesacheck.ingest.ghost_fetch_pool import (
 )
 from pesacheck.ingest.util import env_float, env_int
 from pesacheck.language import detect_language, normalise_language_code
+from pesacheck.tags import is_public_tag, tag_subjects
 
 logger = logging.getLogger(__name__)
 
@@ -251,8 +251,8 @@ class GhostRun:
         "ghost_url",
         "inflight",
         "payloads",
-        "provisional",
         "pool",
+        "provisional",
         "tracker",
         "warm",
     )
@@ -662,8 +662,18 @@ class GhostParser(FileFeedParser):
         )
         byline = ", ".join(a["name"] for a in authors if a.get("name"))
 
-        tags = sorted(tags_by_post.get(post_id, []), key=lambda x: x["sort_order"])
-        keywords = [t["name"] for t in tags if t.get("name")]
+        # Sorted because order is meaningful downstream: it decides the
+        # language when several language tags are present, and which country is
+        # the primary one. Internal tags are dropped here rather than inside
+        # each consumer, so nothing derives a field from Ghost bookkeeping.
+        tags = [
+            tag
+            for tag in sorted(
+                tags_by_post.get(post_id, []), key=lambda x: x["sort_order"]
+            )
+            if is_public_tag(tag)
+        ]
+        tag_entries, keywords = tag_subjects(tags)
 
         firstcreated = self._parse_date(post.get("created_at"))
         published_at = post.get("published_at") or post.get("updated_at")
@@ -699,11 +709,22 @@ class GhostParser(FileFeedParser):
         sample = " ".join(part for part in (post.get("title") or "", body_text) if part)
         item["language"] = self._parse_language(post, tags, sample)
 
-        # The verdict is carried in the headline prefix; record it as the Debunk
-        # rating. Unknown or absent prefixes leave the item without a rating.
+        # Two independent classifiers, one destination: every custom-vocabulary
+        # field on the Article profile is a `subject` entry distinguished by its
+        # `scheme`, so the Debunk rating and the tag-derived fields simply share
+        # the list. Whatever `tag_subjects` could not place stays in `keywords`
+        # above -- people, organisations and sub-national places, none of which
+        # have a vocabulary on this profile.
+        #
+        # The verdict is carried in the headline prefix. Unknown or absent
+        # prefixes leave the item without a rating.
         rating = debunk_rating(item["headline"])
-        if rating:
-            item.setdefault("subject", []).append(rating)
+        subject = ([rating] if rating else []) + tag_entries
+        # Set only when non-empty: an absent key and an empty list are not the
+        # same thing to a reader downstream, and the key was absent whenever
+        # nothing was classified before this mapping existed.
+        if subject:
+            item["subject"] = subject
 
         unresolved = self._parse_images(run, item, post)
 
@@ -924,6 +945,12 @@ class GhostParser(FileFeedParser):
                     {
                         "name": tag.get("name", ""),
                         "slug": tag.get("slug", ""),
+                        # Ghost marks its own bookkeeping tags internal (the
+                        # `#Import <timestamp>` ones); pesacheck.tags drops
+                        # them rather than publishing them as keywords and, via
+                        # Publisher, as public tag pages. Older exports omit the
+                        # column, which `is_public_tag` reads as public.
+                        "visibility": tag.get("visibility"),
                         # Coerce a null sort_order so the sort below can't blow
                         # up comparing None to an int.
                         "sort_order": pt.get("sort_order") or 0,
