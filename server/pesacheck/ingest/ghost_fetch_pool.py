@@ -52,7 +52,7 @@ IMAGE_FETCH_WORKERS = env_int("GHOST_IMAGE_FETCH_WORKERS", 16)
 PREFETCH_WINDOW_POSTS = env_int("GHOST_PREFETCH_WINDOW_POSTS", 20)
 
 # How often the heartbeat reports. 0 disables it.
-HEARTBEAT_SECONDS = env_float("GHOST_INGEST_HEARTBEAT_SECONDS", 15.0)
+HEARTBEAT_SECONDS = env_float("GHOST_INGEST_HEARTBEAT_SECONDS", 60.0)
 
 # No completion for this long, with work in flight, is reported as a stall.
 STALL_SECONDS = env_float("GHOST_IMAGE_STALL_SECONDS", 60.0)
@@ -240,13 +240,20 @@ class InFlightTracker:
             s["since_completion"],
             s["elapsed"],
         )
+        # The per-URL breadcrumb is routine progress, not signal — DEBUG when
+        # healthy so it stays out of the log budget. During a stall it becomes
+        # the evidence the STALLED error points at ("Stuck URLs above"), so
+        # raise it to WARNING then. WARNING because a stalled ingest is the very
+        # failure this heartbeat exists to surface.
+        stalled = bool(s["active"]) and s["since_completion"] >= STALL_SECONDS
+        inflight_level = logging.WARNING if stalled else logging.DEBUG
         for elapsed, url in s["oldest"]:
-            logger.info("    in flight %6.1fs  %s", elapsed, url)
+            logger.log(inflight_level, "    in flight %6.1fs  %s", elapsed, url)
 
         # Nothing finishing while work is outstanding is the signature of the
         # stalls this pipeline has hit before. Say so loudly, once per episode,
         # and name the URLs so the cause is identifiable from logs alone.
-        if s["active"] and s["since_completion"] >= STALL_SECONDS:
+        if stalled:
             if self.last_completion > self._stall_reported_at:
                 self._stall_reported_at = self.last_completion
                 logger.error(
