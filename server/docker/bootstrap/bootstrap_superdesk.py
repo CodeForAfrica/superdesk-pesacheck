@@ -76,6 +76,91 @@ UNCAPPED_PROFILE_FIELDS = {
     "Article": ["slugline", "abstract", "headline"],
 }
 
+# Local-only content-profile field additions, applied after the restore.
+#
+# `keywords` is where Ghost ingest puts every tag it cannot map onto a
+# vocabulary (see pesacheck/tags.py), but the UAT Article profile carries
+# `schema.keywords = None` and no `editor.keywords` entry at all.
+#
+# A None schema value makes core's `is_enabled()` false. That does NOT strip the
+# field on the way in -- Mongo keeps it -- but `apply_schema()` runs inside the
+# publish formatter (superdesk/publish_async/formatters/base_exchange_formatter),
+# so the field is dropped from the outgoing ninjs. The leftovers were therefore
+# stored and invisible: absent from the authoring view, and absent from every
+# item Publisher received. Measured on the local stack 2026-08-28 before this
+# override: `keywords` missing from all 235 transmitted ninjs payloads,
+# Publisher's `swp_keyword` table empty. After it: the key is present and
+# Publisher populates `swp_keyword` / `swp_article_keyword`.
+#
+# Both halves have to be written: the schema entry is what lets the field
+# through the formatter, the editor entry is what renders it in authoring.
+#
+# `order` deliberately sits past the profile's highest (28) so this appends to
+# the end of the header section instead of renumbering the UAT layout.
+PROFILE_FIELD_ADDITIONS = {
+    "Article": {
+        "keywords": {
+            "editor": {
+                "order": 29,
+                "sdWidth": "full",
+                "section": "header",
+                "enabled": True,
+                "required": False,
+                "readonly": False,
+            },
+            "schema": {"type": "list", "required": False, "nullable": True},
+        },
+    },
+}
+
+# Vocabulary items ingest emits that the UAT dump does not define. A subject
+# entry whose qcode is absent from its vocabulary still validates and still
+# reaches Publisher; it simply renders as a blank label, so this is invisible
+# until someone opens the item.
+#
+#   Debunk       pesacheck/debunk.py maps ten ratings and the dump carries
+#                seven. Measured over the full pesacheck.org corpus (2026-08-28)
+#                that sends 350 items -- 2.4% of everything rated -- to
+#                `true`, `misleading` or `mixture`. Added rather than remapped:
+#                "TRUE" has no honest equivalent among the seven, and the
+#                headline prefix is a deliberate editorial verdict.
+#   content_type Ghost tags content `Short Form` / `Long Form`; the dump has
+#                `Quick Read` and `Explainer`. Short Form is Quick Read, but
+#                Long Form is NOT an explainer -- it is its own thing, so it
+#                gets its own item (editorial call, 2026-08-28).
+#
+# Additive and keyed on qcode: an item already present is left exactly as the
+# dump defines it, so this cannot fight a future dump that adds them properly.
+VOCABULARY_ITEM_ADDITIONS = {
+    "Debunk": [
+        {"name": "True", "qcode": "true", "is_active": True},
+        {"name": "Misleading", "qcode": "misleading", "is_active": True},
+        {"name": "Mixture", "qcode": "mixture", "is_active": True},
+    ],
+    "content_type": [
+        {"name": "Long Form", "qcode": "longform", "is_active": True},
+    ],
+}
+
+# qcode corrections, as (vocabulary, item name, wrong qcode, right qcode).
+# Matched on BOTH name and current qcode so a dump that fixes this upstream is
+# left alone rather than being "repaired" back into a different wrong state.
+#
+# countrymention1 codes DR Congo as COG, which is ISO 3166 for
+# Congo-Brazzaville; Kinshasa is COD. The `countries` vocabulary has both, and
+# correctly -- so left alone the Primary country and Countries mentioned fields
+# disagree on every DRC post (~570 in the full corpus).
+VOCABULARY_QCODE_REPAIRS = [
+    ("countrymention1", "DR Congo", "COG", "COD"),
+]
+
+# Mojibake signatures: UTF-8 bytes that were decoded as Latin-1 and re-encoded
+# as UTF-8, so "Côte" is stored as "CÃ´te". Three items in the dump's
+# `countries` vocabulary are affected. Matching is normalisation-insensitive
+# (pesacheck/tags.py), so this is cosmetic for the mapping -- but the name is
+# what the client and everything downstream of Publisher display.
+MOJIBAKE_MARKERS = ("Ã", "Â", "â€")
+
 AVAILABILITY_MANAGER_TAGS = {
     "_id": "availability_manager_tags",
     "display_name": "Availability Manager Tags",
@@ -490,6 +575,160 @@ def remove_profile_maxlengths(db, now):
         print(f"Removed maxlength from {profile_label}: {', '.join(capped)}.")
 
 
+def add_profile_fields(db, now):
+    """Apply PROFILE_FIELD_ADDITIONS to the restored profiles.
+
+    Writes the editor entry and the schema entry together; either alone is
+    useless. See the constant's comment for why both are needed.
+    """
+    for profile_label, fields in PROFILE_FIELD_ADDITIONS.items():
+        profile = db.content_types.find_one({"label": profile_label})
+        if not profile:
+            print(
+                f"No content profile labelled {profile_label!r}; skipping field additions."
+            )
+            continue
+
+        editor = profile.get("editor") or {}
+        schema = profile.get("schema") or {}
+        updates = {}
+        added = []
+        for field, spec in fields.items():
+            # Only write what is missing: a dump that already enables the field
+            # (or an editor who has since positioned it) wins over this default.
+            halves = []
+            if not editor.get(field):
+                updates[f"editor.{field}"] = spec["editor"]
+                halves.append("editor")
+            if not schema.get(field):
+                updates[f"schema.{field}"] = spec["schema"]
+                halves.append("schema")
+            if halves:
+                added.append(f"{field} ({'+'.join(halves)})")
+
+        if not updates:
+            print(f"{profile_label}: no fields to add.")
+            continue
+
+        updates["_updated"] = now
+        updates["_etag"] = new_etag()
+        db.content_types.update_one({"_id": profile["_id"]}, {"$set": updates})
+        print(f"Enabled on {profile_label}: {', '.join(added)}.")
+
+
+def add_vocabulary_items(db, now):
+    """Append VOCABULARY_ITEM_ADDITIONS to the restored vocabularies."""
+    for vocabulary_id, additions in VOCABULARY_ITEM_ADDITIONS.items():
+        vocabulary = db.vocabularies.find_one({"_id": vocabulary_id})
+        if not vocabulary:
+            print(f"No vocabulary {vocabulary_id!r}; skipping item additions.")
+            continue
+
+        items = list(vocabulary.get("items") or [])
+        present = {item.get("qcode") for item in items}
+        missing = [item for item in additions if item["qcode"] not in present]
+        if not missing:
+            print(f"{vocabulary_id}: all items already present.")
+            continue
+
+        db.vocabularies.update_one(
+            {"_id": vocabulary_id},
+            {
+                "$set": {
+                    "items": items + missing,
+                    "_updated": now,
+                    "_etag": new_etag(),
+                }
+            },
+        )
+        print(
+            f"Added to {vocabulary_id}: "
+            + ", ".join(f"{i['name']} ({i['qcode']})" for i in missing)
+            + "."
+        )
+
+
+def repair_vocabulary_qcodes(db, now):
+    """Apply VOCABULARY_QCODE_REPAIRS to the restored vocabularies."""
+    for vocabulary_id, name, wrong_qcode, right_qcode in VOCABULARY_QCODE_REPAIRS:
+        vocabulary = db.vocabularies.find_one({"_id": vocabulary_id})
+        if not vocabulary:
+            print(f"No vocabulary {vocabulary_id!r}; skipping qcode repair.")
+            continue
+
+        items = list(vocabulary.get("items") or [])
+        targets = [
+            item
+            for item in items
+            if item.get("name") == name and item.get("qcode") == wrong_qcode
+        ]
+        if not targets:
+            print(
+                f"{vocabulary_id}: {name} is not coded {wrong_qcode}; nothing to repair."
+            )
+            continue
+
+        for item in targets:
+            item["qcode"] = right_qcode
+        db.vocabularies.update_one(
+            {"_id": vocabulary_id},
+            {"$set": {"items": items, "_updated": now, "_etag": new_etag()}},
+        )
+        print(f"Repaired {vocabulary_id}: {name} {wrong_qcode} -> {right_qcode}.")
+
+
+def demojibake(text):
+    """Undo one round of UTF-8-decoded-as-Latin-1, or return ``text`` unchanged.
+
+    Only attempted when a marker byte sequence is present, so a name that
+    legitimately contains "Ã" is not mangled, and only accepted when the
+    round-trip actually succeeds.
+    """
+    if not isinstance(text, str) or not any(m in text for m in MOJIBAKE_MARKERS):
+        return text
+    try:
+        return text.encode("latin-1").decode("utf-8")
+    except (UnicodeDecodeError, UnicodeEncodeError):
+        return text
+
+
+def repair_vocabulary_mojibake(db, now):
+    """Re-decode double-encoded item names across every restored vocabulary.
+
+    Swept over all vocabularies rather than a named list: the defect is a
+    property of how the dump was exported, so the next refresh can just as
+    easily land it somewhere else.
+    """
+    repaired_vocabularies = 0
+    repaired_names = []
+    for vocabulary in db.vocabularies.find({"items": {"$exists": True}}):
+        items = list(vocabulary.get("items") or [])
+        changed = False
+        for item in items:
+            fixed = demojibake(item.get("name"))
+            if fixed != item.get("name"):
+                repaired_names.append(f"{vocabulary['_id']}.{item['qcode']} -> {fixed}")
+                item["name"] = fixed
+                changed = True
+        if not changed:
+            continue
+        db.vocabularies.update_one(
+            {"_id": vocabulary["_id"]},
+            {"$set": {"items": items, "_updated": now, "_etag": new_etag()}},
+        )
+        repaired_vocabularies += 1
+
+    if not repaired_names:
+        print("No mojibake in vocabulary item names.")
+        return
+    print(
+        f"Repaired {len(repaired_names)} mojibake item name(s) "
+        f"across {repaired_vocabularies} vocabular(ies):"
+    )
+    for entry in repaired_names:
+        print(f"  {entry}")
+
+
 def restore_content_config():
     """Overlay the UAT content-config dump, then repoint it at this instance.
 
@@ -526,6 +765,10 @@ def restore_content_config():
     repoint_profile_references(db, slugify_profile_ids(db))
     reassign_ownership(db, admin, now)
     remove_profile_maxlengths(db, now)
+    add_profile_fields(db, now)
+    add_vocabulary_items(db, now)
+    repair_vocabulary_qcodes(db, now)
+    repair_vocabulary_mojibake(db, now)
     ensure_availability_manager_tags(db)
 
     print("Content config restore and local reference repair complete.")

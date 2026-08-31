@@ -3,9 +3,19 @@
 Every PesaCheck fact-check leads its headline with the verdict, in the article's
 own language and set off by a colon: ``ALTERED: ...``, ``FAUX : ...``,
 ``KHIYAANO: ...``, ``PARTLY FALSE: ...``. Superdesk records that verdict as a
-single-select custom vocabulary — the ``Debunk`` scheme in
-``server/data/vocabularies.json`` — so the prefix has to be mapped onto one of
-its qcodes and attached to the item as a subject entry.
+single-select custom vocabulary — the ``Debunk`` scheme — so the prefix has to be
+mapped onto one of its qcodes and attached to the item as a subject entry. That
+is the same mechanism the tag-derived fields use; see ``pesacheck/tags.py``.
+
+**The qcodes are not defined in this repo.** ``server/data/vocabularies.json``
+looks authoritative and is not: ``bootstrap_superdesk.py``
+(``restore_content_config``) drops and replaces the whole ``vocabularies``
+collection from ``docker/bootstrap/superdesk-content-config.tgz``, a
+periodically re-exported UAT mongodump. So that dump defines which ratings a
+newsroom can actually resolve, and this map can be orphaned by a refresh it has
+no say in. It had been for a while: three of the ten ratings below existed only
+here until ``bootstrap_superdesk.py`` grew a ``VOCABULARY_ITEM_ADDITIONS``
+override (2026-08-28), which is what ``tests/test_tags.py`` now guards.
 
 The map is multilingual because the prefix is written in whichever of the six
 languages the article is in. Where a language has no exact counterpart to a
@@ -18,8 +28,12 @@ import re
 
 # The subject ``scheme`` that marks an entry as a Debunk rating, and the qcode ->
 # display-name map for that vocabulary. Both the name and the qcode are stored on
-# the entry so the client renders the label without a vocabulary lookup. Source
-# of truth for both: the "Debunk" vocabulary in server/data/vocabularies.json.
+# the entry so the client renders the label without a vocabulary lookup -- which
+# is also why a stale name here shows the wrong text rather than failing.
+# Source of truth for both: the "Debunk" vocabulary inside
+# docker/bootstrap/superdesk-content-config.tgz, with bootstrap_superdesk.py's
+# own additions applied. tests/test_tags.py asserts every qcode and name below
+# still matches it.
 DEBUNK_SCHEME = "Debunk"
 
 _RATING_NAMES = {

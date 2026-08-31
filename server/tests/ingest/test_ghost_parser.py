@@ -47,8 +47,9 @@ class GhostParserTestCase(TestCase):
     )
     async def test_parse_returns_only_published_posts(self, _mock):
         items = await self.parser.parse(FIXTURE_PATH)
-        # draft (post_003) and page (post_004) should be excluded
-        self.assertEqual(len(items), 2)
+        # draft (post_003) and page (post_004) should be excluded; post_005 is a
+        # published post carrying neither tags nor a verdict prefix
+        self.assertEqual(len(items), 3)
 
     @patch(
         "pesacheck.ingest.ghost_parser.update_renditions",
@@ -211,30 +212,120 @@ class GhostParserTestCase(TestCase):
         self.assertEqual(post2["byline"], "Alice Reporter")
 
     # ------------------------------------------------------------------
-    # parse — tags → keywords
+    # parse — tags → vocabulary subjects + leftover keywords
     # ------------------------------------------------------------------
+    #
+    # Every tag used to go to `keywords` wholesale. It now goes through
+    # `pesacheck.tags`, which files what it recognises onto the Article
+    # profile's custom-vocabulary fields as `subject` entries and leaves only
+    # the remainder in `keywords`. The mapping itself is unit-tested in
+    # tests/test_tags.py; these assert the parser wiring.
 
-    @patch(
-        "pesacheck.ingest.ghost_parser.update_renditions",
-        side_effect=_mock_update_renditions,
-    )
-    async def test_parse_keywords(self, _mock):
-        items = await self.parser.parse(FIXTURE_PATH)
-        post1 = next(
+    async def _post1(self):
+        with patch(
+            "pesacheck.ingest.ghost_parser.update_renditions",
+            side_effect=_mock_update_renditions,
+        ):
+            items = await self.parser.parse(FIXTURE_PATH)
+        return next(
             i for i in items if i["guid"] == "aaaaaaaa-0001-0001-0001-aaaaaaaaaaaa"
         )
-        self.assertEqual(post1["keywords"], ["Fact Check", "Africa"])
+
+    async def test_parse_maps_tags_onto_vocabulary_subjects(self):
+        post1 = await self._post1()
+        mapped = {(e["scheme"], e["qcode"]) for e in post1["subject"]}
+        self.assertEqual(
+            mapped,
+            {
+                ("Debunk", "false"),
+                ("countrymention1", "UGA"),
+                ("countries", "UGA"),
+                ("countries", "KEN"),
+                ("content_type", "quickread"),
+                ("Harm_type", "elections"),
+            },
+        )
+
+    async def test_parse_keeps_unmapped_tags_as_keywords(self):
+        # "Africa" is not a country and "Bobi Wine" is a person; neither has a
+        # vocabulary on this profile. "Fact Check" is dropped rather than kept,
+        # carrying no information in a corpus where every item is a fact-check.
+        post1 = await self._post1()
+        self.assertEqual(post1["keywords"], ["Africa", "Bobi Wine"])
+
+    async def test_parse_primary_country_is_the_first_by_sort_order(self):
+        # Uganda is tagged before Kenya. `countrymention1` is single-select, so
+        # only Uganda lands there -- but nothing is lost, because multi-select
+        # `countries` still gets both.
+        post1 = await self._post1()
+        primary = [e for e in post1["subject"] if e["scheme"] == "countrymention1"]
+        self.assertEqual([e["qcode"] for e in primary], ["UGA"])
+        self.assertEqual(
+            sorted(e["qcode"] for e in post1["subject"] if e["scheme"] == "countries"),
+            ["KEN", "UGA"],
+        )
+
+    async def test_parse_excludes_internal_tags(self):
+        # post_001 carries Ghost's `#Import <timestamp>` tag at sort_order 0.
+        # It must reach neither keywords nor any vocabulary field -- and must
+        # not consume the single-select primary-country slot on its way past.
+        post1 = await self._post1()
+        self.assertNotIn("#Import 2025-11-27 17:24", post1["keywords"])
+        self.assertNotIn(
+            "#Import 2025-11-27 17:24", [e["name"] for e in post1["subject"]]
+        )
+
+    async def test_parse_tags_without_visibility_are_treated_as_public(self):
+        # The "Elections" fixture tag omits the column entirely, as older
+        # exports do. Reading a missing value as internal would silently drop
+        # every tag in those files.
+        post1 = await self._post1()
+        self.assertIn(
+            ("Harm_type", "elections"),
+            {(e["scheme"], e["qcode"]) for e in post1["subject"]},
+        )
 
     @patch(
         "pesacheck.ingest.ghost_parser.update_renditions",
         side_effect=_mock_update_renditions,
     )
-    async def test_parse_keywords_single_tag(self, _mock):
+    async def test_parse_keywords_empty_when_every_tag_is_placed(self, _mock):
         items = await self.parser.parse(FIXTURE_PATH)
         post2 = next(
             i for i in items if i["guid"] == "bbbbbbbb-0002-0002-0002-bbbbbbbbbbbb"
         )
-        self.assertEqual(post2["keywords"], ["Fact Check"])
+        # post_002's only tag is the dropped "Fact Check".
+        self.assertEqual(post2["keywords"], [])
+
+    @patch(
+        "pesacheck.ingest.ghost_parser.update_renditions",
+        side_effect=_mock_update_renditions,
+    )
+    async def test_parse_omits_subject_when_nothing_classified(self, _mock):
+        # An empty `subject` list is not the same as no subject key, and the
+        # pre-mapping parser only ever created the key when there was a rating
+        # to put in it. post_005 is the only fixture post with neither a verdict
+        # prefix nor a tag, which is the only shape that can leave it empty.
+        items = await self.parser.parse(FIXTURE_PATH)
+        unclassified = next(
+            i for i in items if i["guid"] == "eeeeeeee-0005-0005-0005-eeeeeeeeeeee"
+        )
+        self.assertNotIn("subject", unclassified)
+        self.assertEqual(unclassified["keywords"], [])
+
+    async def test_parse_language_is_unaffected_by_the_tag_mapping(self):
+        # `language` and `Debunklang` derive from the same tags but are not the
+        # same field: Publisher routes on `language` via article.getLocale(),
+        # and an item that routes nowhere is invisible. See
+        # docs/postmortems/publish-delivery.md.
+        items = await self.parser.parse(LANGUAGES_FIXTURE_PATH)
+        by_guid = {i["guid"]: i for i in items}
+        swahili = by_guid["11111111-0001-0001-0001-111111111111"]
+        self.assertEqual(swahili["language"], "sw")
+        self.assertIn(
+            {"name": "Kiswahili", "qcode": "debunkswa", "scheme": "Debunklang"},
+            swahili["subject"],
+        )
 
     # ------------------------------------------------------------------
     # parse — images
