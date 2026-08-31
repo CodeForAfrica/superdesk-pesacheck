@@ -43,6 +43,13 @@ def get_app(config=None):
 
     image_fetch_patch.apply()
 
+    # Silence superdesk-core's per-EXIF-tag stdout prints, which Celery re-emits
+    # as WARNING logs and which dominate ingest log volume
+    # (see pesacheck/exif_log_patch.py).
+    from pesacheck import exif_log_patch
+
+    exif_log_patch.apply()
+
     # Harden AmazonMediaStorage against the aioboto3 S3 get_object hang that freezes
     # ghost ingest (see pesacheck/media_patch.py). Must run before superdesk_app builds
     # the media-storage singleton.
