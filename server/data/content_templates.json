@@ -50,7 +50,7 @@
             "headline": "",
             "language": "en",
             "priority": null,
-            "profile": "announcement",
+            "profile": "6a8c9122e2b084181606a9ce",
             "pubstatus": "usable",
             "slugline": "",
             "type": "text"
@@ -95,7 +95,7 @@
             },
             "format": "HTML",
             "headline": "",
-            "profile": "research_citations",
+            "profile": "6a8d9ff7e2b084181606aabb",
             "pubstatus": "usable",
             "type": "text"
         },
@@ -108,8 +108,8 @@
         "template_name": "Research Citations",
         "template_type": "create"
     },
-    {"_id": "6a8ef90ae2b084181606ab3b", "data": {"abstract": "", "associations": {}, "body_html": "", "extra": {}, "fields_meta": null, "flags": {"marked_archived_only": false, "marked_for_legal": false, "marked_for_not_publication": false, "marked_for_sms": false}, "format": "HTML", "headline": "", "language": null, "profile": "event", "pubstatus": "usable", "type": "text"}, "is_public": true, "next_run": null, "schedule": {"cron_list": []}, "template_desks": [], "template_name": "event", "template_type": "create"},
-    {"_id": "6a954d10dae059933bb05434", "data": {"abstract": "", "associations": {}, "body_html": null, "extra": {}, "fields_meta": null, "flags": {"marked_archived_only": false, "marked_for_legal": false, "marked_for_not_publication": false, "marked_for_sms": false}, "format": "HTML", "headline": "", "language": null, "profile": "faq", "pubstatus": "usable", "type": "text"}, "is_public": true, "next_run": null, "schedule": {"cron_list": []}, "template_desks": [], "template_name": "faq", "template_type": "create"},
-    {"_id": "6a96a2e1d0756a69fc29f903", "data": {"abstract": "", "associations": {}, "body_html": "", "extra": {}, "fields_meta": null, "flags": {"marked_archived_only": false, "marked_for_legal": false, "marked_for_not_publication": false, "marked_for_sms": false}, "format": "HTML", "headline": "", "language": null, "profile": "ecosystem_partner", "pubstatus": "usable", "type": "text"}, "is_public": true, "next_run": null, "schedule": {"cron_list": []}, "template_desks": [], "template_name": "ecosystem partner", "template_type": "create"},
-    {"_id": "6a96df4cd0756a69fc29f9b0", "data": {"flags": {"marked_archived_only": false, "marked_for_legal": false, "marked_for_not_publication": false, "marked_for_sms": false}, "format": "HTML", "profile": "team_member", "pubstatus": "usable", "type": "text"}, "is_public": true, "template_name": "team member", "template_type": "create"}
+    {"_id": "6a8ef90ae2b084181606ab3b", "data": {"abstract": "", "associations": {}, "body_html": "", "extra": {}, "fields_meta": null, "flags": {"marked_archived_only": false, "marked_for_legal": false, "marked_for_not_publication": false, "marked_for_sms": false}, "format": "HTML", "headline": "", "language": null, "profile": "6a97edd7d0756a69fc29fabb", "pubstatus": "usable", "type": "text"}, "is_public": true, "next_run": null, "schedule": {"cron_list": []}, "template_desks": [], "template_name": "event", "template_type": "create"},
+    {"_id": "6a954d10dae059933bb05434", "data": {"abstract": "", "associations": {}, "body_html": null, "extra": {}, "fields_meta": null, "flags": {"marked_archived_only": false, "marked_for_legal": false, "marked_for_not_publication": false, "marked_for_sms": false}, "format": "HTML", "headline": "", "language": null, "profile": "6a97ed55d0756a69fc29fab7", "pubstatus": "usable", "type": "text"}, "is_public": true, "next_run": null, "schedule": {"cron_list": []}, "template_desks": [], "template_name": "faq", "template_type": "create"},
+    {"_id": "6a96df4cd0756a69fc29f9b0", "data": {"abstract": "", "associations": {}, "body_html": "", "extra": {"linkedin_url": "", "team_role": ""}, "fields_meta": null, "flags": {"marked_archived_only": false, "marked_for_legal": false, "marked_for_not_publication": false, "marked_for_sms": false}, "format": "HTML", "headline": "", "language": null, "profile": "6a97ecc6d0756a69fc29fab4", "pubstatus": "usable", "type": "text"}, "is_public": true, "next_run": null, "schedule": {"cron_list": []}, "template_desks": [], "template_name": "team member", "template_type": "create"},
+    {"_id": "6a97e112a31c6dce9be4b2c2", "data": {"abstract": "", "associations": {}, "body_html": null, "extra": {}, "fields_meta": null, "flags": {"marked_archived_only": false, "marked_for_legal": false, "marked_for_not_publication": false, "marked_for_sms": false}, "format": "HTML", "headline": "", "language": null, "profile": "6a97ebdad0756a69fc29fab0", "pubstatus": "usable", "type": "text"}, "is_public": true, "next_run": null, "schedule": {"cron_list": []}, "template_desks": [], "template_name": "ecosystem partner", "template_type": "create"}
 ]

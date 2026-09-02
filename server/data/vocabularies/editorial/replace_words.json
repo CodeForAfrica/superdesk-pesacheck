@@ -11,5 +11,5 @@
     },
     "selection_type": "do not show",
     "type": "manageable",
-    "unique_field": "existing"
+    "unique_field": "qcode"
 }

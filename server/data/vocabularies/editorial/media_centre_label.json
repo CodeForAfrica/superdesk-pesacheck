@@ -2,7 +2,7 @@
     "_deleted": false,
     "_id": "media_centre_label",
     "disable_entire_category_selection": false,
-    "display_name": "Media Centre Label",
+    "display_name": "Entry Type",
     "field_type": null,
     "items": [
         {"is_active": true, "name": "Workshop", "qcode": "workshop"},
