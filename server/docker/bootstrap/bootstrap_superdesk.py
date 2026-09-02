@@ -8,13 +8,16 @@ drifted local stack.
 
 Phases run in order and each assumes the ones before it:
 
-  1. initialize_base_data                manage.py app:initialize_data, admin user
+  1. initialize_base_data                manage.py app:initialize_data --force,
+                                         admin user. Loads the tracked content
+                                         config from data/ (vocabularies via the
+                                         split-tree loader, content_config_patch)
   2. report_known_index_conflicts        explain the IndexKeySpecsConflict
                                          traceback phase 1 emits (upstream bug)
   3. repair_generated_data               flags and desk types the generated data
                                          leaves unset
-  4. restore_content_config              overlay the UAT content-config dump and
-                                         repoint it at this instance
+  4. reassign_content_ownership          point profiles/desks/stages at this
+                                         instance's admin (per-instance, stays code)
   5. seed_publisher_subscriber           product + HTTP push destination pointing
                                          at publisher-nginx
   6. seed_demo_content                   LOCAL-PUBLISHER-* smoke-test stories;
@@ -22,8 +25,6 @@ Phases run in order and each assumes the ones before it:
 
 Environment:
   MONGO_URI, ARCHIVED_URI            Superdesk databases
-  SUPERDESK_CONTENT_CONFIG_ARCHIVE   path to the content-config mongodump tgz
-  SUPERDESK_FORCE_INITIALIZE_DATA    re-run app:initialize_data even if base data exists
   SUPERDESK_DEMO_DATA                set to 0 to skip phase 6
   SUPERDESK_DEMO_DESK_NAME           desk the demo stories are filed to
   SUPERDESK_INTERNAL_API_URL         API base used for the demo-content POSTs
@@ -285,14 +286,14 @@ def has_base_data(db):
 
 def initialize_base_data():
     step("Initializing base data")
-    if has_base_data(superdesk_db()) and not env_flag(
-        "SUPERDESK_FORCE_INITIALIZE_DATA", "0"
-    ):
-        print(
-            "Skipping app:initialize_data because base Superdesk data already exists."
-        )
-    else:
-        run_manage("app:initialize_data")
+    # Always run, and always force. The tracked JSON under data/ is now the source
+    # of truth for the content config (loaded here via
+    # pesacheck/content_config_patch for the split vocabularies tree). Core skips
+    # app:initialize_data on a populated database, and even when it runs it updates
+    # a document only when forced or the file's init_version is newer -- so an
+    # unforced reseed would silently apply nothing at all. Forcing unconditionally
+    # is what makes an edit to a tracked file actually take on reseed.
+    run_manage("app:initialize_data", "--force")
 
     # Fails loudly on a re-run when admin already exists; that is expected.
     run_manage(
@@ -729,9 +730,33 @@ def repair_vocabulary_mojibake(db, now):
         print(f"  {entry}")
 
 
-def restore_content_config():
-    """Overlay the UAT content-config dump, then repoint it at this instance.
+def reassign_content_ownership():
+    """Point the tracked content config at this instance's admin user.
 
+    The content config itself now loads from tracked JSON under data/ via
+    app:initialize_data (see initialize_base_data and
+    pesacheck/content_config_patch for the split vocabularies tree). The only part
+    of the old tgz-restore that is not derivable from a tracked file is ownership:
+    profiles, desks and stages must point at THIS newsroom's admin user, and desks
+    need their membership and etags set. That is what reassign_ownership does, and
+    it deliberately stays code because the admin ObjectId is per-instance.
+    """
+    step("Reassigning content ownership")
+    db = superdesk_db()
+    admin = require_admin(db, "reassign content ownership")
+    reassign_ownership(db, admin, utcnow())
+    print("Content ownership reassigned.")
+
+
+def restore_content_config():
+    """SUPERSEDED by the tracked JSON under data/ + reassign_content_ownership().
+
+    Kept, unused, only until the clean-seed verification in
+    docs/plans/content-config-as-tracked-json.md confirms the new path matches the
+    old one (acceptance criteria gate deletion on that). Delete this and the
+    override machinery it calls once verification passes.
+
+    Overlay the UAT content-config dump, then repoint it at this instance.
     No-op (not an error) when the archive is absent: the generated defaults from
     app:initialize_data are a usable, if bare, newsroom.
     """
@@ -993,7 +1018,7 @@ def main():
     initialize_base_data()
     report_known_index_conflicts()
     repair_generated_data()
-    restore_content_config()
+    reassign_content_ownership()
     seed_publisher_subscriber()
 
     if env_flag("SUPERDESK_DEMO_DATA", "1"):
