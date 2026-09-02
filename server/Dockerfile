@@ -42,7 +42,6 @@ COPY docker/bootstrap/bootstrap-superdesk.sh    /usr/local/bin/bootstrap-superde
 COPY docker/bootstrap/bootstrap_superdesk.py    /usr/local/bin/bootstrap_superdesk.py
 COPY docker/bootstrap/bootstrap-ghost-ingest.sh /usr/local/bin/bootstrap-ghost-ingest.sh
 RUN chmod +x /usr/local/bin/bootstrap-superdesk.sh /usr/local/bin/bootstrap-ghost-ingest.sh
-COPY docker/bootstrap/superdesk-content-config.tgz /opt/superdesk/local-content-config/superdesk-content-config.tgz
 
 ENTRYPOINT [ "/opt/superdesk/docker/start.sh" ]
 CMD ["honcho", "start"]

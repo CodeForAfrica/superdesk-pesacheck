@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """Convert a Superdesk content-config mongodump into the tracked JSON tree.
 
-Part of the "content config as tracked JSON" migration
-(docs/plans/content-config-as-tracked-json.md). This script is the one-way
-converter that turns an opaque `mongodump` of the config collections into the
-readable, reviewable files under `server/data/`. Keeping it means a future
-refresh from a running instance becomes *convert, then review a diff* rather than
-a blind binary swap.
+The content config lives as tracked JSON under `server/data/` (see AGENTS.md
+§4). This script is the one-way converter that turns an opaque `mongodump` of the
+config collections into those readable, reviewable files. Keeping it means a
+future refresh from a running instance becomes *convert, then review a diff*
+rather than a blind binary swap. Pairs with `dump.sh`.
 
 Input:  a directory produced by `mongodump` (the folder holding `*.bson` and
         `*.metadata.json`, e.g. the `superdesk-content-config/<db>/` dir inside

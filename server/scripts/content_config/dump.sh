@@ -2,10 +2,11 @@
 # Dump the Superdesk content-config collections from a running stack into a
 # mongodump tarball, ready to feed to convert.py.
 #
-# Part of the "content config as tracked JSON" migration
-# (docs/plans/content-config-as-tracked-json.md). Pairs with convert.py: this
-# captures the current state of a running instance, convert.py turns it into the
-# tracked tree, and the diff is the review. Read-only against MongoDB; writes
+# The content config lives as tracked JSON under server/data/ (see AGENTS.md §4).
+# Pairs with convert.py: this captures the current state of a running instance,
+# convert.py turns it into the tracked tree, and the diff is the review. The
+# collections dumped are the content-config set core seeds. Read-only against
+# MongoDB; writes
 # only ephemeral files (under /tmp on the host and inside the container) which it
 # cleans up.
 #
@@ -19,7 +20,10 @@
 #   DB      (default superdesk)
 #   LOCAL_MONGO_CONTAINER                      auto-detected if unset (local only)
 #
-# The collections dumped are exactly bootstrap_superdesk.py's CONFIG_COLLECTIONS.
+# The collections dumped are the content-config set: the same ones convert.py
+# materialises under server/data/ (content_types, content_templates,
+# vocabularies, content_filters, coverage_profiles, planning_types, desks,
+# stages).
 set -euo pipefail
 
 SOURCE="${1:-}"
