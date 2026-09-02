@@ -137,7 +137,8 @@ class VocabularyConformanceTestCase(unittest.TestCase):
         reference = None
         for n in range(1, 6):
             items = {
-                (i.get("qcode"), i.get("name")) for i in voc[f"countrymention{n}"]["items"]
+                (i.get("qcode"), i.get("name"))
+                for i in voc[f"countrymention{n}"]["items"]
             }
             if reference is None:
                 reference = items
