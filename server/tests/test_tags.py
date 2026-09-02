@@ -19,10 +19,11 @@ from pesacheck.tags import (
 )
 
 from tests.content_config import (
-    CONTENT_CONFIG_ARCHIVE,
+    VOCAB_ROOT,
     allowed_subject_schemes,
     names_by_qcode,
     qcodes,
+    vocabularies,
 )
 
 
@@ -51,15 +52,15 @@ def qcode_for(subjects, scheme):
 class VocabularyConformanceTestCase(unittest.TestCase):
     """Every qcode this repo emits must exist in the vocabulary that defines it.
 
-    The whole tag mapping keys off vocabularies this repo does not own:
-    `superdesk-content-config.tgz` is a periodically re-exported UAT mongodump
-    and `bootstrap_superdesk.py` restores `vocabularies` from it wholesale. A
-    refresh that renames a qcode orphans every item carrying it, and the symptom
+    The whole tag mapping keys off the tracked content-config vocabularies under
+    `server/data/vocabularies/` (loaded at seed time by app:initialize_data). An
+    edit that renames a qcode orphans every item carrying it, and the symptom
     -- a field that renders blank -- shows up nowhere near the cause.
 
     This is the only thing that turns that from a silent breakage into a failing
     test, which is why it is the first test in the file. When it fails, the fix
-    is in `tag_vocabularies.py` (or `debunk.py`), not here.
+    is in `tag_vocabularies.py` (or `debunk.py`), or the tracked vocabulary file,
+    not here.
     """
 
     def test_every_scheme_is_a_real_vocabulary(self) -> None:
@@ -77,18 +78,17 @@ class VocabularyConformanceTestCase(unittest.TestCase):
                     orphans,
                     [],
                     f"{scheme}: {len(orphans)} qcode(s) in tag_vocabularies.py are "
-                    f"absent from the {scheme} vocabulary in "
-                    f"{CONTENT_CONFIG_ARCHIVE.name}: {orphans}. Either the dump was "
-                    "refreshed and dropped them, or the mapping invented them.",
+                    f"absent from the {scheme} vocabulary under "
+                    f"{VOCAB_ROOT.name}/: {orphans}. Either the tracked vocabulary "
+                    "dropped them, or the mapping invented them.",
                 )
 
     def test_every_debunk_rating_qcode_exists_in_its_vocabulary(self) -> None:
         # debunk.py predates this test, and this is the defect that motivated
         # writing it: it mapped ten ratings against a seven-item vocabulary, so
-        # 2.4% of rated items carried an unresolvable qcode. Three of the ten
-        # are supplied by bootstrap_superdesk.py's VOCABULARY_ITEM_ADDITIONS,
-        # which `qcodes()` folds in -- so this passing depends on that override
-        # still being applied.
+        # 2.4% of rated items carried an unresolvable qcode. All ten now live in
+        # the tracked Debunk vocabulary (data/vocabularies/editorial/Debunk.json),
+        # so this passing depends on that file still defining them.
         orphans = sorted(set(_RATING_NAMES) - qcodes(DEBUNK_SCHEME))
         self.assertEqual(
             orphans,
@@ -127,6 +127,25 @@ class VocabularyConformanceTestCase(unittest.TestCase):
         self.assertEqual(sorted(set(_SCHEMES) - allowed), [])
         self.assertIn(DEBUNK_SCHEME, allowed)
 
+    def test_countrymention_schemes_are_identical(self) -> None:
+        # countrymention1-5 are byte-identical by design: the authoring interface
+        # shows the same list in five slots, and an explicit copy beats a
+        # generated one. Keep them in lockstep -- a drift means one slot silently
+        # offers a different country set. Compared on the item set so field-order
+        # noise does not fail it.
+        voc = vocabularies()
+        reference = None
+        for n in range(1, 6):
+            items = {
+                (i.get("qcode"), i.get("name")) for i in voc[f"countrymention{n}"]["items"]
+            }
+            if reference is None:
+                reference = items
+            else:
+                self.assertEqual(
+                    items, reference, f"countrymention{n} diverges from countrymention1"
+                )
+
     def test_primary_country_is_a_subset_of_countries(self) -> None:
         # The two country schemes share one alias table because they share one
         # qcode space (ISO 3166-1 alpha-3). If that stopped being true, the
@@ -134,8 +153,8 @@ class VocabularyConformanceTestCase(unittest.TestCase):
         self.assertLessEqual(set(tv.PRIMARY_COUNTRIES), set(tv.COUNTRIES))
 
     def test_dr_congo_agrees_across_both_country_schemes(self) -> None:
-        # Phase 0.2: countrymention1 shipped DR Congo as COG, which is
-        # Congo-Brazzaville. bootstrap_superdesk.py repairs it to COD, and the
+        # countrymention1 once shipped DR Congo as COG, which is
+        # Congo-Brazzaville. The tracked vocabulary now carries COD, and the
         # alias table maps every Ghost spelling of the DRC onto COD.
         self.assertEqual(tv.PRIMARY_COUNTRIES["COD"], "DR Congo")
         self.assertNotIn("COG", tv.PRIMARY_COUNTRIES)

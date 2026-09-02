@@ -7,8 +7,9 @@ none of them. Every Ghost tag went to ``keywords``, a field that profile does
 not expose at all: the tags were stored on the item in Superdesk but stripped
 from the ninjs on the way out, so they never reached Publisher. Measured on the
 local stack 2026-08-28: ``keywords`` was absent from all 235 transmitted
-payloads and Publisher's ``swp_keyword`` table held zero rows. See
-``bootstrap_superdesk.py`` (``PROFILE_FIELD_ADDITIONS``) for the mechanism.
+payloads and Publisher's ``swp_keyword`` table held zero rows. The Article
+profile's ``keywords`` schema+editor entry now lives in the tracked content
+config (``server/data/content_types.json``); AGENTS.md §4 has the mechanism.
 
 The tags to fill most of those fields were already in the export and already
 being parsed. Measured 2026-08-28 over the full 301-file pesacheck.org export
