@@ -1,0 +1,23 @@
+{
+    "_deleted": false,
+    "_id": "originator",
+    "description": "Name of person/institution/website that created the fake claim.",
+    "disable_entire_category_selection": false,
+    "display_name": "Claim originator",
+    "field_type": "text",
+    "helper_text": "Name of person/institution/website that created the fake claim.",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "tags": [
+        {"text": "Claim information"}
+    ],
+    "type": "manageable",
+    "unique_field": "qcode"
+}

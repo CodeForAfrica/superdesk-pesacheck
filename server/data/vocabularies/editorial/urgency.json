@@ -1,0 +1,49 @@
+{
+    "_id": "urgency",
+    "disable_entire_category_selection": false,
+    "display_name": "Urgency",
+    "init_version": 1,
+    "items": [
+        {"is_active": true, "name": "1", "qcode": 1},
+        {"is_active": true, "name": "2", "qcode": 2},
+        {"is_active": true, "name": "3", "qcode": 3},
+        {"is_active": true, "name": "4", "qcode": 4},
+        {"is_active": true, "name": "5", "qcode": 5}
+    ],
+    "schema": {
+        "color": {
+            "label": "Сolour",
+            "type": "color"
+        },
+        "name": {
+            "required": true,
+            "translate": true
+        },
+        "qcode": {
+            "required": true,
+            "type": "integer"
+        },
+        "short": {
+            "label": "List Name",
+            "maxlength": 2,
+            "translate": true,
+            "type": "short"
+        }
+    },
+    "selection_type": "multi selection",
+    "translations": {
+        "display_name": {
+            "da": "haster",
+            "de-DE": "dringlichkeit",
+            "el": "Επείγον",
+            "es": "urgencia",
+            "fr-CA": "urgence",
+            "nb": "Hast",
+            "pt-BR": "Urgência",
+            "ru-RU": "Срочность",
+            "uk-UA": "Tерміновість"
+        }
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

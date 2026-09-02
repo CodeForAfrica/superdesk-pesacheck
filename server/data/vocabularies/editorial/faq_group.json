@@ -1,0 +1,23 @@
+{
+    "_deleted": false,
+    "_id": "faq_group",
+    "disable_entire_category_selection": false,
+    "display_name": "FAQ Group",
+    "field_type": null,
+    "items": [
+        {"is_active": true, "name": "Questions about our fact-checks", "qcode": "factchecks"},
+        {"is_active": true, "name": "Questions about our policies", "qcode": "policies"},
+        {"is_active": true, "name": "Questions about using the site", "qcode": "site"}
+    ],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "selection_type": "single selection",
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

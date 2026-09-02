@@ -1,0 +1,19 @@
+{
+    "_deleted": false,
+    "_id": "event_languages",
+    "disable_entire_category_selection": false,
+    "display_name": "Event languages",
+    "field_type": "text",
+    "helper_text": "e.g. English, French, Kiswahili",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

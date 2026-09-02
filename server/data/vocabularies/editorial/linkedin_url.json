@@ -1,0 +1,19 @@
+{
+    "_deleted": false,
+    "_id": "linkedin_url",
+    "disable_entire_category_selection": false,
+    "display_name": "LinkedIn",
+    "field_type": "text",
+    "helper_text": "Full profile URL; leave blank to hide the badge",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

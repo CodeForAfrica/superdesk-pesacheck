@@ -1,0 +1,20 @@
+{
+    "_id": "package-story-labels",
+    "disable_entire_category_selection": false,
+    "display_name": "Package Story Labels",
+    "items": [
+        {"is_active": true, "name": "Featured", "qcode": "story-label:featured"}
+    ],
+    "schema": {
+        "is_active": {},
+        "name": {
+            "required": true
+        },
+        "qcode": {
+            "required": true
+        }
+    },
+    "selection_type": "do not show",
+    "type": "manageable",
+    "unique_field": "qcode"
+}

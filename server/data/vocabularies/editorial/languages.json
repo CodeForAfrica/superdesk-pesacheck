@@ -1,0 +1,19 @@
+{
+    "_id": "languages",
+    "disable_entire_category_selection": false,
+    "display_name": "Languages",
+    "init_version": 1,
+    "items": [
+        {"is_active": true, "name": "Afaan Oromo", "qcode": "om"},
+        {"is_active": true, "name": "Amharic", "qcode": "am"},
+        {"is_active": true, "name": "English", "qcode": "en"},
+        {"is_active": true, "name": "Français", "qcode": "fr"},
+        {"is_active": true, "name": "Kiswahili", "qcode": "sw"},
+        {"is_active": true, "name": "Somali", "qcode": "so"}
+    ],
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

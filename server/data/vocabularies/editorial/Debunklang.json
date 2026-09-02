@@ -1,0 +1,47 @@
+{
+    "_id": "Debunklang",
+    "description": "The language in which the article was debunked/written.",
+    "disable_entire_category_selection": false,
+    "display_name": "Debunk language",
+    "field_type": null,
+    "items": [
+        {"is_active": true, "name": "Afaan Oromo", "qcode": "debunkoro"},
+        {"is_active": true, "name": "Afrikaans", "parent": "", "qcode": "debunkakns"},
+        {"is_active": true, "name": "Amharic", "qcode": "debunkamh"},
+        {"is_active": true, "name": "Arabic", "qcode": "debunkarb"},
+        {"is_active": true, "name": "Bambara", "parent": "", "qcode": "debunkbmb"},
+        {"is_active": true, "name": "English", "qcode": "debunkeng"},
+        {"is_active": true, "name": "French", "qcode": "debunkfr"},
+        {"is_active": true, "name": "Fulani", "parent": "", "qcode": "debunkful"},
+        {"is_active": true, "name": "Hausa", "parent": "", "qcode": "debunkhsa"},
+        {"is_active": true, "name": "Igbo", "parent": "", "qcode": "debunkigb"},
+        {"is_active": true, "name": "Kiswahili", "qcode": "debunkswa"},
+        {"is_active": true, "name": "Lingala", "parent": "", "qcode": "debunklng"},
+        {"is_active": true, "name": "Pidgin", "qcode": "debunkpid"},
+        {"is_active": true, "name": "Sesotho", "qcode": "debunkses"},
+        {"is_active": true, "name": "Somali", "qcode": "debunksom"},
+        {"is_active": true, "name": "Tigrinya", "qcode": "debunktig"},
+        {"is_active": true, "name": "Wolof", "qcode": "debunkwol"},
+        {"is_active": true, "name": "Xhosa", "qcode": "debunkxho"},
+        {"is_active": true, "name": "Yoruba", "qcode": "debunkyor"},
+        {"is_active": true, "name": "Zulu", "qcode": "debunkzu"}
+    ],
+    "schema": {
+        "name": {
+            "required": true
+        },
+        "parent": {},
+        "qcode": {
+            "required": true
+        }
+    },
+    "selection_type": "single selection",
+    "service": {
+        "all": 1
+    },
+    "tags": [
+        {"text": "Claim information"}
+    ],
+    "type": "manageable",
+    "unique_field": "qcode"
+}

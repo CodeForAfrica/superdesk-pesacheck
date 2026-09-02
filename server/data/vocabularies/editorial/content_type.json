@@ -1,0 +1,23 @@
+{
+    "_deleted": false,
+    "_id": "content_type",
+    "disable_entire_category_selection": false,
+    "display_name": "Content Type",
+    "field_type": null,
+    "items": [
+        {"is_active": true, "name": "Explainer", "qcode": "explainer"},
+        {"is_active": true, "name": "Quick Read", "qcode": "quickread"},
+        {"is_active": true, "name": "Long Form", "qcode": "longform"}
+    ],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "selection_type": "single selection",
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

@@ -1,0 +1,3 @@
+[
+    {"_id": "6a60cec4359af00f83894212", "content_expiry": 14400000, "default_content_profile": "article", "default_content_template": "6a60a3c95d0074a9f711bbf6", "desk_language": "en", "desk_metadata": {}, "desk_type": "production", "incoming_stage": "6a60cec4359af00f83894210", "name": "Newsdesk", "preserve_published_content": false, "source": "newsdesk", "working_stage": "6a60cec4359af00f83894210"}
+]

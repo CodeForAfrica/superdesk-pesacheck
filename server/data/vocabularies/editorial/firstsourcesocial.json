@@ -1,0 +1,20 @@
+{
+    "_deleted": false,
+    "_id": "firstsourcesocial",
+    "description": "The social media URL (eg Facebook, Twitter, TikTok) of the fake claim.",
+    "disable_entire_category_selection": false,
+    "display_name": "1st appearance (source/social url)",
+    "field_type": "urls",
+    "helper_text": "Enter the social media URL (eg Facebook, Twitter, TikTok) of the fake claim.",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

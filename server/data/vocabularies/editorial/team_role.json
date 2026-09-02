@@ -1,0 +1,19 @@
+{
+    "_deleted": false,
+    "_id": "team_role",
+    "disable_entire_category_selection": false,
+    "display_name": "Role",
+    "field_type": "text",
+    "helper_text": "Job title, e.g. Managing Editor",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

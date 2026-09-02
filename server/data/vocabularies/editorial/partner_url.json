@@ -1,0 +1,19 @@
+{
+    "_deleted": false,
+    "_id": "partner_url",
+    "disable_entire_category_selection": false,
+    "display_name": "Partner website",
+    "field_type": "text",
+    "helper_text": "The organisation's own site — where Learn More goes",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

@@ -1,0 +1,20 @@
+{
+    "_deleted": false,
+    "_id": "firstsource",
+    "description": "URL of the website/ blog/YouTube channel etc where the fake claim first appeared. (Not for social URLs.)",
+    "disable_entire_category_selection": false,
+    "display_name": "1st appearance (source url)",
+    "field_type": "urls",
+    "helper_text": "Enter the URL of the website/ blog/YouTube channel etc where the fake claim first appeared. (Not for social URLs.)",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

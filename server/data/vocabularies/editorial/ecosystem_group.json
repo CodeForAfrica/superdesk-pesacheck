@@ -1,0 +1,22 @@
+{
+    "_deleted": false,
+    "_id": "ecosystem_group",
+    "disable_entire_category_selection": false,
+    "display_name": "Ecosystem Group",
+    "field_type": null,
+    "items": [
+        {"is_active": true, "name": "Fact-checking networks", "qcode": "networks"},
+        {"is_active": true, "name": "Research & investigation", "qcode": "research"}
+    ],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "selection_type": "single selection",
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

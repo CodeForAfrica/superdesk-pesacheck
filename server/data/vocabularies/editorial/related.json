@@ -1,0 +1,37 @@
+{
+    "_deleted": false,
+    "_id": "related",
+    "disable_entire_category_selection": false,
+    "display_name": "Related",
+    "field_options": {
+        "allowed_types": {
+            "audio": true,
+            "composite": true,
+            "graphic": true,
+            "picture": true,
+            "preformatted": true,
+            "text": true,
+            "video": true
+        },
+        "allowed_workflows": {
+            "in_progress": true,
+            "published": true
+        },
+        "multiple_items": {
+            "enabled": true,
+            "max_items": 10
+        }
+    },
+    "field_type": "related_content",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

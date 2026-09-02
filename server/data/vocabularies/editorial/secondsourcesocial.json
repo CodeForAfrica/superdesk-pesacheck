@@ -1,0 +1,20 @@
+{
+    "_deleted": false,
+    "_id": "secondsourcesocial",
+    "description": "Claims similar (ie, that echo or repeat/duplicate) to those recorded in \"1st appearance source url\" and \"1st appearance source/social url\" found and shared by other users on different platforms as 2nd and, if available, 3rd appearance respectively.",
+    "disable_entire_category_selection": false,
+    "display_name": "2nd appearance (source/social url)",
+    "field_type": "urls",
+    "helper_text": "Claims similar to those recorded in \"1st appearance source url\" and \"1st appearance source/social url\"",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

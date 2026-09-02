@@ -1,0 +1,19 @@
+{
+    "_deleted": false,
+    "_id": "event_venue",
+    "disable_entire_category_selection": false,
+    "display_name": "Event venue",
+    "field_type": "text",
+    "helper_text": "Where it happens, e.g. Nairobi or Online",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

@@ -1,0 +1,15 @@
+{
+    "_id": "replace_words",
+    "disable_entire_category_selection": false,
+    "display_name": "Replacement Words",
+    "items": [
+        {"existing": "FIXME", "is_active": true, "replacement": ""}
+    ],
+    "schema": {
+        "existing": {},
+        "replacement": {}
+    },
+    "selection_type": "do not show",
+    "type": "manageable",
+    "unique_field": "existing"
+}

@@ -1,0 +1,19 @@
+{
+    "_deleted": false,
+    "_id": "event_dates",
+    "disable_entire_category_selection": false,
+    "display_name": "Event dates",
+    "field_type": "text",
+    "helper_text": "When it happens, e.g. 12–13 September 2026",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

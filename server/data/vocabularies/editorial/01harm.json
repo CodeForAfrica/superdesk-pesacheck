@@ -1,0 +1,40 @@
+{
+    "_id": "01harm",
+    "description": "Type of harm(s) that might be caused by the false/misleading item",
+    "disable_entire_category_selection": false,
+    "display_name": "Harm type",
+    "field_type": null,
+    "helper_text": "Type of harm that the published item might cause",
+    "items": [
+        {"is_active": true, "name": "Distorts understanding", "qcode": "distort_harm"},
+        {"is_active": true, "name": "Economic", "qcode": "econ_harm"},
+        {"is_active": true, "name": "Environment", "qcode": "environ_harm"},
+        {"is_active": true, "name": "Fairness", "qcode": "fair_harm"},
+        {"is_active": true, "name": "Financial", "qcode": "finan_harm"},
+        {"is_active": true, "name": "International relations", "qcode": "international_harm"},
+        {"is_active": true, "name": "Justice", "qcode": "just_harm"},
+        {"is_active": true, "name": "Mental", "qcode": "ment_harm"},
+        {"is_active": true, "name": "Other", "qcode": "other_harm"},
+        {"is_active": true, "name": "Physical", "qcode": "phys_harm"},
+        {"is_active": true, "name": "Political", "qcode": "polit_harm"}
+    ],
+    "preffered_items": true,
+    "schema": {
+        "name": {
+            "required": true
+        },
+        "parent": {},
+        "qcode": {
+            "required": true
+        }
+    },
+    "selection_type": "multi selection",
+    "service": {
+        "all": 1
+    },
+    "tags": [
+        {"text": "Classification lists"}
+    ],
+    "type": "manageable",
+    "unique_field": "qcode"
+}

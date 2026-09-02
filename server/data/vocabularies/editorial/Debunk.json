@@ -1,0 +1,37 @@
+{
+    "_id": "Debunk",
+    "description": "The debunk rating given to the claim by the fact-checker.",
+    "disable_entire_category_selection": false,
+    "display_name": "Debunk rating",
+    "field_type": null,
+    "items": [
+        {"is_active": true, "name": "Altered", "qcode": "altered"},
+        {"is_active": true, "name": "False", "qcode": "false"},
+        {"is_active": true, "name": "False headline", "qcode": "falsehead"},
+        {"is_active": true, "name": "Hoax", "qcode": "hoax"},
+        {"is_active": true, "name": "Missing context", "qcode": "context"},
+        {"is_active": true, "name": "Partly false", "qcode": "partfalse"},
+        {"is_active": true, "name": "Satire", "qcode": "satire"},
+        {"is_active": true, "name": "True", "qcode": "true"},
+        {"is_active": true, "name": "Misleading", "qcode": "misleading"},
+        {"is_active": true, "name": "Mixture", "qcode": "mixture"}
+    ],
+    "schema": {
+        "name": {
+            "required": true
+        },
+        "parent": {},
+        "qcode": {
+            "required": true
+        }
+    },
+    "selection_type": "single selection",
+    "service": {
+        "all": 1
+    },
+    "tags": [
+        {"text": "Classification lists"}
+    ],
+    "type": "manageable",
+    "unique_field": "qcode"
+}

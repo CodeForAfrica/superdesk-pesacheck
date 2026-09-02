@@ -1,0 +1,15 @@
+{
+    "_id": "newscoveragestatus",
+    "disable_entire_category_selection": false,
+    "display_name": "News Coverage Status",
+    "init_version": 1,
+    "items": [
+        {"is_active": true, "label": "Planned", "name": "coverage intended", "qcode": "ncostat:int"},
+        {"is_active": true, "label": "On merit", "name": "coverage not decided yet", "qcode": "ncostat:notdec"},
+        {"is_active": false, "label": "Not planned", "name": "coverage not intended", "qcode": "ncostat:notint"},
+        {"is_active": true, "label": "On request", "name": "coverage upon request", "qcode": "ncostat:onreq"}
+    ],
+    "selection_type": "do not show",
+    "type": "manageable",
+    "unique_field": "qcode"
+}
