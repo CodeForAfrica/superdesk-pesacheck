@@ -78,15 +78,32 @@ async def _raw_drop_load(entity_name, file_path, index_params, original_import_f
     Indexes are (re)created by delegating to core's own `import_file` with no file
     (`file_name=None`): core then skips the load and runs only its index-creation
     tail, so a core change to index handling is picked up automatically instead of
-    drifting from a copied loop (AGENTS.md §5, "delegate, don't copy a core body").
+    drifting from a copied loop.
+
+    We DO stamp Eve's optimistic-concurrency bookkeeping (`_etag`, `_created`,
+    `_updated`) that convert.py strips as churn and that a normal service insert
+    would have set. Without a stored `_etag`, Eve recomputes one on the fly on
+    both GET and the PATCH concurrency read, and those two representations do not
+    agree for these resources (the fetch path enhances/renders the doc, the
+    concurrency read does not) -- so every edit of a raw-loaded template or stage
+    returned 412 "Client and server etags don't match", A stored `_etag` is returned
+    verbatim by GET and compared verbatim on PATCH, so the two paths agree again.
+    Load-once, so the timestamp is the seed time.
     """
     import superdesk
+    from eve.utils import document_etag
     from superdesk.core import get_current_app
+    from superdesk.utc import utcnow
 
     app = get_current_app()
     service = superdesk.get_resource_service(entity_name)
     docs = json.loads(file_path.read_text(encoding="utf-8"))
     docs = [app.data.mongo._mongotize(doc, service.datasource) for doc in docs]
+    now = utcnow()
+    for doc in docs:
+        doc.setdefault("_created", now)
+        doc.setdefault("_updated", now)
+        doc["_etag"] = document_etag(doc)
     collection = app.data.mongo.pymongo(resource=entity_name).db[entity_name]
     collection.drop()
     if docs:

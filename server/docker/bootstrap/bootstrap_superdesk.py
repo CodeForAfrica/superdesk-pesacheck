@@ -306,6 +306,53 @@ def reassign_ownership(db, admin, now):
         {"user": {"$exists": True}},
         {"$set": {"user": admin["_id"], "_updated": now, "_etag": new_etag()}},
     )
+    refresh_stage_visibility(db, now)
+
+
+def refresh_stage_visibility(db, now):
+    """Recompute each user's cached ``invisible_stages`` from desk membership.
+
+    Superdesk caches, on every user, the ids of stages that user may NOT see:
+    the hidden (``is_visible: false``) stages of desks the user is *not* a member
+    of. Search and the desk Output view read this cache verbatim
+    (apps/search `SearchService.get_stages_to_exclude`), so a stale value silently
+    hides published content. The authoritative computation is core's
+    ``apps/stages.py`` ``get_stages_by_visibility(is_visible=False, user_desk_ids)``
+    -> ``{"is_visible": False, "desk": {"$nin": user_desk_ids}}``; core keeps the
+    cache fresh via ``update_stage_visibility_for_users`` on every stage-visibility
+    or membership change *made through the service*.
+
+    Both the stage load (raw drop-load from the tracked JSON, see
+    pesacheck/content_config_patch) and the membership assignment above are raw
+    Mongo writes that bypass those service hooks, so nothing recomputes the cache.
+    Worse, the hidden stages now exist *before* ``users:create`` runs (they load
+    inside ``app:initialize_data --force``), so the admin's ``on_created`` hook
+    caches every hidden stage as invisible while it is not yet a desk member --
+    and no later step clears it. The result: auto-published fact-checks live on the
+    hidden ``Pitches`` incoming stage and vanish from /search and Output even though
+    they publish fine and reach Publisher. This restores exact-parity with the old
+    tgz-restore flow, where the same raw writes happened to leave the cache empty
+    because the hidden stages did not exist at user-create time.
+
+    Replicating the core query in raw Mongo rather than calling the service keeps
+    this in the bootstrap's raw idiom; if core changes the visibility algorithm,
+    the docstring above names the function to re-validate against.
+    """
+    for user in db.users.find({}, {"_id": 1}):
+        user_desk_ids = [
+            desk["_id"]
+            for desk in db.desks.find({"members.user": user["_id"]}, {"_id": 1})
+        ]
+        invisible = [
+            str(stage["_id"])
+            for stage in db.stages.find(
+                {"is_visible": False, "desk": {"$nin": user_desk_ids}}, {"_id": 1}
+            )
+        ]
+        db.users.update_one(
+            {"_id": user["_id"]},
+            {"$set": {"invisible_stages": invisible, "_updated": now}},
+        )
 
 
 def reassign_content_ownership():
