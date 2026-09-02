@@ -1,0 +1,11 @@
+{
+    "_id": "desk_types",
+    "disable_entire_category_selection": false,
+    "display_name": "Desk Types",
+    "items": [
+        {"is_active": true, "name": "authoring", "qcode": "authoring"},
+        {"is_active": true, "name": "production", "qcode": "production"}
+    ],
+    "selection_type": "do not show",
+    "type": "unmanageable"
+}

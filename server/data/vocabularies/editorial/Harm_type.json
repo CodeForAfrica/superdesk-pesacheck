@@ -1,0 +1,50 @@
+{
+    "_deleted": false,
+    "_id": "Harm_type",
+    "description": "General topic area (or areas) to which the harm category applies",
+    "disable_entire_category_selection": false,
+    "display_name": "Claim topic",
+    "field_type": null,
+    "helper_text": "Topic area/s to which the claim relates",
+    "items": [
+        {"is_active": true, "name": "Anti-vaxx", "parent": "health", "qcode": "antivaxx"},
+        {"is_active": true, "name": "Arts", "parent": null, "qcode": "arts"},
+        {"is_active": true, "name": "Climate", "parent": null, "qcode": "climate"},
+        {"is_active": true, "name": "Covid-19", "parent": "health", "qcode": "covid"},
+        {"is_active": true, "name": "Education", "parent": null, "qcode": "education"},
+        {"is_active": true, "name": "Elections", "parent": "politics", "qcode": "elections"},
+        {"is_active": true, "name": "Employment", "parent": null, "qcode": "employment"},
+        {"is_active": true, "name": "Entertainment", "parent": null, "qcode": "ents"},
+        {"is_active": true, "name": "Finance", "parent": null, "qcode": "finance"},
+        {"is_active": true, "name": "Gender", "parent": null, "qcode": "gender"},
+        {"is_active": true, "name": "Health", "parent": null, "qcode": "health"},
+        {"is_active": true, "name": "Health media", "parent": "health", "qcode": "healthmedia"},
+        {"is_active": true, "name": "LGBTQIA+", "parent": null, "qcode": "LGBT"},
+        {"is_active": true, "name": "Nutrition", "parent": "health", "qcode": "nutrition"},
+        {"is_active": true, "name": "Politics", "parent": null, "qcode": "politics"},
+        {"is_active": true, "name": "Religion", "parent": null, "qcode": "religion"},
+        {"is_active": true, "name": "Science", "parent": null, "qcode": "science"},
+        {"is_active": true, "name": "Sports", "parent": null, "qcode": "sports"},
+        {"is_active": true, "name": "Telecommunications", "parent": null, "qcode": "telecomms"},
+        {"is_active": true, "name": "Tourism", "parent": null, "qcode": "tourism"},
+        {"is_active": true, "name": "Transportation", "parent": null, "qcode": "transport"},
+        {"is_active": true, "name": "Wildlife", "parent": null, "qcode": "wildlife"},
+        {"is_active": true, "name": "Xenophobia", "parent": null, "qcode": "xenophobia"}
+    ],
+    "popup_width": 250,
+    "preffered_items": true,
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "selection_type": "multi selection",
+    "service": {
+        "all": 1
+    },
+    "tags": [
+        {"text": "Classification lists"}
+    ],
+    "type": "manageable",
+    "unique_field": "qcode"
+}

@@ -1,0 +1,12 @@
+{
+    "_id": "contact_phone_usage",
+    "disable_entire_category_selection": false,
+    "display_name": "Contact phone usage",
+    "helper_text": "Indicates if the contact phone number is to be made public outside the system",
+    "items": [
+        {"is_active": true, "name": "Confidential number", "public": false, "qcode": "Confidential"},
+        {"is_active": true, "name": "Business number", "public": true, "qcode": "Business"}
+    ],
+    "type": "manageable",
+    "unique_field": "qcode"
+}

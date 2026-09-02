@@ -1,0 +1,20 @@
+{
+    "_deleted": true,
+    "_id": "draft_url",
+    "description": "Link to article draft in Google Docs",
+    "disable_entire_category_selection": false,
+    "display_name": "Draft URL",
+    "field_type": "urls",
+    "helper_text": "Link to article draft in Google Docs",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

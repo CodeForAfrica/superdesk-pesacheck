@@ -7,12 +7,10 @@ change for entirely different reasons.
 Two kinds of thing live here, and the distinction matters.
 
 **The ``*_BY_QCODE`` tables are transcribed, not authored.** Each mirrors one
-vocabulary in ``docker/bootstrap/superdesk-content-config.tgz`` -- the UAT
-mongodump that ``bootstrap_superdesk.py`` restores over the ``vocabularies``
-collection wholesale -- with that script's own overrides already folded in
-(``VOCABULARY_ITEM_ADDITIONS``, ``VOCABULARY_QCODE_REPAIRS``, mojibake repair).
-That dump is periodically re-exported from UAT and this repo does not own it, so
-these tables can go stale without any change here. ``tests/test_tags.py``
+vocabulary in the tracked content config under ``server/data/vocabularies/`` --
+the reviewed JSON that ``app:initialize_data`` seeds over the ``vocabularies``
+collection. Editing a tracked vocabulary can leave these tables stale without any
+change here. ``tests/test_tags.py``
 asserts every qcode and display name below still matches the dump; that test is
 the only thing standing between a dump refresh and a corpus of items carrying
 labels the client cannot resolve. Regenerate rather than hand-edit.

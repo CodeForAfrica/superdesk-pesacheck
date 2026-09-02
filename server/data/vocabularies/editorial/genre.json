@@ -1,0 +1,56 @@
+{
+    "_id": "genre",
+    "disable_entire_category_selection": false,
+    "display_name": "Genre",
+    "init_version": 1,
+    "items": [
+        {"is_active": true, "name": "Article (news)", "qcode": "Article"},
+        {"is_active": true, "name": "Sidebar", "qcode": "Sidebar"},
+        {"is_active": true, "name": "Factbox", "qcode": "Factbox"},
+        {"is_active": true, "name": "Feature", "qcode": "Feature"},
+        {"is_active": true, "name": "Newsfeature", "qcode": "Newsfeature"},
+        {"is_active": true, "name": "Backgrounder", "qcode": "Backgrounder"},
+        {"is_active": true, "name": "Opinion", "qcode": "Opinion"},
+        {"is_active": true, "name": "View (incl parly sketch)", "qcode": "View"},
+        {"is_active": true, "name": "Modular", "qcode": "Modular"},
+        {"is_active": true, "name": "Broadcast Script", "qcode": "Broadcast Script"},
+        {"is_active": true, "name": "Briefs", "qcode": "Briefs"},
+        {"is_active": true, "name": "Colour piece", "qcode": "Colour piece"},
+        {"is_active": true, "name": "Obituary", "qcode": "Obituary"},
+        {"is_active": true, "name": "Analysis", "qcode": "Analysis"},
+        {"is_active": true, "name": "Timeline", "qcode": "Timeline"},
+        {"is_active": true, "name": "Chronology", "qcode": "Chronology"},
+        {"is_active": true, "name": "Interview", "qcode": "Interview"},
+        {"is_active": true, "name": "Results (sport)", "qcode": "Results (sport)"},
+        {"is_active": true, "name": "Market Open", "qcode": "Market Open"},
+        {"is_active": true, "name": "Market Close", "qcode": "Market Close"},
+        {"is_active": true, "name": "Market Report", "qcode": "Market Report"},
+        {"is_active": true, "name": "Review", "qcode": "Review"},
+        {"is_active": true, "name": "Preview", "qcode": "Preview"}
+    ],
+    "schema": {
+        "name": {
+            "required": true,
+            "translate": true
+        },
+        "qcode": {
+            "required": true
+        }
+    },
+    "selection_type": "multi selection",
+    "translations": {
+        "display_name": {
+            "da": "genre",
+            "de-DE": "genre",
+            "el": "Είδος",
+            "es": "genero",
+            "fr-CA": "version",
+            "nb": "Stofftype",
+            "pt-BR": "gênero",
+            "ru-RU": "Жанр",
+            "uk-UA": "Жанр"
+        }
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

@@ -1,0 +1,14 @@
+{
+    "_id": "event_calendars",
+    "disable_entire_category_selection": false,
+    "display_name": "Event Calendars",
+    "init_version": 1,
+    "items": [
+        {"is_active": true, "name": "Sport", "qcode": "sport"},
+        {"is_active": true, "name": "Finance", "qcode": "finance"},
+        {"is_active": true, "name": "Entertainment", "qcode": "entertainment"}
+    ],
+    "selection_type": "do not show",
+    "type": "manageable",
+    "unique_field": "qcode"
+}

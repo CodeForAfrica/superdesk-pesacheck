@@ -1,0 +1,36 @@
+{
+    "_id": "platform",
+    "description": "The place where the claim was originally published.",
+    "disable_entire_category_selection": false,
+    "display_name": "Primary platform",
+    "field_type": null,
+    "items": [
+        {"is_active": true, "name": "Facebook", "qcode": "fb"},
+        {"is_active": true, "name": "Instagram", "qcode": "insta"},
+        {"is_active": true, "name": "Signal", "qcode": "signal"},
+        {"is_active": true, "name": "Telegram", "qcode": "telegram"},
+        {"is_active": true, "name": "TikTok", "qcode": "tiktok"},
+        {"is_active": true, "name": "X/Twitter", "qcode": "xtwit"},
+        {"is_active": true, "name": "Website", "qcode": "web"},
+        {"is_active": true, "name": "WhatsApp", "qcode": "whatsapp"},
+        {"is_active": true, "name": "YouTube", "qcode": "YT"}
+    ],
+    "schema": {
+        "name": {
+            "required": true
+        },
+        "parent": {},
+        "qcode": {
+            "required": true
+        }
+    },
+    "selection_type": "single selection",
+    "service": {
+        "all": 1
+    },
+    "tags": [
+        {"text": "Claim information"}
+    ],
+    "type": "manageable",
+    "unique_field": "qcode"
+}

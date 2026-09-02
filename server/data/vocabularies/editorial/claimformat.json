@@ -1,0 +1,46 @@
+{
+    "_id": "claimformat",
+    "description": "How the claim was presented, eg in the form of text, image and/or video.",
+    "disable_entire_category_selection": false,
+    "display_name": "Claim format",
+    "field_type": null,
+    "items": [
+        {"is_active": true, "name": "Audio edited", "qcode": "audioedit"},
+        {"is_active": true, "name": "Audio original", "qcode": "audioorig"},
+        {"is_active": true, "name": "Audio staged", "qcode": "audiostaged"},
+        {"is_active": true, "name": "Audio transformed", "qcode": "audiotransf"},
+        {"is_active": true, "name": "Image cropped", "qcode": "imgcrop"},
+        {"is_active": true, "name": "Image missing context", "qcode": "imgmisscontext"},
+        {"is_active": true, "name": "Image original", "qcode": "imgorig"},
+        {"is_active": true, "name": "Image staged", "qcode": "imgstaged"},
+        {"is_active": true, "name": "Image transformed", "qcode": "imgtransf"},
+        {"is_active": true, "name": "Not applicable", "qcode": "notapplic"},
+        {"is_active": true, "name": "Synthetic media", "qcode": "synthmedia"},
+        {"is_active": true, "name": "Text as article", "qcode": "textarticle"},
+        {"is_active": true, "name": "Text as caption", "qcode": "textcaption"},
+        {"is_active": true, "name": "Text as image", "qcode": "textimg"},
+        {"is_active": true, "name": "Video edited", "qcode": "videdit"},
+        {"is_active": true, "name": "Video missing context", "qcode": "vidmisscontext"},
+        {"is_active": true, "name": "Video original", "qcode": "vidorig"},
+        {"is_active": true, "name": "Video staged", "qcode": "vidstaged"},
+        {"is_active": true, "name": "Video transformed", "qcode": "vidtransf"}
+    ],
+    "schema": {
+        "name": {
+            "required": true
+        },
+        "parent": {},
+        "qcode": {
+            "required": true
+        }
+    },
+    "selection_type": "multi selection",
+    "service": {
+        "all": 1
+    },
+    "tags": [
+        {"text": "Classification lists"}
+    ],
+    "type": "manageable",
+    "unique_field": "qcode"
+}

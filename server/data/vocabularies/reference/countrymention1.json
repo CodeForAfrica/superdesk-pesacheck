@@ -1,0 +1,81 @@
+{
+    "_id": "countrymention1",
+    "description": "The source country of primary claim",
+    "disable_entire_category_selection": false,
+    "display_name": "Primary country",
+    "field_type": null,
+    "helper_text": "The source country of primary claim",
+    "items": [
+        {"is_active": true, "name": "Algeria", "qcode": "DZA"},
+        {"is_active": true, "name": "Angola", "qcode": "AGO"},
+        {"is_active": true, "name": "Benin", "qcode": "BEN"},
+        {"is_active": true, "name": "Botswana", "qcode": "BWA"},
+        {"is_active": true, "name": "Burkina Faso", "qcode": "BFA"},
+        {"is_active": true, "name": "Burundi", "qcode": "BDI"},
+        {"is_active": true, "name": "Cabo Verde", "qcode": "CPV"},
+        {"is_active": true, "name": "Cameroon", "qcode": "CMR"},
+        {"is_active": true, "name": "Central African Republic", "qcode": "CAF"},
+        {"is_active": true, "name": "Chad", "qcode": "TCD"},
+        {"is_active": true, "name": "Comoros", "qcode": "COM"},
+        {"is_active": true, "name": "Côte d'Ivoire", "qcode": "CIV"},
+        {"is_active": true, "name": "DR Congo", "qcode": "COD"},
+        {"is_active": true, "name": "Djibouti", "qcode": "DJI"},
+        {"is_active": true, "name": "Egypt", "qcode": "EGY"},
+        {"is_active": true, "name": "Equatorial Guinea", "qcode": "GNQ"},
+        {"is_active": true, "name": "Eritrea", "qcode": "ERI"},
+        {"is_active": true, "name": "Eswatini", "qcode": "SWZ"},
+        {"is_active": true, "name": "Ethiopia", "qcode": "ETH"},
+        {"is_active": true, "name": "Gabon", "qcode": "GAB"},
+        {"is_active": true, "name": "Ghana", "qcode": "GHA"},
+        {"is_active": true, "name": "Guinea", "qcode": "GIN"},
+        {"is_active": true, "name": "Guinea-Bissau", "qcode": "GNB"},
+        {"is_active": true, "name": "Kenya", "qcode": "KEN"},
+        {"is_active": true, "name": "Lesotho", "qcode": "LSO"},
+        {"is_active": true, "name": "Liberia", "qcode": "LBR"},
+        {"is_active": true, "name": "Libya", "qcode": "LBY"},
+        {"is_active": true, "name": "Madagascar", "qcode": "MDG"},
+        {"is_active": true, "name": "Malawi", "qcode": "MWI"},
+        {"is_active": true, "name": "Mali", "qcode": "MLI"},
+        {"is_active": true, "name": "Mauritania", "qcode": "MRT"},
+        {"is_active": true, "name": "Mauritius", "qcode": "MUS"},
+        {"is_active": true, "name": "Morocco", "qcode": "MAR"},
+        {"is_active": true, "name": "Mozambique", "qcode": "MOZ"},
+        {"is_active": true, "name": "Namibia", "qcode": "NAM"},
+        {"is_active": true, "name": "Niger", "qcode": "NER"},
+        {"is_active": true, "name": "Nigeria", "qcode": "NGA"},
+        {"is_active": true, "name": "Rwanda", "qcode": "RWA"},
+        {"is_active": true, "name": "Senegal", "qcode": "SEN"},
+        {"is_active": true, "name": "Seychelles", "qcode": "SYC"},
+        {"is_active": true, "name": "Sierra Leone", "qcode": "SLE"},
+        {"is_active": true, "name": "Somalia", "qcode": "SOM"},
+        {"is_active": true, "name": "South Africa", "qcode": "ZAF"},
+        {"is_active": true, "name": "South Sudan", "qcode": "SSD"},
+        {"is_active": true, "name": "Sudan", "qcode": "SDN"},
+        {"is_active": true, "name": "São Tomé and Príncipe", "qcode": "STP"},
+        {"is_active": true, "name": "Tanzania", "qcode": "TZA"},
+        {"is_active": true, "name": "The Gambia", "qcode": "GMB"},
+        {"is_active": true, "name": "Togo", "qcode": "TGO"},
+        {"is_active": true, "name": "Tunisia", "qcode": "TUN"},
+        {"is_active": true, "name": "Uganda", "qcode": "UGA"},
+        {"is_active": true, "name": "Zambia", "qcode": "ZMB"},
+        {"is_active": true, "name": "Zimbabwe", "qcode": "ZWE"}
+    ],
+    "schema": {
+        "name": {
+            "required": true
+        },
+        "parent": {},
+        "qcode": {
+            "required": true
+        }
+    },
+    "selection_type": "single selection",
+    "service": {
+        "all": 1
+    },
+    "tags": [
+        {"text": "Claim information"}
+    ],
+    "type": "manageable",
+    "unique_field": "qcode"
+}

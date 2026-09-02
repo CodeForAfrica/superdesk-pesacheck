@@ -1,0 +1,35 @@
+{
+    "_id": "claimtype",
+    "description": "The type of false claim being made",
+    "disable_entire_category_selection": false,
+    "display_name": "Claim type",
+    "field_type": null,
+    "helper_text": "The type of false claim being made",
+    "items": [
+        {"is_active": true, "name": "Fabricated content", "qcode": "fabricated"},
+        {"is_active": true, "name": "False connection/clickbait", "qcode": "clickbait"},
+        {"is_active": true, "name": "False content/propaganda", "qcode": "falseprop"},
+        {"is_active": true, "name": "Imposter content", "qcode": "imposter"},
+        {"is_active": true, "name": "Manipulated content/conspiracy theories", "qcode": "manip"},
+        {"is_active": true, "name": "Misleading/out-of-context content", "qcode": "mislead"},
+        {"is_active": true, "name": "Satire/parody", "qcode": "satpar"}
+    ],
+    "schema": {
+        "name": {
+            "required": true
+        },
+        "parent": {},
+        "qcode": {
+            "required": true
+        }
+    },
+    "selection_type": "multi selection",
+    "service": {
+        "all": 1
+    },
+    "tags": [
+        {"text": "Classification lists"}
+    ],
+    "type": "manageable",
+    "unique_field": "qcode"
+}

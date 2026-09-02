@@ -8,13 +8,16 @@ drifted local stack.
 
 Phases run in order and each assumes the ones before it:
 
-  1. initialize_base_data                manage.py app:initialize_data, admin user
+  1. initialize_base_data                manage.py app:initialize_data --force,
+                                         admin user. Loads the tracked content
+                                         config from data/ (vocabularies via the
+                                         split-tree loader, content_config_patch)
   2. report_known_index_conflicts        explain the IndexKeySpecsConflict
                                          traceback phase 1 emits (upstream bug)
   3. repair_generated_data               flags and desk types the generated data
                                          leaves unset
-  4. restore_content_config              overlay the UAT content-config dump and
-                                         repoint it at this instance
+  4. reassign_content_ownership          point profiles/desks/stages at this
+                                         instance's admin (per-instance, stays code)
   5. seed_publisher_subscriber           product + HTTP push destination pointing
                                          at publisher-nginx
   6. seed_demo_content                   LOCAL-PUBLISHER-* smoke-test stories;
@@ -22,8 +25,6 @@ Phases run in order and each assumes the ones before it:
 
 Environment:
   MONGO_URI, ARCHIVED_URI            Superdesk databases
-  SUPERDESK_CONTENT_CONFIG_ARCHIVE   path to the content-config mongodump tgz
-  SUPERDESK_FORCE_INITIALIZE_DATA    re-run app:initialize_data even if base data exists
   SUPERDESK_DEMO_DATA                set to 0 to skip phase 6
   SUPERDESK_DEMO_DESK_NAME           desk the demo stories are filed to
   SUPERDESK_INTERNAL_API_URL         API base used for the demo-content POSTs
@@ -34,147 +35,18 @@ import os
 import re
 import secrets
 import subprocess
-import tarfile
-import tempfile
 import time
 import urllib.error
 import urllib.request
 from datetime import datetime, timezone
-from pathlib import Path
 
-from bson import ObjectId, decode_file_iter, json_util
-from pymongo import ASCENDING, DESCENDING, MongoClient
+from bson import ObjectId
+from pymongo import ASCENDING, MongoClient
 
 DEFAULT_MONGO_URI = "mongodb://superdesk-mongodb/superdesk"
 DEFAULT_ARCHIVED_URI = "mongodb://superdesk-mongodb/superdesk_archive"
-DEFAULT_CONFIG_ARCHIVE = (
-    "/opt/superdesk/local-content-config/superdesk-content-config.tgz"
-)
 DEFAULT_INTERNAL_API_URL = "http://superdesk-api:5000/api"
 
-# Collections the content-config dump owns outright: each is dropped and
-# replaced wholesale, so anything edited locally in these is not preserved.
-CONFIG_COLLECTIONS = [
-    "content_types",
-    "content_templates",
-    "vocabularies",
-    "content_filters",
-    "coverage_profiles",
-    "planning_types",
-    "desks",
-    "stages",
-]
-
-# Local-only content-profile overrides, applied after the restore. The UAT
-# export caps a few headline-ish fields (slugline 24, headline 64, abstract 160)
-# and the PesaCheck editorial workflow needs them unbounded.
-#
-# Kept here rather than edited into the dump: the dump is an opaque mongodump
-# re-exported from UAT periodically, so an edit there is both unreviewable in a
-# diff and silently reverted on the next refresh.
-UNCAPPED_PROFILE_FIELDS = {
-    "Article": ["slugline", "abstract", "headline"],
-}
-
-# Local-only content-profile field additions, applied after the restore.
-#
-# `keywords` is where Ghost ingest puts every tag it cannot map onto a
-# vocabulary (see pesacheck/tags.py), but the UAT Article profile carries
-# `schema.keywords = None` and no `editor.keywords` entry at all.
-#
-# A None schema value makes core's `is_enabled()` false. That does NOT strip the
-# field on the way in -- Mongo keeps it -- but `apply_schema()` runs inside the
-# publish formatter (superdesk/publish_async/formatters/base_exchange_formatter),
-# so the field is dropped from the outgoing ninjs. The leftovers were therefore
-# stored and invisible: absent from the authoring view, and absent from every
-# item Publisher received. Measured on the local stack 2026-08-28 before this
-# override: `keywords` missing from all 235 transmitted ninjs payloads,
-# Publisher's `swp_keyword` table empty. After it: the key is present and
-# Publisher populates `swp_keyword` / `swp_article_keyword`.
-#
-# Both halves have to be written: the schema entry is what lets the field
-# through the formatter, the editor entry is what renders it in authoring.
-#
-# `order` deliberately sits past the profile's highest (28) so this appends to
-# the end of the header section instead of renumbering the UAT layout.
-PROFILE_FIELD_ADDITIONS = {
-    "Article": {
-        "keywords": {
-            "editor": {
-                "order": 29,
-                "sdWidth": "full",
-                "section": "header",
-                "enabled": True,
-                "required": False,
-                "readonly": False,
-            },
-            "schema": {"type": "list", "required": False, "nullable": True},
-        },
-    },
-}
-
-# Vocabulary items ingest emits that the UAT dump does not define. A subject
-# entry whose qcode is absent from its vocabulary still validates and still
-# reaches Publisher; it simply renders as a blank label, so this is invisible
-# until someone opens the item.
-#
-#   Debunk       pesacheck/debunk.py maps ten ratings and the dump carries
-#                seven. Measured over the full pesacheck.org corpus (2026-08-28)
-#                that sends 350 items -- 2.4% of everything rated -- to
-#                `true`, `misleading` or `mixture`. Added rather than remapped:
-#                "TRUE" has no honest equivalent among the seven, and the
-#                headline prefix is a deliberate editorial verdict.
-#   content_type Ghost tags content `Short Form` / `Long Form`; the dump has
-#                `Quick Read` and `Explainer`. Short Form is Quick Read, but
-#                Long Form is NOT an explainer -- it is its own thing, so it
-#                gets its own item (editorial call, 2026-08-28).
-#
-# Additive and keyed on qcode: an item already present is left exactly as the
-# dump defines it, so this cannot fight a future dump that adds them properly.
-VOCABULARY_ITEM_ADDITIONS = {
-    "Debunk": [
-        {"name": "True", "qcode": "true", "is_active": True},
-        {"name": "Misleading", "qcode": "misleading", "is_active": True},
-        {"name": "Mixture", "qcode": "mixture", "is_active": True},
-    ],
-    "content_type": [
-        {"name": "Long Form", "qcode": "longform", "is_active": True},
-    ],
-}
-
-# qcode corrections, as (vocabulary, item name, wrong qcode, right qcode).
-# Matched on BOTH name and current qcode so a dump that fixes this upstream is
-# left alone rather than being "repaired" back into a different wrong state.
-#
-# countrymention1 codes DR Congo as COG, which is ISO 3166 for
-# Congo-Brazzaville; Kinshasa is COD. The `countries` vocabulary has both, and
-# correctly -- so left alone the Primary country and Countries mentioned fields
-# disagree on every DRC post (~570 in the full corpus).
-VOCABULARY_QCODE_REPAIRS = [
-    ("countrymention1", "DR Congo", "COG", "COD"),
-]
-
-# Mojibake signatures: UTF-8 bytes that were decoded as Latin-1 and re-encoded
-# as UTF-8, so "Côte" is stored as "CÃ´te". Three items in the dump's
-# `countries` vocabulary are affected. Matching is normalisation-insensitive
-# (pesacheck/tags.py), so this is cosmetic for the mapping -- but the name is
-# what the client and everything downstream of Publisher display.
-MOJIBAKE_MARKERS = ("Ã", "Â", "â€")
-
-AVAILABILITY_MANAGER_TAGS = {
-    "_id": "availability_manager_tags",
-    "display_name": "Availability Manager Tags",
-    "type": "manageable",
-    "unique_field": "qcode",
-    "selection_type": "multi selection",
-    "items": [],
-    "schema": {
-        "name": {"type": "string"},
-        "qcode": {"type": "string"},
-        "parent": {"type": "string"},
-        "translations": {"type": "dict"},
-    },
-}
 
 PUBLISHER_PRODUCT_NAME = "Local Publisher Product"
 PUBLISHER_SUBSCRIBER_NAME = "Local Publisher Subscriber"
@@ -207,8 +79,6 @@ DEMO_STORIES = [
         "<p>Use this item to test publishing into the local Superdesk Publisher service.</p>",
     ),
 ]
-
-OBJECT_ID_HEX_RE = re.compile(r"^[0-9a-fA-F]{24}$")
 
 
 # --------------------------------------------------------------------------
@@ -259,40 +129,21 @@ def run_manage(*args, check=True, capture=False):
     )
 
 
-def ensure_availability_manager_tags(db):
-    # Upserted in two places because the content-config restore drops the whole
-    # vocabularies collection; this keeps the vocabulary present either way.
-    db.vocabularies.update_one(
-        {"_id": AVAILABILITY_MANAGER_TAGS["_id"]},
-        {"$setOnInsert": AVAILABILITY_MANAGER_TAGS},
-        upsert=True,
-    )
-
-
 # --------------------------------------------------------------------------
 # 1. Base data
 # --------------------------------------------------------------------------
 
 
-def has_base_data(db):
-    has_admin = db.users.count_documents({"username": "admin"}) > 0
-    has_config = (
-        db.validators.estimated_document_count() > 0
-        and db.config.estimated_document_count() > 0
-    )
-    return has_admin and has_config
-
-
 def initialize_base_data():
     step("Initializing base data")
-    if has_base_data(superdesk_db()) and not env_flag(
-        "SUPERDESK_FORCE_INITIALIZE_DATA", "0"
-    ):
-        print(
-            "Skipping app:initialize_data because base Superdesk data already exists."
-        )
-    else:
-        run_manage("app:initialize_data")
+    # Always run, and always force. The tracked JSON under data/ is now the source
+    # of truth for the content config (loaded here via
+    # pesacheck/content_config_patch for the split vocabularies tree). Core skips
+    # app:initialize_data on a populated database, and even when it runs it updates
+    # a document only when forced or the file's init_version is newer -- so an
+    # unforced reseed would silently apply nothing at all. Forcing unconditionally
+    # is what makes an edit to a tracked file actually take on reseed.
+    run_manage("app:initialize_data", "--force")
 
     # Fails loudly on a re-run when admin already exists; that is expected.
     run_manage(
@@ -390,8 +241,6 @@ def repair_generated_data():
     admin = require_admin(db, "finish bootstrap")
     now = utcnow()
 
-    ensure_availability_manager_tags(db)
-
     db.users.update_one(
         {"_id": admin["_id"]},
         {
@@ -423,95 +272,12 @@ def repair_generated_data():
 
 
 # --------------------------------------------------------------------------
-# 4. Content config restore
+# 4. Content ownership
 # --------------------------------------------------------------------------
 
 
-def profile_slug(profile, fallback):
-    label = str(profile.get("label") or profile.get("type") or fallback)
-    slug = re.sub(r"[^a-z0-9_]+", "_", label.lower()).strip("_")
-    return slug or fallback
-
-
-def restore_collection(db, collection_name, source_dir):
-    """Replace one collection with the dump's copy, including its indexes."""
-    bson_path = source_dir / f"{collection_name}.bson"
-    if not bson_path.exists():
-        db[collection_name].drop()
-        print(f"Dropped {collection_name}; not present in archive.")
-        return
-
-    with bson_path.open("rb") as handle:
-        documents = list(decode_file_iter(handle))
-    db[collection_name].drop()
-    if documents:
-        db[collection_name].insert_many(documents)
-
-    metadata_path = source_dir / f"{collection_name}.metadata.json"
-    if metadata_path.exists():
-        metadata = json_util.loads(metadata_path.read_text())
-        for index in metadata.get("indexes", []):
-            if index.get("name") == "_id_":
-                continue
-            keys = [
-                (key, ASCENDING if int(direction) >= 0 else DESCENDING)
-                for key, direction in index.get("key", {}).items()
-            ]
-            options = {k: v for k, v in index.items() if k not in {"v", "key", "ns"}}
-            db[collection_name].create_index(keys, **options)
-
-    print(f"Restored {collection_name}: {len(documents)} documents.")
-
-
-def slugify_profile_ids(db):
-    """Rewrite ObjectId-shaped content profile `_id`s to readable slugs.
-
-    Superdesk's own profiles use slugs ("text", "picture"); the UAT export
-    carries ObjectIds. Returns {old_id: new_id} so references can be repointed.
-    """
-    converted = {}
-    for profile in db.content_types.find({}):
-        current_id = profile.get("_id")
-        is_object_id_shaped = isinstance(current_id, ObjectId) or (
-            isinstance(current_id, str) and OBJECT_ID_HEX_RE.match(current_id)
-        )
-        if not is_object_id_shaped:
-            continue
-
-        new_id = profile_slug(profile, f"profile_{current_id}")
-        if new_id != current_id and db.content_types.count_documents({"_id": new_id}):
-            new_id = f"{new_id}_{current_id}"
-
-        profile["_id"] = new_id
-        db.content_types.delete_one({"_id": current_id})
-        db.content_types.insert_one(profile)
-        converted[current_id] = new_id
-    return converted
-
-
-def repoint_profile_references(db, converted_profile_ids):
-    for old_id, new_id in converted_profile_ids.items():
-        # The same id can be stored as ObjectId, its str(), or its raw hex.
-        candidates = [old_id, str(old_id)]
-        if isinstance(old_id, ObjectId):
-            candidates.append(old_id.binary.hex())
-
-        db.desks.update_many(
-            {"default_content_profile": {"$in": candidates}},
-            {"$set": {"default_content_profile": new_id}},
-        )
-        db.content_templates.update_many(
-            {"data.profile": {"$in": candidates}},
-            {"$set": {"data.profile": new_id}},
-        )
-        db.archive.update_many(
-            {"profile": {"$in": candidates}},
-            {"$set": {"profile": new_id}},
-        )
-
-
 def reassign_ownership(db, admin, now):
-    """Point the restored config at this instance's admin user."""
+    """Point the tracked content config at this instance's admin user."""
     if not db.desks.find_one(sort=[("name", ASCENDING)]):
         return
     db.content_types.update_many(
@@ -540,238 +306,71 @@ def reassign_ownership(db, admin, now):
         {"user": {"$exists": True}},
         {"$set": {"user": admin["_id"], "_updated": now, "_etag": new_etag()}},
     )
+    refresh_stage_visibility(db, now)
 
 
-def remove_profile_maxlengths(db, now):
-    """Apply UNCAPPED_PROFILE_FIELDS to the restored profiles.
+def refresh_stage_visibility(db, now):
+    """Recompute each user's cached ``invisible_stages`` from desk membership.
 
-    $unset rather than maxlength: None -- an uncapped field in this schema
-    simply has no maxlength key, so this leaves the profile in the exact shape
-    Superdesk writes when the limit is cleared in the UI.
+    Superdesk caches, on every user, the ids of stages that user may NOT see:
+    the hidden (``is_visible: false``) stages of desks the user is *not* a member
+    of. Search and the desk Output view read this cache verbatim
+    (apps/search `SearchService.get_stages_to_exclude`), so a stale value silently
+    hides published content. The authoritative computation is core's
+    ``apps/stages.py`` ``get_stages_by_visibility(is_visible=False, user_desk_ids)``
+    -> ``{"is_visible": False, "desk": {"$nin": user_desk_ids}}``; core keeps the
+    cache fresh via ``update_stage_visibility_for_users`` on every stage-visibility
+    or membership change *made through the service*.
+
+    Both the stage load (raw drop-load from the tracked JSON, see
+    pesacheck/content_config_patch) and the membership assignment above are raw
+    Mongo writes that bypass those service hooks, so nothing recomputes the cache.
+    Worse, the hidden stages now exist *before* ``users:create`` runs (they load
+    inside ``app:initialize_data --force``), so the admin's ``on_created`` hook
+    caches every hidden stage as invisible while it is not yet a desk member --
+    and no later step clears it. The result: auto-published fact-checks live on the
+    hidden ``Pitches`` incoming stage and vanish from /search and Output even though
+    they publish fine and reach Publisher. This restores exact-parity with the old
+    tgz-restore flow, where the same raw writes happened to leave the cache empty
+    because the hidden stages did not exist at user-create time.
+
+    Replicating the core query in raw Mongo rather than calling the service keeps
+    this in the bootstrap's raw idiom; if core changes the visibility algorithm,
+    the docstring above names the function to re-validate against.
     """
-    for profile_label, field_names in UNCAPPED_PROFILE_FIELDS.items():
-        profile = db.content_types.find_one({"label": profile_label})
-        if not profile:
-            print(
-                f"No content profile labelled {profile_label!r}; skipping maxlength removal."
-            )
-            continue
-
-        schema = profile.get("schema") or {}
-        capped = [
-            f for f in field_names if (schema.get(f) or {}).get("maxlength") is not None
+    for user in db.users.find({}, {"_id": 1}):
+        user_desk_ids = [
+            desk["_id"]
+            for desk in db.desks.find({"members.user": user["_id"]}, {"_id": 1})
         ]
-        if not capped:
-            print(f"{profile_label}: no maxlength to remove.")
-            continue
-
-        db.content_types.update_one(
-            {"_id": profile["_id"]},
-            {
-                "$unset": {f"schema.{field}.maxlength": "" for field in capped},
-                "$set": {"_updated": now, "_etag": new_etag()},
-            },
-        )
-        print(f"Removed maxlength from {profile_label}: {', '.join(capped)}.")
-
-
-def add_profile_fields(db, now):
-    """Apply PROFILE_FIELD_ADDITIONS to the restored profiles.
-
-    Writes the editor entry and the schema entry together; either alone is
-    useless. See the constant's comment for why both are needed.
-    """
-    for profile_label, fields in PROFILE_FIELD_ADDITIONS.items():
-        profile = db.content_types.find_one({"label": profile_label})
-        if not profile:
-            print(
-                f"No content profile labelled {profile_label!r}; skipping field additions."
+        invisible = [
+            str(stage["_id"])
+            for stage in db.stages.find(
+                {"is_visible": False, "desk": {"$nin": user_desk_ids}}, {"_id": 1}
             )
-            continue
-
-        editor = profile.get("editor") or {}
-        schema = profile.get("schema") or {}
-        updates = {}
-        added = []
-        for field, spec in fields.items():
-            # Only write what is missing: a dump that already enables the field
-            # (or an editor who has since positioned it) wins over this default.
-            halves = []
-            if not editor.get(field):
-                updates[f"editor.{field}"] = spec["editor"]
-                halves.append("editor")
-            if not schema.get(field):
-                updates[f"schema.{field}"] = spec["schema"]
-                halves.append("schema")
-            if halves:
-                added.append(f"{field} ({'+'.join(halves)})")
-
-        if not updates:
-            print(f"{profile_label}: no fields to add.")
-            continue
-
-        updates["_updated"] = now
-        updates["_etag"] = new_etag()
-        db.content_types.update_one({"_id": profile["_id"]}, {"$set": updates})
-        print(f"Enabled on {profile_label}: {', '.join(added)}.")
-
-
-def add_vocabulary_items(db, now):
-    """Append VOCABULARY_ITEM_ADDITIONS to the restored vocabularies."""
-    for vocabulary_id, additions in VOCABULARY_ITEM_ADDITIONS.items():
-        vocabulary = db.vocabularies.find_one({"_id": vocabulary_id})
-        if not vocabulary:
-            print(f"No vocabulary {vocabulary_id!r}; skipping item additions.")
-            continue
-
-        items = list(vocabulary.get("items") or [])
-        present = {item.get("qcode") for item in items}
-        missing = [item for item in additions if item["qcode"] not in present]
-        if not missing:
-            print(f"{vocabulary_id}: all items already present.")
-            continue
-
-        db.vocabularies.update_one(
-            {"_id": vocabulary_id},
-            {
-                "$set": {
-                    "items": items + missing,
-                    "_updated": now,
-                    "_etag": new_etag(),
-                }
-            },
-        )
-        print(
-            f"Added to {vocabulary_id}: "
-            + ", ".join(f"{i['name']} ({i['qcode']})" for i in missing)
-            + "."
-        )
-
-
-def repair_vocabulary_qcodes(db, now):
-    """Apply VOCABULARY_QCODE_REPAIRS to the restored vocabularies."""
-    for vocabulary_id, name, wrong_qcode, right_qcode in VOCABULARY_QCODE_REPAIRS:
-        vocabulary = db.vocabularies.find_one({"_id": vocabulary_id})
-        if not vocabulary:
-            print(f"No vocabulary {vocabulary_id!r}; skipping qcode repair.")
-            continue
-
-        items = list(vocabulary.get("items") or [])
-        targets = [
-            item
-            for item in items
-            if item.get("name") == name and item.get("qcode") == wrong_qcode
         ]
-        if not targets:
-            print(
-                f"{vocabulary_id}: {name} is not coded {wrong_qcode}; nothing to repair."
-            )
-            continue
-
-        for item in targets:
-            item["qcode"] = right_qcode
-        db.vocabularies.update_one(
-            {"_id": vocabulary_id},
-            {"$set": {"items": items, "_updated": now, "_etag": new_etag()}},
+        db.users.update_one(
+            {"_id": user["_id"]},
+            {"$set": {"invisible_stages": invisible, "_updated": now}},
         )
-        print(f"Repaired {vocabulary_id}: {name} {wrong_qcode} -> {right_qcode}.")
 
 
-def demojibake(text):
-    """Undo one round of UTF-8-decoded-as-Latin-1, or return ``text`` unchanged.
+def reassign_content_ownership():
+    """Point the tracked content config at this instance's admin user.
 
-    Only attempted when a marker byte sequence is present, so a name that
-    legitimately contains "Ã" is not mangled, and only accepted when the
-    round-trip actually succeeds.
+    The content config itself now loads from tracked JSON under data/ via
+    app:initialize_data (see initialize_base_data and
+    pesacheck/content_config_patch for the split vocabularies tree). The only part
+    of the old tgz-restore that is not derivable from a tracked file is ownership:
+    profiles, desks and stages must point at THIS newsroom's admin user, and desks
+    need their membership and etags set. That is what reassign_ownership does, and
+    it deliberately stays code because the admin ObjectId is per-instance.
     """
-    if not isinstance(text, str) or not any(m in text for m in MOJIBAKE_MARKERS):
-        return text
-    try:
-        return text.encode("latin-1").decode("utf-8")
-    except (UnicodeDecodeError, UnicodeEncodeError):
-        return text
-
-
-def repair_vocabulary_mojibake(db, now):
-    """Re-decode double-encoded item names across every restored vocabulary.
-
-    Swept over all vocabularies rather than a named list: the defect is a
-    property of how the dump was exported, so the next refresh can just as
-    easily land it somewhere else.
-    """
-    repaired_vocabularies = 0
-    repaired_names = []
-    for vocabulary in db.vocabularies.find({"items": {"$exists": True}}):
-        items = list(vocabulary.get("items") or [])
-        changed = False
-        for item in items:
-            fixed = demojibake(item.get("name"))
-            if fixed != item.get("name"):
-                repaired_names.append(f"{vocabulary['_id']}.{item['qcode']} -> {fixed}")
-                item["name"] = fixed
-                changed = True
-        if not changed:
-            continue
-        db.vocabularies.update_one(
-            {"_id": vocabulary["_id"]},
-            {"$set": {"items": items, "_updated": now, "_etag": new_etag()}},
-        )
-        repaired_vocabularies += 1
-
-    if not repaired_names:
-        print("No mojibake in vocabulary item names.")
-        return
-    print(
-        f"Repaired {len(repaired_names)} mojibake item name(s) "
-        f"across {repaired_vocabularies} vocabular(ies):"
-    )
-    for entry in repaired_names:
-        print(f"  {entry}")
-
-
-def restore_content_config():
-    """Overlay the UAT content-config dump, then repoint it at this instance.
-
-    No-op (not an error) when the archive is absent: the generated defaults from
-    app:initialize_data are a usable, if bare, newsroom.
-    """
-    step("Restoring content config")
-    archive_path = Path(
-        os.environ.get("SUPERDESK_CONTENT_CONFIG_ARCHIVE", DEFAULT_CONFIG_ARCHIVE)
-    )
-    if not archive_path.exists():
-        print(
-            f"No content config archive found at {archive_path}; keeping generated defaults."
-        )
-        return
-
+    step("Reassigning content ownership")
     db = superdesk_db()
-    admin = require_admin(db, "restore content config")
-    now = utcnow()
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        with tarfile.open(archive_path) as archive:
-            archive.extractall(tmpdir, filter="data")
-
-        bson_files = list(Path(tmpdir).rglob("*.bson"))
-        if not bson_files:
-            raise SystemExit(f"No BSON files found in {archive_path}.")
-        source_dir = bson_files[0].parent
-
-        print(f"Restoring content config from {archive_path}.")
-        for collection_name in CONFIG_COLLECTIONS:
-            restore_collection(db, collection_name, source_dir)
-
-    repoint_profile_references(db, slugify_profile_ids(db))
-    reassign_ownership(db, admin, now)
-    remove_profile_maxlengths(db, now)
-    add_profile_fields(db, now)
-    add_vocabulary_items(db, now)
-    repair_vocabulary_qcodes(db, now)
-    repair_vocabulary_mojibake(db, now)
-    ensure_availability_manager_tags(db)
-
-    print("Content config restore and local reference repair complete.")
+    admin = require_admin(db, "reassign content ownership")
+    reassign_ownership(db, admin, utcnow())
+    print("Content ownership reassigned.")
 
 
 # --------------------------------------------------------------------------
@@ -993,7 +592,7 @@ def main():
     initialize_base_data()
     report_known_index_conflicts()
     repair_generated_data()
-    restore_content_config()
+    reassign_content_ownership()
     seed_publisher_subscriber()
 
     if env_flag("SUPERDESK_DEMO_DATA", "1"):

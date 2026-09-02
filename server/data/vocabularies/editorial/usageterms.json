@@ -1,0 +1,22 @@
+{
+    "_id": "usageterms",
+    "disable_entire_category_selection": false,
+    "display_name": "Terms of use",
+    "items": [
+        {"is_active": true, "name": "Single Usage", "qcode": "single-usage"},
+        {"is_active": true, "name": "Time Restricted", "qcode": "time-restricted"},
+        {"is_active": true, "name": "Indefinite Usage", "qcode": "indefinite-usage"}
+    ],
+    "schema": {
+        "name": {
+            "required": true
+        },
+        "qcode": {
+            "required": true
+        }
+    },
+    "schema_field": "usageterms",
+    "selection_type": "single selection",
+    "type": "manageable",
+    "unique_field": "qcode"
+}

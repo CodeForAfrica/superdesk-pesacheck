@@ -1,0 +1,14 @@
+{
+    "_id": "signal",
+    "disable_entire_category_selection": false,
+    "display_name": "Signal",
+    "items": [
+        {"is_active": true, "name": "Correction", "qcode": "Correction"},
+        {"is_active": true, "name": "Update", "qcode": "Update"},
+        {"is_active": true, "name": "Add", "qcode": "Add"},
+        {"is_active": true, "name": "Repeat", "qcode": "Repeat"},
+        {"is_active": true, "name": "Content Warning", "qcode": "Content Warning"}
+    ],
+    "selection_type": "multi selection",
+    "type": "unmanageable"
+}

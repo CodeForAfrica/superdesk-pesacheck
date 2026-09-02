@@ -69,6 +69,13 @@ def get_app(config=None):
 
     promote_media_patch.apply()
 
+    # Load the vocabularies collection from the tracked per-vocabulary tree under
+    # data/vocabularies/ (deny-listing keywords), instead of core's single-file
+    # fallback (see pesacheck/content_config_patch.py).
+    from pesacheck import content_config_patch
+
+    content_config_patch.apply()
+
     app = superdesk_app(config)
     return app
 

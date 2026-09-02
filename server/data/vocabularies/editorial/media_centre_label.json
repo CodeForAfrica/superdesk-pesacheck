@@ -1,0 +1,38 @@
+{
+    "_deleted": false,
+    "_id": "media_centre_label",
+    "disable_entire_category_selection": false,
+    "display_name": "Entry Type",
+    "field_type": null,
+    "items": [
+        {"is_active": true, "name": "Workshop", "qcode": "workshop"},
+        {"is_active": true, "name": "Webinar", "qcode": "webinar"},
+        {"is_active": true, "name": "Lab", "qcode": "lab"},
+        {"is_active": true, "name": "Summit", "qcode": "summit"},
+        {"is_active": true, "name": "Clinic", "qcode": "clinic"},
+        {"is_active": true, "name": "Network", "qcode": "network"},
+        {"is_active": true, "name": "Methodology", "qcode": "methodology"},
+        {"is_active": true, "name": "Partnership", "qcode": "partnership"},
+        {"is_active": true, "name": "Data", "qcode": "data"},
+        {"is_active": true, "name": "Journal article", "qcode": "journal_article"},
+        {"is_active": true, "name": "Working paper", "qcode": "working_paper"},
+        {"is_active": true, "name": "Conference paper", "qcode": "conference_paper"},
+        {"is_active": true, "name": "Policy report", "qcode": "policy_report"},
+        {"is_active": true, "name": "International newsrooms", "qcode": "international_newsrooms"},
+        {"is_active": true, "name": "Platform reporting", "qcode": "platform_reporting"},
+        {"is_active": true, "name": "Sector review", "qcode": "sector_review"},
+        {"is_active": true, "name": "Broadcast", "qcode": "broadcast"}
+    ],
+    "preffered_items": true,
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "selection_type": "single selection",
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

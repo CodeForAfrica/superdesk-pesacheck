@@ -1,0 +1,19 @@
+{
+    "_deleted": false,
+    "_id": "partner_role",
+    "disable_entire_category_selection": false,
+    "display_name": "Partner role",
+    "field_type": "text",
+    "helper_text": "Relationship, e.g. Verified signatory",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

@@ -1,0 +1,20 @@
+{
+    "_deleted": false,
+    "_id": "archiveurl",
+    "description": "The archive URL for the claims that were entered in \"1st appearance source url\" and \"1st appearance source/social url\"",
+    "disable_entire_category_selection": false,
+    "display_name": "Claim archive url",
+    "field_type": "urls",
+    "helper_text": "The archive URL for the claims that were entered in \"1st appearance source url\" and \"1st appearance source/social url\"",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

@@ -1,0 +1,34 @@
+{
+    "_deleted": false,
+    "_id": "project",
+    "description": "deprecated list",
+    "disable_entire_category_selection": false,
+    "display_name": "Project_deprecated",
+    "field_type": null,
+    "helper_text": "Entity/funding body.",
+    "items": [
+        {"is_active": true, "name": "DWA", "qcode": "projdwa"},
+        {"is_active": true, "name": "IFCN", "qcode": "projifcn"},
+        {"is_active": true, "name": "Long Form", "qcode": "projlongform"},
+        {"is_active": true, "name": "MONUSCO", "qcode": "projmonusco"},
+        {"is_active": true, "name": "Meta Incubator", "qcode": "projmeta"},
+        {"is_active": true, "name": "TPFC", "qcode": "projtpfc"},
+        {"is_active": true, "name": "TikTok", "qcode": "projtiktok"},
+        {"is_active": true, "name": "USAID", "qcode": "projusaid"},
+        {"is_active": true, "name": "WhatsApp", "qcode": "projwhatsapp"}
+    ],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "selection_type": "single selection",
+    "service": {
+        "all": 1
+    },
+    "tags": [
+        {"text": "Classification lists"}
+    ],
+    "type": "manageable",
+    "unique_field": "qcode"
+}

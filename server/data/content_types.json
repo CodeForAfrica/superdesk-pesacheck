@@ -1,0 +1,3281 @@
+[
+    {
+        "_id": "6a8c9122e2b084181606a9ce",
+        "editor": {
+            "01harm": null,
+            "Debunk": null,
+            "Debunklang": null,
+            "GEC": null,
+            "Harm_type": null,
+            "abstract": {
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "link"
+                ],
+                "order": 11,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "anpa_category": {
+                "enabled": true,
+                "order": 5,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "anpa_take_key": null,
+            "archiveurl": null,
+            "attachments": null,
+            "authors": {
+                "enabled": true,
+                "order": 8,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "body_footer": null,
+            "body_html": {
+                "cleanPastedHTML": false,
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "h2",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "quote",
+                    "link",
+                    "embed",
+                    "media"
+                ],
+                "order": 14,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "byline": {
+                "enabled": true,
+                "order": 12,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "claimformat": null,
+            "claimtype": null,
+            "company_codes": null,
+            "content_type": null,
+            "countries": null,
+            "countrymention1": null,
+            "countrymention2": null,
+            "countrymention3": null,
+            "countrymention4": null,
+            "countrymention5": null,
+            "dateline": {
+                "enabled": true,
+                "order": 13,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "drafturl": null,
+            "ednote": {
+                "enabled": true,
+                "order": 7,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "feature_media": null,
+            "firstsource": null,
+            "firstsourcesocial": null,
+            "footer": null,
+            "genre": {
+                "enabled": true,
+                "order": 1,
+                "required": false,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "headline": {
+                "enabled": true,
+                "formatOptions": [],
+                "order": 10,
+                "required": true,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "keywords": null,
+            "language": null,
+            "media_centre_label": {
+                "enabled": true,
+                "field_name": "Media Centre Label",
+                "order": 9,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "media_description": null,
+            "originator": null,
+            "place": {
+                "enabled": true,
+                "order": 2,
+                "required": false,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "platform": null,
+            "priority": {
+                "enabled": true,
+                "order": 3,
+                "required": false,
+                "sdWidth": "quarter",
+                "section": "header"
+            },
+            "project": null,
+            "related": null,
+            "secondsourcesocial": null,
+            "sign_off": {
+                "enabled": true,
+                "order": 15,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "slugline": {
+                "enabled": true,
+                "order": 0,
+                "required": true,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "sms": null,
+            "subject": {
+                "enabled": true,
+                "order": 6,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "thirdsource": null,
+            "urgency": {
+                "enabled": true,
+                "order": 4,
+                "required": false,
+                "sdWidth": "quarter",
+                "section": "header"
+            },
+            "usageterms": null
+        },
+        "embeddable": false,
+        "enabled": true,
+        "label": "Announcement",
+        "priority": 0,
+        "schema": {
+            "abstract": {
+                "maxlength": 160,
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "anpa_category": {
+                "mandatory_in_list": null,
+                "nullable": true,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "anpa_take_key": null,
+            "archiveurl": null,
+            "attachments": null,
+            "authors": {
+                "mandatory_in_list": null,
+                "nullable": true,
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "parent": {
+                            "type": "string"
+                        },
+                        "role": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "body_footer": null,
+            "body_html": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "byline": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "company_codes": null,
+            "dateline": {
+                "nullable": true,
+                "required": false,
+                "type": "dict"
+            },
+            "drafturl": null,
+            "ednote": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "feature_media": null,
+            "firstsource": null,
+            "firstsourcesocial": null,
+            "footer": null,
+            "genre": {
+                "mandatory_in_list": null,
+                "nullable": true,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "headline": {
+                "maxlength": 64,
+                "nullable": false,
+                "required": true,
+                "type": "string"
+            },
+            "keywords": null,
+            "language": null,
+            "media_description": null,
+            "originator": null,
+            "place": {
+                "mandatory_in_list": null,
+                "nullable": true,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "priority": {
+                "nullable": true,
+                "required": false,
+                "type": "integer"
+            },
+            "related": null,
+            "secondsourcesocial": null,
+            "sign_off": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "slugline": {
+                "maxlength": 24,
+                "nullable": false,
+                "required": true,
+                "type": "string"
+            },
+            "sms": null,
+            "subject": {
+                "default": [],
+                "mandatory_in_list": {
+                    "scheme": {
+                        "01harm": null,
+                        "Debunk": null,
+                        "Debunklang": null,
+                        "GEC": null,
+                        "Harm_type": null,
+                        "claimformat": null,
+                        "claimtype": null,
+                        "content_type": null,
+                        "countries": null,
+                        "countrymention1": null,
+                        "countrymention2": null,
+                        "countrymention3": null,
+                        "countrymention4": null,
+                        "countrymention5": null,
+                        "media_centre_label": null,
+                        "platform": null,
+                        "project": null
+                    }
+                },
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {},
+                        "scheme": {
+                            "allowed": [
+                                "media_centre_label"
+                            ],
+                            "nullable": true,
+                            "required": true,
+                            "type": "string"
+                        },
+                        "service": {
+                            "nullable": true
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "thirdsource": null,
+            "urgency": {
+                "nullable": true,
+                "required": false,
+                "type": "integer"
+            },
+            "usageterms": null
+        },
+        "type": "text"
+    },
+    {
+        "_id": "6a8d9ff7e2b084181606aabb",
+        "description": "Purely for research",
+        "editor": {
+            "01harm": null,
+            "Debunk": null,
+            "Debunklang": null,
+            "GEC": null,
+            "Harm_type": null,
+            "abstract": {
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "link"
+                ],
+                "order": 5,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "anpa_category": null,
+            "anpa_take_key": null,
+            "archiveurl": null,
+            "attachments": null,
+            "authors": {
+                "enabled": true,
+                "order": 2,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "body_footer": null,
+            "body_html": {
+                "cleanPastedHTML": false,
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "h2",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "quote",
+                    "link",
+                    "embed",
+                    "media"
+                ],
+                "order": 6,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "byline": null,
+            "claimformat": null,
+            "claimtype": null,
+            "company_codes": null,
+            "content_type": null,
+            "countries": null,
+            "countrymention1": null,
+            "countrymention2": null,
+            "countrymention3": null,
+            "countrymention4": null,
+            "countrymention5": null,
+            "dateline": null,
+            "drafturl": null,
+            "ednote": null,
+            "event_cost": null,
+            "event_dates": null,
+            "event_format": null,
+            "event_languages": null,
+            "event_meta": null,
+            "event_venue": null,
+            "feature_media": null,
+            "firstsource": null,
+            "firstsourcesocial": null,
+            "footer": null,
+            "genre": null,
+            "headline": {
+                "enabled": true,
+                "formatOptions": [],
+                "order": 4,
+                "required": true,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "keywords": null,
+            "language": null,
+            "media_centre_label": {
+                "enabled": true,
+                "field_name": "Media Centre Label",
+                "order": 3,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "media_description": null,
+            "originator": null,
+            "place": {
+                "enabled": true,
+                "order": 1,
+                "required": false,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "platform": null,
+            "priority": null,
+            "project": null,
+            "related": null,
+            "secondsourcesocial": null,
+            "sign_off": {
+                "enabled": true,
+                "order": 7,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "slugline": {
+                "enabled": true,
+                "order": 0,
+                "required": true,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "sms": null,
+            "subject": null,
+            "thirdsource": null,
+            "urgency": null,
+            "usageterms": null
+        },
+        "embeddable": false,
+        "enabled": true,
+        "label": "Research Citations",
+        "priority": 0,
+        "schema": {
+            "abstract": {
+                "maxlength": 160,
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "anpa_category": null,
+            "anpa_take_key": null,
+            "archiveurl": null,
+            "attachments": null,
+            "authors": {
+                "mandatory_in_list": null,
+                "nullable": true,
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "parent": {
+                            "type": "string"
+                        },
+                        "role": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "body_footer": null,
+            "body_html": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "byline": null,
+            "company_codes": null,
+            "dateline": null,
+            "drafturl": null,
+            "ednote": null,
+            "event_cost": null,
+            "event_dates": null,
+            "event_format": null,
+            "event_languages": null,
+            "event_meta": null,
+            "event_venue": null,
+            "feature_media": null,
+            "firstsource": null,
+            "firstsourcesocial": null,
+            "footer": null,
+            "genre": null,
+            "headline": {
+                "maxlength": 64,
+                "nullable": false,
+                "required": true,
+                "type": "string"
+            },
+            "keywords": null,
+            "language": null,
+            "media_description": null,
+            "originator": null,
+            "place": {
+                "mandatory_in_list": null,
+                "nullable": true,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "priority": null,
+            "related": null,
+            "secondsourcesocial": null,
+            "sign_off": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "slugline": {
+                "maxlength": null,
+                "nullable": false,
+                "required": true,
+                "type": "string"
+            },
+            "sms": null,
+            "subject": {
+                "default": [],
+                "mandatory_in_list": {
+                    "scheme": {
+                        "01harm": null,
+                        "Debunk": null,
+                        "Debunklang": null,
+                        "GEC": null,
+                        "Harm_type": null,
+                        "claimformat": null,
+                        "claimtype": null,
+                        "content_type": null,
+                        "countries": null,
+                        "countrymention1": null,
+                        "countrymention2": null,
+                        "countrymention3": null,
+                        "countrymention4": null,
+                        "countrymention5": null,
+                        "media_centre_label": null,
+                        "platform": null,
+                        "project": null
+                    }
+                },
+                "readonly": false,
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {},
+                        "scheme": {
+                            "allowed": [
+                                "media_centre_label"
+                            ],
+                            "nullable": true,
+                            "required": true,
+                            "type": "string"
+                        },
+                        "service": {
+                            "nullable": true
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "thirdsource": null,
+            "urgency": null,
+            "usageterms": null
+        },
+        "type": "text"
+    },
+    {
+        "_id": "6a97ebdad0756a69fc29fab0",
+        "description": "One organisation on the Our Ecosystem page",
+        "editor": {
+            "01harm": null,
+            "Debunk": null,
+            "Debunklang": null,
+            "GEC": null,
+            "Harm_type": null,
+            "abstract": {
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "link"
+                ],
+                "order": 5,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "anpa_category": null,
+            "anpa_take_key": null,
+            "archiveurl": null,
+            "attachments": null,
+            "authors": null,
+            "body_footer": null,
+            "body_html": null,
+            "byline": null,
+            "claimformat": null,
+            "claimtype": null,
+            "company_codes": null,
+            "content_type": null,
+            "countries": null,
+            "countrymention1": null,
+            "countrymention2": null,
+            "countrymention3": null,
+            "countrymention4": null,
+            "countrymention5": null,
+            "dateline": null,
+            "drafturl": null,
+            "ecosystem_group": {
+                "enabled": true,
+                "field_name": "Ecosystem Group",
+                "order": 1,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "ednote": null,
+            "event_cost": null,
+            "event_dates": null,
+            "event_format": null,
+            "event_languages": null,
+            "event_meta": null,
+            "event_venue": null,
+            "faq_group": null,
+            "feature_media": {
+                "enabled": true,
+                "order": 6,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "firstsource": null,
+            "firstsourcesocial": null,
+            "footer": null,
+            "genre": null,
+            "headline": {
+                "enabled": true,
+                "formatOptions": [],
+                "order": 4,
+                "required": true,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "keywords": null,
+            "language": null,
+            "linkedin_url": null,
+            "media_centre_label": null,
+            "media_description": null,
+            "originator": null,
+            "partner_role": {
+                "enabled": true,
+                "field_name": "Partner role",
+                "order": 2,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "partner_url": {
+                "enabled": true,
+                "field_name": "Partner website",
+                "order": 3,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "place": null,
+            "platform": null,
+            "priority": null,
+            "project": null,
+            "related": null,
+            "secondsourcesocial": null,
+            "sign_off": null,
+            "slugline": {
+                "enabled": true,
+                "order": 0,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "sms": null,
+            "subject": null,
+            "team_role": null,
+            "thirdsource": null,
+            "urgency": null,
+            "usageterms": null
+        },
+        "embeddable": false,
+        "enabled": true,
+        "label": "Ecosystem Partner",
+        "priority": 0,
+        "schema": {
+            "abstract": {
+                "maxlength": 160,
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "anpa_category": null,
+            "anpa_take_key": null,
+            "archiveurl": null,
+            "attachments": null,
+            "authors": null,
+            "body_footer": null,
+            "body_html": null,
+            "byline": null,
+            "company_codes": null,
+            "dateline": null,
+            "drafturl": null,
+            "ednote": null,
+            "event_cost": null,
+            "event_dates": null,
+            "event_format": null,
+            "event_languages": null,
+            "event_meta": null,
+            "event_venue": null,
+            "feature_media": {
+                "nullable": true,
+                "required": false,
+                "type": "media"
+            },
+            "firstsource": null,
+            "firstsourcesocial": null,
+            "footer": null,
+            "genre": null,
+            "headline": {
+                "maxlength": 64,
+                "nullable": false,
+                "required": true,
+                "type": "string"
+            },
+            "keywords": null,
+            "language": null,
+            "linkedin_url": null,
+            "media_description": null,
+            "originator": null,
+            "partner_role": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "partner_url": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "place": null,
+            "priority": null,
+            "related": null,
+            "secondsourcesocial": null,
+            "sign_off": null,
+            "slugline": {
+                "maxlength": 24,
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "sms": null,
+            "subject": {
+                "default": [],
+                "mandatory_in_list": {
+                    "scheme": {
+                        "01harm": null,
+                        "Debunk": null,
+                        "Debunklang": null,
+                        "GEC": null,
+                        "Harm_type": null,
+                        "claimformat": null,
+                        "claimtype": null,
+                        "content_type": null,
+                        "countries": null,
+                        "countrymention1": null,
+                        "countrymention2": null,
+                        "countrymention3": null,
+                        "countrymention4": null,
+                        "countrymention5": null,
+                        "ecosystem_group": null,
+                        "faq_group": null,
+                        "media_centre_label": null,
+                        "platform": null,
+                        "project": null
+                    }
+                },
+                "readonly": false,
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {},
+                        "scheme": {
+                            "allowed": [
+                                "ecosystem_group"
+                            ],
+                            "nullable": true,
+                            "required": true,
+                            "type": "string"
+                        },
+                        "service": {
+                            "nullable": true
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "team_role": null,
+            "thirdsource": null,
+            "urgency": null,
+            "usageterms": null
+        },
+        "type": "text"
+    },
+    {
+        "_id": "6a97ecc6d0756a69fc29fab4",
+        "description": "Team Member",
+        "editor": {
+            "01harm": null,
+            "Debunk": null,
+            "Debunklang": null,
+            "GEC": null,
+            "Harm_type": null,
+            "abstract": {
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "link"
+                ],
+                "order": 4,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "anpa_category": null,
+            "anpa_take_key": null,
+            "archiveurl": null,
+            "attachments": null,
+            "authors": null,
+            "body_footer": null,
+            "body_html": {
+                "cleanPastedHTML": false,
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "h2",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "quote",
+                    "link",
+                    "embed",
+                    "media"
+                ],
+                "order": 5,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "byline": null,
+            "claimformat": null,
+            "claimtype": null,
+            "company_codes": null,
+            "content_type": null,
+            "countries": null,
+            "countrymention1": null,
+            "countrymention2": null,
+            "countrymention3": null,
+            "countrymention4": null,
+            "countrymention5": null,
+            "dateline": null,
+            "drafturl": null,
+            "ecosystem_group": null,
+            "ednote": null,
+            "event_cost": null,
+            "event_dates": null,
+            "event_format": null,
+            "event_languages": null,
+            "event_meta": null,
+            "event_venue": null,
+            "faq_group": null,
+            "feature_media": {
+                "enabled": true,
+                "order": 6,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "firstsource": null,
+            "firstsourcesocial": null,
+            "footer": null,
+            "genre": null,
+            "headline": {
+                "enabled": true,
+                "formatOptions": [],
+                "order": 3,
+                "required": true,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "keywords": null,
+            "language": null,
+            "linkedin_url": {
+                "enabled": true,
+                "field_name": "LinkedIn",
+                "order": 2,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "media_centre_label": null,
+            "media_description": null,
+            "originator": null,
+            "partner_role": null,
+            "partner_url": null,
+            "place": null,
+            "platform": null,
+            "priority": null,
+            "project": null,
+            "related": null,
+            "secondsourcesocial": null,
+            "sign_off": null,
+            "slugline": {
+                "enabled": true,
+                "order": 0,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "sms": null,
+            "subject": null,
+            "team_role": {
+                "enabled": true,
+                "field_name": "Role",
+                "order": 1,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "thirdsource": null,
+            "urgency": null,
+            "usageterms": null
+        },
+        "embeddable": false,
+        "enabled": true,
+        "label": "Team Member",
+        "priority": 0,
+        "schema": {
+            "abstract": {
+                "maxlength": 160,
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "anpa_category": null,
+            "anpa_take_key": null,
+            "archiveurl": null,
+            "attachments": null,
+            "authors": null,
+            "body_footer": null,
+            "body_html": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "byline": null,
+            "company_codes": null,
+            "dateline": null,
+            "drafturl": null,
+            "ednote": null,
+            "event_cost": null,
+            "event_dates": null,
+            "event_format": null,
+            "event_languages": null,
+            "event_meta": null,
+            "event_venue": null,
+            "feature_media": {
+                "nullable": true,
+                "required": false,
+                "type": "media"
+            },
+            "firstsource": null,
+            "firstsourcesocial": null,
+            "footer": null,
+            "genre": null,
+            "headline": {
+                "maxlength": 64,
+                "nullable": false,
+                "required": true,
+                "type": "string"
+            },
+            "keywords": null,
+            "language": null,
+            "linkedin_url": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "media_description": null,
+            "originator": null,
+            "partner_role": null,
+            "partner_url": null,
+            "place": null,
+            "priority": null,
+            "related": null,
+            "secondsourcesocial": null,
+            "sign_off": null,
+            "slugline": {
+                "maxlength": 24,
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "sms": null,
+            "subject": null,
+            "team_role": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "thirdsource": null,
+            "urgency": null,
+            "usageterms": null
+        },
+        "type": "text"
+    },
+    {
+        "_id": "6a97ed55d0756a69fc29fab7",
+        "description": "FAQ",
+        "editor": {
+            "01harm": null,
+            "Debunk": null,
+            "Debunklang": null,
+            "GEC": null,
+            "Harm_type": null,
+            "abstract": {
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "link"
+                ],
+                "order": 3,
+                "required": true,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "anpa_category": null,
+            "anpa_take_key": null,
+            "archiveurl": null,
+            "attachments": null,
+            "authors": null,
+            "body_footer": null,
+            "body_html": null,
+            "byline": null,
+            "claimformat": null,
+            "claimtype": null,
+            "company_codes": null,
+            "content_type": null,
+            "countries": null,
+            "countrymention1": null,
+            "countrymention2": null,
+            "countrymention3": null,
+            "countrymention4": null,
+            "countrymention5": null,
+            "dateline": null,
+            "drafturl": null,
+            "ecosystem_group": null,
+            "ednote": null,
+            "event_cost": null,
+            "event_dates": null,
+            "event_format": null,
+            "event_languages": null,
+            "event_meta": null,
+            "event_venue": null,
+            "faq_group": {
+                "enabled": true,
+                "field_name": "FAQ Group",
+                "order": 1,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "feature_media": null,
+            "firstsource": null,
+            "firstsourcesocial": null,
+            "footer": null,
+            "genre": null,
+            "headline": {
+                "enabled": true,
+                "formatOptions": [],
+                "order": 2,
+                "required": true,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "keywords": null,
+            "language": null,
+            "linkedin_url": null,
+            "media_centre_label": null,
+            "media_description": null,
+            "originator": null,
+            "partner_role": null,
+            "partner_url": null,
+            "place": null,
+            "platform": null,
+            "priority": null,
+            "project": null,
+            "related": null,
+            "secondsourcesocial": null,
+            "sign_off": null,
+            "slugline": {
+                "enabled": true,
+                "order": 0,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "sms": null,
+            "subject": null,
+            "team_role": null,
+            "thirdsource": null,
+            "urgency": null,
+            "usageterms": null
+        },
+        "embeddable": false,
+        "enabled": true,
+        "label": "FAQ",
+        "priority": 0,
+        "schema": {
+            "abstract": {
+                "maxlength": 160,
+                "nullable": false,
+                "required": true,
+                "type": "string"
+            },
+            "anpa_category": null,
+            "anpa_take_key": null,
+            "archiveurl": null,
+            "attachments": null,
+            "authors": null,
+            "body_footer": null,
+            "body_html": null,
+            "byline": null,
+            "company_codes": null,
+            "dateline": null,
+            "drafturl": null,
+            "ednote": null,
+            "event_cost": null,
+            "event_dates": null,
+            "event_format": null,
+            "event_languages": null,
+            "event_meta": null,
+            "event_venue": null,
+            "feature_media": null,
+            "firstsource": null,
+            "firstsourcesocial": null,
+            "footer": null,
+            "genre": null,
+            "headline": {
+                "maxlength": 64,
+                "nullable": false,
+                "required": true,
+                "type": "string"
+            },
+            "keywords": null,
+            "language": null,
+            "linkedin_url": null,
+            "media_description": null,
+            "originator": null,
+            "partner_role": null,
+            "partner_url": null,
+            "place": null,
+            "priority": null,
+            "related": null,
+            "secondsourcesocial": null,
+            "sign_off": null,
+            "slugline": {
+                "maxlength": 24,
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "sms": null,
+            "subject": {
+                "default": [],
+                "mandatory_in_list": {
+                    "scheme": {
+                        "01harm": null,
+                        "Debunk": null,
+                        "Debunklang": null,
+                        "GEC": null,
+                        "Harm_type": null,
+                        "claimformat": null,
+                        "claimtype": null,
+                        "content_type": null,
+                        "countries": null,
+                        "countrymention1": null,
+                        "countrymention2": null,
+                        "countrymention3": null,
+                        "countrymention4": null,
+                        "countrymention5": null,
+                        "ecosystem_group": null,
+                        "faq_group": null,
+                        "media_centre_label": null,
+                        "platform": null,
+                        "project": null
+                    }
+                },
+                "readonly": false,
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {},
+                        "scheme": {
+                            "allowed": [
+                                "faq_group"
+                            ],
+                            "nullable": true,
+                            "required": true,
+                            "type": "string"
+                        },
+                        "service": {
+                            "nullable": true
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "team_role": null,
+            "thirdsource": null,
+            "urgency": null,
+            "usageterms": null
+        },
+        "type": "text"
+    },
+    {
+        "_id": "6a97edd7d0756a69fc29fabb",
+        "description": "Media Centre event spotlight and upcoming cards",
+        "editor": {
+            "01harm": null,
+            "Debunk": null,
+            "Debunklang": null,
+            "GEC": null,
+            "Harm_type": null,
+            "abstract": {
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "link"
+                ],
+                "order": 8,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "anpa_category": null,
+            "anpa_take_key": null,
+            "archiveurl": null,
+            "attachments": null,
+            "authors": null,
+            "body_footer": null,
+            "body_html": {
+                "cleanPastedHTML": false,
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "h2",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "quote",
+                    "link",
+                    "embed",
+                    "media"
+                ],
+                "order": 9,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "byline": null,
+            "claimformat": null,
+            "claimtype": null,
+            "company_codes": null,
+            "content_type": null,
+            "countries": null,
+            "countrymention1": null,
+            "countrymention2": null,
+            "countrymention3": null,
+            "countrymention4": null,
+            "countrymention5": null,
+            "dateline": null,
+            "drafturl": null,
+            "ecosystem_group": null,
+            "ednote": null,
+            "event_cost": {
+                "enabled": true,
+                "field_name": "Event cost",
+                "order": 6,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "event_dates": {
+                "enabled": true,
+                "field_name": "Event dates",
+                "order": 3,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "event_format": {
+                "enabled": true,
+                "field_name": "Event format",
+                "order": 4,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "event_languages": {
+                "enabled": true,
+                "field_name": "Event languages",
+                "order": 5,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "event_meta": null,
+            "event_venue": {
+                "enabled": true,
+                "field_name": "Event venue",
+                "order": 2,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "faq_group": null,
+            "feature_media": {
+                "enabled": true,
+                "order": 10,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "firstsource": null,
+            "firstsourcesocial": null,
+            "footer": null,
+            "genre": null,
+            "headline": {
+                "enabled": true,
+                "formatOptions": [],
+                "order": 7,
+                "required": true,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "keywords": null,
+            "language": null,
+            "linkedin_url": null,
+            "media_centre_label": {
+                "enabled": true,
+                "field_name": "Entry Type",
+                "order": 1,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "media_description": null,
+            "originator": null,
+            "partner_role": null,
+            "partner_url": null,
+            "place": null,
+            "platform": null,
+            "priority": null,
+            "project": null,
+            "related": null,
+            "secondsourcesocial": null,
+            "sign_off": null,
+            "slugline": {
+                "enabled": true,
+                "order": 0,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "sms": null,
+            "subject": null,
+            "team_role": null,
+            "thirdsource": null,
+            "urgency": null,
+            "usageterms": null
+        },
+        "embeddable": false,
+        "enabled": true,
+        "label": "Event",
+        "priority": 0,
+        "schema": {
+            "abstract": {
+                "maxlength": 160,
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "anpa_category": null,
+            "anpa_take_key": null,
+            "archiveurl": null,
+            "attachments": null,
+            "authors": null,
+            "body_footer": null,
+            "body_html": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "byline": null,
+            "company_codes": null,
+            "dateline": null,
+            "drafturl": null,
+            "ednote": null,
+            "event_cost": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "event_dates": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "event_format": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "event_languages": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "event_meta": null,
+            "event_venue": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "feature_media": {
+                "nullable": true,
+                "required": false,
+                "type": "media"
+            },
+            "firstsource": null,
+            "firstsourcesocial": null,
+            "footer": null,
+            "genre": null,
+            "headline": {
+                "maxlength": 64,
+                "nullable": false,
+                "required": true,
+                "type": "string"
+            },
+            "keywords": null,
+            "language": null,
+            "linkedin_url": null,
+            "media_description": null,
+            "originator": null,
+            "partner_role": null,
+            "partner_url": null,
+            "place": null,
+            "priority": null,
+            "related": null,
+            "secondsourcesocial": null,
+            "sign_off": null,
+            "slugline": {
+                "maxlength": 24,
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "sms": null,
+            "subject": {
+                "default": [],
+                "mandatory_in_list": {
+                    "scheme": {
+                        "01harm": null,
+                        "Debunk": null,
+                        "Debunklang": null,
+                        "GEC": null,
+                        "Harm_type": null,
+                        "claimformat": null,
+                        "claimtype": null,
+                        "content_type": null,
+                        "countries": null,
+                        "countrymention1": null,
+                        "countrymention2": null,
+                        "countrymention3": null,
+                        "countrymention4": null,
+                        "countrymention5": null,
+                        "ecosystem_group": null,
+                        "faq_group": null,
+                        "media_centre_label": null,
+                        "platform": null,
+                        "project": null
+                    }
+                },
+                "readonly": false,
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {},
+                        "scheme": {
+                            "allowed": [
+                                "media_centre_label"
+                            ],
+                            "nullable": true,
+                            "required": true,
+                            "type": "string"
+                        },
+                        "service": {
+                            "nullable": true
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "team_role": null,
+            "thirdsource": null,
+            "urgency": null,
+            "usageterms": null
+        },
+        "type": "text"
+    },
+    {
+        "_id": "article",
+        "editor": {
+            "01harm": {
+                "enabled": true,
+                "field_name": "Harm type",
+                "order": 2,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "Debunk": {
+                "enabled": true,
+                "field_name": "Debunk rating",
+                "order": 3,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "Debunklang": {
+                "enabled": true,
+                "field_name": "Debunk language",
+                "order": 8,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "GEC": {
+                "enabled": true,
+                "field_name": "GEC category",
+                "order": 7,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "Harm_type": {
+                "enabled": true,
+                "field_name": "Claim topic",
+                "order": 5,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "abstract": {
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "h4",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "link"
+                ],
+                "order": 23,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "anpa_category": null,
+            "anpa_take_key": null,
+            "archiveurl": {
+                "enabled": true,
+                "field_name": "Claim archive url",
+                "order": 20,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "attachments": null,
+            "authors": null,
+            "body_footer": {
+                "enabled": true,
+                "formatOptions": [
+                    "bold",
+                    "italic",
+                    "link",
+                    "embed",
+                    "media"
+                ],
+                "order": 25,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "body_html": {
+                "cleanPastedHTML": false,
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "h2",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "link",
+                    "quote",
+                    "embed",
+                    "media",
+                    "comments"
+                ],
+                "order": 24,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "byline": null,
+            "claimformat": {
+                "enabled": true,
+                "field_name": "Claim format",
+                "order": 4,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "claimtype": {
+                "enabled": true,
+                "field_name": "Claim type",
+                "order": 6,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "company_codes": null,
+            "content_type": {
+                "enabled": true,
+                "field_name": "Content Type",
+                "order": 15,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "countries": {
+                "enabled": true,
+                "field_name": "Countries mentioned",
+                "order": 11,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "countrymention1": {
+                "enabled": true,
+                "field_name": "Primary country",
+                "order": 10,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "countrymention2": null,
+            "countrymention3": null,
+            "countrymention4": null,
+            "countrymention5": null,
+            "dateline": null,
+            "drafturl": {
+                "enabled": true,
+                "field_name": "Draft URL",
+                "order": 21,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "ednote": {
+                "enabled": true,
+                "order": 13,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "feature_media": {
+                "enabled": true,
+                "order": 27,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "firstsource": {
+                "enabled": true,
+                "field_name": "1st appearance (source url)",
+                "order": 16,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "firstsourcesocial": {
+                "enabled": true,
+                "field_name": "1st appearance (source/social url)",
+                "order": 17,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "footer": null,
+            "genre": null,
+            "headline": {
+                "enabled": true,
+                "formatOptions": [],
+                "order": 22,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "keywords": null,
+            "language": null,
+            "media_centre_label": null,
+            "media_description": null,
+            "originator": {
+                "enabled": true,
+                "field_name": "Claim originator",
+                "order": 12,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "place": null,
+            "platform": {
+                "enabled": true,
+                "field_name": "Primary platform",
+                "order": 9,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "priority": {
+                "enabled": true,
+                "order": 0,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "project": null,
+            "related": {
+                "enabled": true,
+                "field_name": "Related",
+                "order": 28,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "secondsourcesocial": {
+                "enabled": true,
+                "field_name": "2nd appearance (source/social url)",
+                "order": 18,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "sign_off": {
+                "enabled": true,
+                "order": 26,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "slugline": {
+                "enabled": true,
+                "order": 14,
+                "readonly": false,
+                "required": true,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "sms": null,
+            "subject": null,
+            "thirdsource": {
+                "enabled": true,
+                "field_name": "3rd appearance (source url)",
+                "order": 19,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "urgency": {
+                "enabled": true,
+                "order": 1,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "usageterms": null
+        },
+        "embeddable": false,
+        "enabled": true,
+        "label": "Article",
+        "priority": 0,
+        "schema": {
+            "abstract": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "string"
+            },
+            "anpa_category": null,
+            "anpa_take_key": null,
+            "archiveurl": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "urls"
+            },
+            "attachments": null,
+            "authors": null,
+            "body_footer": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "string"
+            },
+            "body_html": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "string"
+            },
+            "byline": null,
+            "company_codes": null,
+            "dateline": null,
+            "drafturl": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "urls"
+            },
+            "ednote": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "string"
+            },
+            "feature_media": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "media"
+            },
+            "firstsource": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "urls"
+            },
+            "firstsourcesocial": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "urls"
+            },
+            "footer": null,
+            "genre": null,
+            "headline": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "string"
+            },
+            "keywords": null,
+            "language": null,
+            "media_description": null,
+            "originator": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "place": null,
+            "priority": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "integer"
+            },
+            "related": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "related_content"
+            },
+            "secondsourcesocial": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "urls"
+            },
+            "sign_off": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "string"
+            },
+            "slugline": {
+                "nullable": false,
+                "readonly": false,
+                "required": true,
+                "type": "string"
+            },
+            "sms": null,
+            "subject": {
+                "default": [],
+                "mandatory_in_list": {
+                    "scheme": {
+                        "01harm": null,
+                        "Debunk": null,
+                        "Debunklang": null,
+                        "GEC": null,
+                        "Harm_type": null,
+                        "claimformat": null,
+                        "claimtype": null,
+                        "content_type": null,
+                        "countries": null,
+                        "countrymention1": null,
+                        "countrymention2": null,
+                        "countrymention3": null,
+                        "countrymention4": null,
+                        "countrymention5": null,
+                        "media_centre_label": null,
+                        "platform": null,
+                        "project": null
+                    }
+                },
+                "readonly": false,
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {},
+                        "scheme": {
+                            "allowed": [
+                                "countries",
+                                "claimformat",
+                                "claimtype",
+                                "countrymention1",
+                                "Debunklang",
+                                "Debunk",
+                                "GEC",
+                                "01harm",
+                                "platform",
+                                "Harm_type",
+                                "content_type"
+                            ],
+                            "nullable": true,
+                            "required": true,
+                            "type": "string"
+                        },
+                        "service": {
+                            "nullable": true
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "thirdsource": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "urls"
+            },
+            "urgency": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "integer"
+            },
+            "usageterms": null
+        },
+        "type": "text"
+    },
+    {
+        "_id": "audio",
+        "editor": {
+            "anpa_category": {
+                "enabled": true,
+                "order": 10,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "byline": {
+                "enabled": true,
+                "order": 11,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "dateline": {
+                "enabled": true,
+                "order": 12,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "ednote": {
+                "enabled": true,
+                "order": 13,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "genre": {
+                "enabled": true,
+                "order": 5,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "headline": {
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [],
+                "order": 10,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "keywords": {
+                "enabled": false,
+                "order": 2,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "language": {
+                "enabled": false,
+                "order": 3,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "media_description": {
+                "enabled": true,
+                "order": 14,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "place": {
+                "enabled": true,
+                "order": 7,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "priority": {
+                "enabled": true,
+                "order": 8,
+                "sdWidth": "quarter",
+                "section": "header"
+            },
+            "sign_off": {
+                "enabled": true,
+                "order": 13,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "slugline": {
+                "enabled": true,
+                "order": 1,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "subject": {
+                "enabled": true,
+                "order": 11,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "urgency": {
+                "enabled": true,
+                "order": 9,
+                "sdWidth": "quarter",
+                "section": "header"
+            }
+        },
+        "embeddable": false,
+        "enabled": true,
+        "init_version": 2,
+        "label": "Audio",
+        "priority": 0,
+        "schema": {
+            "anpa_category": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "byline": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "dateline": {
+                "required": false,
+                "type": "dict"
+            },
+            "ednote": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "genre": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "headline": {
+                "required": true,
+                "type": "string"
+            },
+            "keywords": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "language": {
+                "required": false,
+                "type": "string"
+            },
+            "media_description": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "place": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "priority": {
+                "required": false,
+                "type": "integer"
+            },
+            "sign_off": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "slugline": {
+                "required": false,
+                "type": "string"
+            },
+            "subject": {
+                "mandatory_in_list": {
+                    "scheme": {}
+                },
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {},
+                        "scheme": {
+                            "allowed": [],
+                            "nullable": true,
+                            "required": true,
+                            "type": "string"
+                        },
+                        "service": {
+                            "nullable": true
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "urgency": {
+                "required": false,
+                "type": "integer"
+            }
+        },
+        "type": "audio"
+    },
+    {
+        "_id": "composite",
+        "editor": {
+            "abstract": {
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "link"
+                ],
+                "order": 17,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "anpa_category": {
+                "enabled": true,
+                "order": 10,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "attachments": {
+                "enabled": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "byline": {
+                "enabled": true,
+                "order": 18,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "dateline": {
+                "enabled": true,
+                "order": 19,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "ednote": {
+                "enabled": true,
+                "order": 13,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "feature_media": {
+                "enabled": true,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "footer": {
+                "enabled": false,
+                "order": 21,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "genre": {
+                "enabled": true,
+                "order": 5,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "headline": {
+                "enabled": true,
+                "formatOptions": [],
+                "order": 15,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "keywords": {
+                "enabled": false,
+                "order": 2,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "language": {
+                "enabled": false,
+                "order": 3,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "media_description": {
+                "enabled": true,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "place": {
+                "enabled": true,
+                "order": 7,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "priority": {
+                "enabled": true,
+                "order": 8,
+                "sdWidth": "quarter",
+                "section": "header"
+            },
+            "sign_off": {
+                "enabled": true,
+                "order": 23,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "slugline": {
+                "enabled": true,
+                "order": 1,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "sms": {
+                "enabled": false,
+                "order": 16,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "subject": {
+                "enabled": true,
+                "order": 11,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "urgency": {
+                "enabled": true,
+                "order": 9,
+                "sdWidth": "quarter",
+                "section": "header"
+            },
+            "usageterms": {
+                "enabled": false,
+                "order": 4,
+                "sdWidth": "full",
+                "section": "content"
+            }
+        },
+        "embeddable": false,
+        "enabled": true,
+        "init_version": 2,
+        "label": "Package",
+        "priority": 0,
+        "schema": {
+            "abstract": {
+                "maxlength": 160,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "anpa_category": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "attachments": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "byline": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "dateline": {
+                "required": false,
+                "type": "dict"
+            },
+            "ednote": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "feature_media": {
+                "required": false,
+                "type": "media"
+            },
+            "footer": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "genre": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "headline": {
+                "maxlength": 64,
+                "minlength": null,
+                "required": true,
+                "type": "string"
+            },
+            "keywords": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "language": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "media_description": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "place": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "priority": {
+                "required": false,
+                "type": "integer"
+            },
+            "sign_off": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "slugline": {
+                "maxlength": 24,
+                "minlength": null,
+                "required": true,
+                "type": "string"
+            },
+            "sms": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "subject": {
+                "mandatory_in_list": {
+                    "scheme": {}
+                },
+                "required": true,
+                "schema": {
+                    "schema": {
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {},
+                        "scheme": {
+                            "allowed": [],
+                            "nullable": true,
+                            "required": true,
+                            "type": "string"
+                        },
+                        "service": {
+                            "nullable": true
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "urgency": {
+                "required": false,
+                "type": "integer"
+            },
+            "usageterms": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            }
+        },
+        "type": "composite"
+    },
+    {
+        "_id": "picture",
+        "editor": {
+            "anpa_category": {
+                "enabled": true,
+                "order": 10,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "byline": {
+                "enabled": true,
+                "order": 11,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "dateline": {
+                "enabled": true,
+                "order": 12,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "ednote": {
+                "enabled": true,
+                "order": 13,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "genre": {
+                "enabled": true,
+                "order": 5,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "headline": {
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [],
+                "order": 10,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "keywords": {
+                "enabled": false,
+                "order": 2,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "language": {
+                "enabled": false,
+                "order": 3,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "media_description": {
+                "enabled": true,
+                "order": 14,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "place": {
+                "enabled": true,
+                "order": 7,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "priority": {
+                "enabled": true,
+                "order": 8,
+                "sdWidth": "quarter",
+                "section": "header"
+            },
+            "sign_off": {
+                "enabled": true,
+                "order": 13,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "slugline": {
+                "enabled": true,
+                "order": 1,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "subject": {
+                "enabled": true,
+                "order": 11,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "urgency": {
+                "enabled": true,
+                "order": 9,
+                "sdWidth": "quarter",
+                "section": "header"
+            }
+        },
+        "embeddable": false,
+        "enabled": true,
+        "init_version": 2,
+        "label": "Picture",
+        "priority": 0,
+        "schema": {
+            "anpa_category": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "byline": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "dateline": {
+                "required": false,
+                "type": "dict"
+            },
+            "ednote": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "genre": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "headline": {
+                "required": true,
+                "type": "string"
+            },
+            "keywords": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "language": {
+                "required": false,
+                "type": "string"
+            },
+            "media_description": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "place": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "priority": {
+                "required": false,
+                "type": "integer"
+            },
+            "sign_off": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "slugline": {
+                "required": false,
+                "type": "string"
+            },
+            "subject": {
+                "mandatory_in_list": {
+                    "scheme": {}
+                },
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {},
+                        "scheme": {
+                            "allowed": [],
+                            "nullable": true,
+                            "required": true,
+                            "type": "string"
+                        },
+                        "service": {
+                            "nullable": true
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "urgency": {
+                "required": false,
+                "type": "integer"
+            }
+        },
+        "type": "picture"
+    },
+    {
+        "_id": "text",
+        "editor": {
+            "abstract": {
+                "editor3": true,
+                "formatOptions": [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "link"
+                ],
+                "order": 17,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "anpa_category": {
+                "order": 10,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "attachments": {},
+            "authors": {
+                "order": 14,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "body_html": {
+                "cleanPastedHTML": false,
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "h2",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "quote",
+                    "link",
+                    "embed",
+                    "media"
+                ],
+                "order": 20,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "byline": {
+                "order": 18,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "dateline": {
+                "order": 19,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "ednote": {
+                "order": 13,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "footer": {
+                "order": 21,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "genre": {
+                "order": 5,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "headline": {
+                "formatOptions": [],
+                "order": 15,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "keywords": {
+                "order": 2,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "language": {
+                "order": 3,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "place": {
+                "order": 7,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "priority": {
+                "order": 8,
+                "sdWidth": "quarter",
+                "section": "header"
+            },
+            "sign_off": {
+                "order": 23,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "slugline": {
+                "order": 1,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "sms": {
+                "order": 16,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "subject": {
+                "order": 11,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "urgency": {
+                "order": 9,
+                "sdWidth": "quarter",
+                "section": "header"
+            },
+            "usageterms": {
+                "order": 4,
+                "sdWidth": "full",
+                "section": "content"
+            }
+        },
+        "embeddable": false,
+        "enabled": true,
+        "init_version": 2,
+        "label": "Text",
+        "priority": 0,
+        "schema": {
+            "abstract": {
+                "maxlength": 160,
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "anpa_category": {
+                "nullable": true,
+                "required": false,
+                "type": "list"
+            },
+            "attachments": {
+                "required": false,
+                "type": "list"
+            },
+            "authors": {
+                "nullable": true,
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "parent": {
+                            "type": "string"
+                        },
+                        "role": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "body_footer": null,
+            "body_html": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "byline": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "dateline": {
+                "nullable": true,
+                "required": false,
+                "type": "dict"
+            },
+            "ednote": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "feature_media": {
+                "required": false,
+                "type": "media"
+            },
+            "footer": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "genre": {
+                "nullable": true,
+                "required": false,
+                "type": "list"
+            },
+            "headline": {
+                "maxlength": 64,
+                "nullable": false,
+                "required": true,
+                "type": "string"
+            },
+            "keywords": {
+                "nullable": true,
+                "required": false,
+                "type": "list"
+            },
+            "language": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "media_description": {
+                "required": false,
+                "type": "string"
+            },
+            "place": {
+                "nullable": true,
+                "required": false,
+                "type": "list"
+            },
+            "priority": {
+                "nullable": true,
+                "required": false,
+                "type": "integer"
+            },
+            "sign_off": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "slugline": {
+                "maxlength": 24,
+                "nullable": false,
+                "required": true,
+                "type": "string"
+            },
+            "sms": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "subject": {
+                "mandatory_in_list": {
+                    "scheme": {}
+                },
+                "nullable": false,
+                "required": false,
+                "schema": {},
+                "type": "list"
+            },
+            "urgency": {
+                "nullable": true,
+                "required": false,
+                "type": "integer"
+            },
+            "usageterms": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            }
+        },
+        "type": "text"
+    },
+    {
+        "_id": "video",
+        "editor": {
+            "anpa_category": {
+                "enabled": true,
+                "order": 10,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "byline": {
+                "enabled": true,
+                "order": 11,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "dateline": {
+                "enabled": true,
+                "order": 12,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "ednote": {
+                "enabled": true,
+                "order": 13,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "genre": {
+                "enabled": true,
+                "order": 5,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "headline": {
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [],
+                "order": 10,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "keywords": {
+                "enabled": false,
+                "order": 2,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "language": {
+                "enabled": false,
+                "order": 3,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "media_description": {
+                "enabled": true,
+                "order": 14,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "place": {
+                "enabled": true,
+                "order": 7,
+                "sdWidth": "half",
+                "section": "header"
+            },
+            "priority": {
+                "enabled": true,
+                "order": 8,
+                "sdWidth": "quarter",
+                "section": "header"
+            },
+            "sign_off": {
+                "enabled": true,
+                "order": 13,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "slugline": {
+                "enabled": true,
+                "order": 1,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "subject": {
+                "enabled": true,
+                "order": 11,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "urgency": {
+                "enabled": true,
+                "order": 9,
+                "sdWidth": "quarter",
+                "section": "header"
+            }
+        },
+        "embeddable": false,
+        "enabled": true,
+        "init_version": 2,
+        "label": "Video",
+        "priority": 0,
+        "schema": {
+            "anpa_category": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "byline": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "dateline": {
+                "required": false,
+                "type": "dict"
+            },
+            "ednote": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "genre": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "headline": {
+                "required": true,
+                "type": "string"
+            },
+            "keywords": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "language": {
+                "required": false,
+                "type": "string"
+            },
+            "media_description": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "place": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "priority": {
+                "required": false,
+                "type": "integer"
+            },
+            "sign_off": {
+                "maxlength": null,
+                "minlength": null,
+                "required": false,
+                "type": "string"
+            },
+            "slugline": {
+                "required": false,
+                "type": "string"
+            },
+            "subject": {
+                "mandatory_in_list": {
+                    "scheme": {}
+                },
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {},
+                        "scheme": {
+                            "allowed": [],
+                            "nullable": true,
+                            "required": true,
+                            "type": "string"
+                        },
+                        "service": {
+                            "nullable": true
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "urgency": {
+                "required": false,
+                "type": "integer"
+            }
+        },
+        "type": "video"
+    }
+]

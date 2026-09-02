@@ -1,0 +1,22 @@
+{
+    "_id": "crop_sizes",
+    "disable_entire_category_selection": false,
+    "display_name": "Image Crop Sizes",
+    "items": [
+        {"height": 600, "is_active": true, "name": "FIXME", "width": 800}
+    ],
+    "schema": {
+        "height": {
+            "type": "int"
+        },
+        "name": {
+            "required": true
+        },
+        "width": {
+            "type": "int"
+        }
+    },
+    "selection_type": "do not show",
+    "type": "manageable",
+    "unique_field": "name"
+}

@@ -1,0 +1,37 @@
+{
+    "_id": "categories",
+    "disable_entire_category_selection": false,
+    "display_name": "Categories",
+    "init_version": 1,
+    "items": [
+        {"is_active": true, "name": "FIXME1", "qcode": "f1", "subject": "", "translations": {"name": {"es": "FIXME1-es", "fr": "FIXME1-fr"}}},
+        {"is_active": true, "name": "FIXME2", "qcode": "f2", "subject": "", "translations": {"name": {"es": "FIXME2-es", "fr": "FIXME2-fr"}}}
+    ],
+    "schema": {
+        "name": {
+            "required": true,
+            "translate": true
+        },
+        "qcode": {
+            "required": true
+        },
+        "subject": {}
+    },
+    "selection_type": "multi selection",
+    "translations": {
+        "display_name": {
+            "ar": "فئات",
+            "da": "kategorier",
+            "de-DE": "Kategorien",
+            "el": "κατηγορίες",
+            "es": "categorías",
+            "fr-CA": "Catégories",
+            "nb": "kategorier",
+            "pt-BR": "categorias",
+            "ru-RU": "категории",
+            "uk-UA": "категорії"
+        }
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

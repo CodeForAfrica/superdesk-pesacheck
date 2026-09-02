@@ -1,0 +1,59 @@
+{
+    "_deleted": false,
+    "_id": "priority",
+    "description": "Entity/funding body under which this claim belongs.",
+    "disable_entire_category_selection": false,
+    "display_name": "Project",
+    "helper_text": "Entity/funding body under which this claim belongs.",
+    "init_version": 1,
+    "items": [
+        {"color": "#ff91a4", "is_active": true, "name": "DWA", "qcode": 6, "short": "DWA"},
+        {"color": "#31fb09", "is_active": true, "name": "IFCN", "qcode": 5, "short": "IFCN"},
+        {"color": "#ff91a4", "is_active": true, "name": "Long Form", "qcode": 9, "short": "Long Form"},
+        {"color": "#0df4f8", "is_active": true, "name": "MONUSCO", "qcode": 1, "short": "MONUSCO"},
+        {"color": null, "is_active": true, "name": "Meta Incubator", "qcode": 8, "short": "Meta"},
+        {"color": "#fcbe1f", "is_active": true, "name": "TPFC", "qcode": 3, "short": "TPFC"},
+        {"color": "#0e0707", "is_active": true, "name": "TikTok", "qcode": 2, "short": "TikTok"},
+        {"color": null, "is_active": true, "name": "USAID", "qcode": 7, "short": "USAID"},
+        {"color": "#f40b0b", "is_active": true, "name": "WhatsApp", "qcode": 4, "short": "WhatsApp"}
+    ],
+    "schema": {
+        "color": {
+            "label": "Сolour",
+            "type": "color"
+        },
+        "name": {
+            "required": true,
+            "translate": true
+        },
+        "qcode": {
+            "required": true,
+            "type": "integer"
+        },
+        "short": {
+            "label": "List Name",
+            "maxlength": 2,
+            "translate": true,
+            "type": "short"
+        }
+    },
+    "selection_type": "single selection",
+    "tags": [
+        {"text": "Classification lists"}
+    ],
+    "translations": {
+        "display_name": {
+            "da": "prioritet",
+            "de-DE": "priorität",
+            "el": "Προτεραιότητα",
+            "es": "prioridad",
+            "fr-CA": "Priorité",
+            "nb": "viktighet",
+            "pt-BR": "prioridade",
+            "ru-RU": "Приоритет",
+            "uk-UA": "Пріоритет"
+        }
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

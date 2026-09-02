@@ -1,0 +1,44 @@
+{
+    "_id": "GEC",
+    "description": "GEC category of the claim",
+    "disable_entire_category_selection": false,
+    "display_name": "GEC category",
+    "field_type": null,
+    "helper_text": "GEC category of the claim",
+    "items": [
+        {"is_active": true, "name": "African countries", "qcode": "african"},
+        {"is_active": true, "name": "Anti-vaxx", "qcode": "avax"},
+        {"is_active": true, "name": "China", "qcode": "china"},
+        {"is_active": true, "name": "Covid-19", "qcode": "covid19"},
+        {"is_active": true, "name": "EU", "qcode": "eu"},
+        {"is_active": true, "name": "France", "parent": "eu", "qcode": "france"},
+        {"is_active": true, "name": "India", "qcode": "india"},
+        {"is_active": true, "name": "Israel", "qcode": "israel"},
+        {"is_active": true, "name": "NATO", "qcode": "nato"},
+        {"is_active": true, "name": "Non-African countries", "qcode": "nonafrican"},
+        {"is_active": true, "name": "North Korea", "qcode": "nkorea"},
+        {"is_active": true, "name": "Russia", "qcode": "russia"},
+        {"is_active": true, "name": "Saudi Arabia", "qcode": "saudi"},
+        {"is_active": true, "name": "Turkey", "qcode": "turkey"},
+        {"is_active": true, "name": "UK", "qcode": "uk"},
+        {"is_active": true, "name": "US", "qcode": "us"}
+    ],
+    "schema": {
+        "name": {
+            "required": true
+        },
+        "parent": {},
+        "qcode": {
+            "required": true
+        }
+    },
+    "selection_type": "single selection",
+    "service": {
+        "all": 1
+    },
+    "tags": [
+        {"text": "Classification lists"}
+    ],
+    "type": "manageable",
+    "unique_field": "qcode"
+}

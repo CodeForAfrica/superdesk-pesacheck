@@ -1,0 +1,30 @@
+{
+    "_id": "locators",
+    "disable_entire_category_selection": false,
+    "display_name": "Locators",
+    "items": [
+        {"is_active": true, "name": "NSW", "qcode": "NSW"}
+    ],
+    "schema": {
+        "country": {
+            "translate": true
+        },
+        "group": {},
+        "name": {
+            "required": true,
+            "translate": true
+        },
+        "qcode": {
+            "required": true
+        },
+        "state": {
+            "translate": true
+        },
+        "world_region": {
+            "translate": true
+        }
+    },
+    "selection_type": "multi selection",
+    "type": "manageable",
+    "unique_field": "qcode"
+}

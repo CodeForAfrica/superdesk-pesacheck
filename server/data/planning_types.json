@@ -1,50 +1,841 @@
 [
-  {
-    "_id": "event",
-    "name": "event",
-    "init_version": 1,
-    "schema": {
-      "language": {
-        "type": "string",
-        "required": true
-      }
+    {
+        "_id": "coverage",
+        "editor": {
+            "contact_info": {
+                "enabled": false
+            },
+            "ednote": {
+                "enabled": true,
+                "index": 4
+            },
+            "files": {
+                "enabled": false
+            },
+            "g2_content_type": {
+                "enabled": true,
+                "index": 1
+            },
+            "genre": {
+                "enabled": true,
+                "index": 2
+            },
+            "headline": {
+                "enabled": false
+            },
+            "internal_note": {
+                "enabled": true,
+                "index": 5
+            },
+            "keyword": {
+                "enabled": false
+            },
+            "language": {
+                "enabled": true
+            },
+            "news_coverage_status": {
+                "enabled": true,
+                "index": 6
+            },
+            "no_content_linking": {
+                "enabled": false
+            },
+            "priority": {
+                "enabled": false
+            },
+            "scheduled": {
+                "enabled": true,
+                "index": 7
+            },
+            "scheduled_updates": {
+                "enabled": true,
+                "index": 8
+            },
+            "slugline": {
+                "enabled": true,
+                "index": 3
+            },
+            "xmp_file": {
+                "enabled": false
+            }
+        },
+        "init_version": 1,
+        "name": "coverage",
+        "schema": {
+            "contact_info": {
+                "required": false,
+                "type": "string"
+            },
+            "ednote": {
+                "field_type": "multi_line",
+                "required": false,
+                "type": "string"
+            },
+            "files": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "g2_content_type": {
+                "mandatory_in_list": null,
+                "required": true,
+                "schema": null,
+                "type": "list"
+            },
+            "genre": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "headline": {
+                "required": false,
+                "type": "string"
+            },
+            "internal_note": {
+                "expandable": true,
+                "field_type": "multi_line",
+                "required": false,
+                "type": "string"
+            },
+            "keyword": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "language": {
+                "required": true,
+                "type": "string"
+            },
+            "news_coverage_status": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "no_content_linking": {
+                "required": false,
+                "type": "boolean"
+            },
+            "priority": {
+                "required": false,
+                "type": "integer"
+            },
+            "scheduled": {
+                "required": true,
+                "type": "datetime"
+            },
+            "scheduled_updates": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "slugline": {
+                "required": false,
+                "type": "string"
+            },
+            "xmp_file": {
+                "required": false,
+                "type": "dict"
+            }
+        }
     },
-    "editor": {
-      "language": {
-        "enabled": true
-      }
-    }
-  },
-  {
-    "_id": "planning",
-    "name": "planning",
-    "init_version": 1,
-    "schema": {
-      "language": {
-        "type": "string",
-        "required": true
-      }
+    {
+        "_id": "event",
+        "editor": {
+            "accreditation_deadline": {
+                "enabled": false
+            },
+            "accreditation_info": {
+                "enabled": false
+            },
+            "anpa_category": {
+                "enabled": true,
+                "group": "details",
+                "index": 1
+            },
+            "calendars": {
+                "enabled": true,
+                "group": "description",
+                "index": 6
+            },
+            "custom_vocabularies": {
+                "enabled": false
+            },
+            "dates": {
+                "all_day": {
+                    "enabled": true
+                },
+                "default_duration_on_change": 1,
+                "enabled": true,
+                "group": "schedule",
+                "index": 2
+            },
+            "definition_long": {
+                "enabled": true,
+                "group": "details",
+                "index": 3
+            },
+            "definition_short": {
+                "enabled": true,
+                "group": "description",
+                "index": 4
+            },
+            "ednote": {
+                "enabled": true,
+                "group": "details",
+                "index": 5
+            },
+            "event_contact_info": {
+                "enabled": true,
+                "group": "location",
+                "index": 2
+            },
+            "files": {
+                "enabled": true,
+                "group": "attachments",
+                "index": 1
+            },
+            "internal_note": {
+                "enabled": true,
+                "group": "details",
+                "index": 4
+            },
+            "invitation_details": {
+                "enabled": false
+            },
+            "language": {
+                "enabled": true,
+                "group": "description",
+                "index": 1
+            },
+            "links": {
+                "enabled": true,
+                "group": "links",
+                "index": 1
+            },
+            "location": {
+                "enabled": true,
+                "group": "location",
+                "index": 1
+            },
+            "name": {
+                "enabled": true,
+                "group": "description",
+                "index": 3
+            },
+            "occur_status": {
+                "enabled": true,
+                "group": "description",
+                "index": 8
+            },
+            "place": {
+                "enabled": false,
+                "group": "description",
+                "index": 7
+            },
+            "priority": {
+                "enabled": false,
+                "group": "description",
+                "index": 9
+            },
+            "recurring_rules": {
+                "enabled": true,
+                "group": "schedule",
+                "index": 1
+            },
+            "reference": {
+                "enabled": false,
+                "group": "description",
+                "index": 5
+            },
+            "registration_details": {
+                "enabled": false
+            },
+            "related_items": {
+                "enabled": false
+            },
+            "related_plannings": {
+                "enabled": true,
+                "group": "related_plannings",
+                "index": 1
+            },
+            "slugline": {
+                "enabled": true,
+                "group": "description",
+                "index": 2
+            },
+            "subject": {
+                "enabled": true,
+                "group": "details",
+                "index": 2
+            }
+        },
+        "groups": {
+            "attachments": {
+                "_id": "attachments",
+                "icon": "attachment",
+                "index": 5,
+                "name": "Attachments",
+                "showBookmark": true,
+                "translations": {
+                    "name": {}
+                },
+                "useToggleBox": true
+            },
+            "description": {
+                "_id": "description",
+                "icon": "align-left",
+                "index": 2,
+                "name": "Description",
+                "showBookmark": true,
+                "translations": {
+                    "name": {}
+                },
+                "useToggleBox": false
+            },
+            "details": {
+                "_id": "details",
+                "icon": "info-sign",
+                "index": 4,
+                "name": "Details",
+                "showBookmark": true,
+                "translations": {
+                    "name": {}
+                },
+                "useToggleBox": true
+            },
+            "links": {
+                "_id": "links",
+                "icon": "link",
+                "index": 6,
+                "name": "Links",
+                "showBookmark": true,
+                "translations": {
+                    "name": {}
+                },
+                "useToggleBox": true
+            },
+            "location": {
+                "_id": "location",
+                "icon": "map-marker",
+                "index": 3,
+                "name": "Location",
+                "showBookmark": true,
+                "translations": {
+                    "name": {}
+                },
+                "useToggleBox": false
+            },
+            "related_plannings": {
+                "_id": "related_plannings",
+                "icon": "calendar-list",
+                "index": 7,
+                "name": "Related Plannings",
+                "showBookmark": true,
+                "translations": {
+                    "name": {}
+                },
+                "useToggleBox": false
+            },
+            "schedule": {
+                "_id": "schedule",
+                "icon": "time",
+                "index": 1,
+                "name": "Schedule",
+                "showBookmark": true,
+                "translations": {
+                    "name": {}
+                },
+                "useToggleBox": false
+            }
+        },
+        "init_version": 1,
+        "name": "event",
+        "schema": {
+            "accreditation_deadline": {
+                "required": false,
+                "type": "string"
+            },
+            "accreditation_info": {
+                "field_type": "single_line",
+                "required": false,
+                "type": "string"
+            },
+            "anpa_category": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "calendars": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "custom_vocabularies": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "dates": {
+                "required": true,
+                "type": "dict"
+            },
+            "definition_long": {
+                "field_type": "multi_line",
+                "required": false,
+                "type": "string"
+            },
+            "definition_short": {
+                "field_type": "multi_line",
+                "required": false,
+                "type": "string"
+            },
+            "ednote": {
+                "field_type": "multi_line",
+                "required": false,
+                "type": "string"
+            },
+            "event_contact_info": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "files": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "internal_note": {
+                "expandable": true,
+                "field_type": "multi_line",
+                "required": false,
+                "type": "string"
+            },
+            "invitation_details": {
+                "field_type": "multi_line",
+                "required": false,
+                "type": "string"
+            },
+            "language": {
+                "default_langauge": null,
+                "languages": null,
+                "required": true,
+                "type": "string"
+            },
+            "links": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "location": {
+                "required": false,
+                "type": "string"
+            },
+            "name": {
+                "field_type": "single_line",
+                "required": true,
+                "type": "string"
+            },
+            "occur_status": {
+                "required": false,
+                "schema": {
+                    "label": {
+                        "required": false,
+                        "type": "string"
+                    },
+                    "name": {
+                        "required": false,
+                        "type": "string"
+                    },
+                    "qcode": {
+                        "required": true,
+                        "type": "string"
+                    }
+                },
+                "type": "dict"
+            },
+            "place": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "priority": {
+                "required": false,
+                "type": "integer"
+            },
+            "recurring_rules": {
+                "required": false,
+                "type": "dict"
+            },
+            "reference": {
+                "required": false,
+                "type": "string"
+            },
+            "registration_details": {
+                "field_type": "multi_line",
+                "required": false,
+                "type": "string"
+            },
+            "related_items": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "related_plannings": {
+                "cancel_plan_with_event": true,
+                "mandatory_in_list": null,
+                "planning_auto_publish": false,
+                "read_only": false,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "slugline": {
+                "required": false,
+                "type": "string"
+            },
+            "subject": {
+                "mandatory_in_list": {
+                    "scheme": {}
+                },
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {},
+                        "scheme": {
+                            "nullable": true,
+                            "required": true,
+                            "type": "string"
+                        },
+                        "service": {
+                            "nullable": true
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            }
+        }
     },
-    "editor": {
-      "language": {
-        "enabled": true
-      }
+    {
+        "_id": "planning",
+        "editor": {
+            "agendas": {
+                "enabled": true,
+                "group": "description",
+                "index": 4
+            },
+            "anpa_category": {
+                "enabled": true,
+                "group": "details",
+                "index": 2
+            },
+            "associated_event": {
+                "enabled": true,
+                "group": "associated_event",
+                "index": 1
+            },
+            "coverages": {
+                "enabled": true,
+                "group": "coverages",
+                "index": 1
+            },
+            "custom_vocabularies": {
+                "enabled": false,
+                "group": "details",
+                "index": 4
+            },
+            "description_text": {
+                "enabled": true,
+                "group": "description",
+                "index": 1
+            },
+            "ednote": {
+                "enabled": true,
+                "group": "details",
+                "index": 1
+            },
+            "files": {
+                "enabled": false,
+                "group": "attachments",
+                "index": 1
+            },
+            "headline": {
+                "enabled": false,
+                "group": "title",
+                "index": 3
+            },
+            "internal_note": {
+                "enabled": true,
+                "group": "description",
+                "index": 2
+            },
+            "language": {
+                "enabled": true,
+                "group": "title",
+                "index": 1
+            },
+            "marked_for_not_publication": {
+                "enabled": true,
+                "group": "details",
+                "index": 6
+            },
+            "name": {
+                "enabled": false,
+                "group": "title",
+                "index": 4
+            },
+            "overide_auto_assign_to_workflow": {
+                "enabled": true,
+                "group": "details",
+                "index": 7
+            },
+            "place": {
+                "enabled": false,
+                "group": "description",
+                "index": 3
+            },
+            "planning_date": {
+                "enabled": true,
+                "group": "schedule",
+                "index": 1
+            },
+            "priority": {
+                "enabled": false,
+                "group": "details",
+                "index": 8
+            },
+            "slugline": {
+                "enabled": true,
+                "group": "title",
+                "index": 2
+            },
+            "subject": {
+                "enabled": true,
+                "group": "details",
+                "index": 3
+            },
+            "urgency": {
+                "enabled": true,
+                "group": "details",
+                "index": 5
+            }
+        },
+        "groups": {
+            "associated_event": {
+                "_id": "associated_event",
+                "icon": "calendar",
+                "index": 6,
+                "name": "Associated Event",
+                "showBookmark": true,
+                "translations": {
+                    "name": {}
+                },
+                "useToggleBox": false
+            },
+            "attachments": {
+                "_id": "attachments",
+                "icon": "attachment",
+                "index": 5,
+                "name": "Attachments",
+                "showBookmark": true,
+                "translations": {
+                    "name": {}
+                },
+                "useToggleBox": false
+            },
+            "coverages": {
+                "_id": "coverages",
+                "icon": "calendar-list",
+                "index": 7,
+                "name": "Coverages",
+                "showBookmark": true,
+                "translations": {
+                    "name": {}
+                },
+                "useToggleBox": false
+            },
+            "description": {
+                "_id": "description",
+                "icon": "align-left",
+                "index": 3,
+                "name": "Description",
+                "showBookmark": true,
+                "translations": {
+                    "name": {}
+                },
+                "useToggleBox": false
+            },
+            "details": {
+                "_id": "details",
+                "icon": "info-sign",
+                "index": 4,
+                "name": "Details",
+                "showBookmark": true,
+                "translations": {
+                    "name": {}
+                },
+                "useToggleBox": true
+            },
+            "schedule": {
+                "_id": "schedule",
+                "icon": "time",
+                "index": 2,
+                "name": "Schedule",
+                "showBookmark": true,
+                "translations": {
+                    "name": {}
+                },
+                "useToggleBox": false
+            },
+            "title": {
+                "_id": "title",
+                "icon": "align-left",
+                "index": 1,
+                "name": "Title",
+                "showBookmark": true,
+                "translations": {
+                    "name": {}
+                },
+                "useToggleBox": false
+            }
+        },
+        "init_version": 1,
+        "name": "planning",
+        "schema": {
+            "agendas": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "anpa_category": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "associated_event": null,
+            "coverages": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "custom_vocabularies": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "description_text": {
+                "field_type": "multi_line",
+                "required": false,
+                "type": "string"
+            },
+            "ednote": {
+                "field_type": "multi_line",
+                "required": false,
+                "type": "string"
+            },
+            "files": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "headline": {
+                "required": false,
+                "type": "string"
+            },
+            "internal_note": {
+                "expandable": true,
+                "field_type": "multi_line",
+                "required": false,
+                "type": "string"
+            },
+            "language": {
+                "default_langauge": null,
+                "languages": null,
+                "required": true,
+                "type": "string"
+            },
+            "marked_for_not_publication": {
+                "required": false,
+                "type": "boolean"
+            },
+            "name": {
+                "field_type": "single_line",
+                "required": false,
+                "type": "string"
+            },
+            "overide_auto_assign_to_workflow": {
+                "required": false,
+                "type": "boolean"
+            },
+            "place": {
+                "mandatory_in_list": null,
+                "required": false,
+                "schema": null,
+                "type": "list"
+            },
+            "planning_date": {
+                "required": true,
+                "type": "datetime"
+            },
+            "priority": {
+                "required": false,
+                "type": "integer"
+            },
+            "slugline": {
+                "required": true,
+                "type": "string"
+            },
+            "subject": {
+                "mandatory_in_list": {
+                    "scheme": {}
+                },
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {},
+                        "scheme": {
+                            "nullable": true,
+                            "required": true,
+                            "type": "string"
+                        },
+                        "service": {
+                            "nullable": true
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "urgency": {
+                "required": false,
+                "type": "integer"
+            }
+        }
     }
-  },
-  {
-    "_id": "coverage",
-    "name": "coverage",
-    "init_version": 1,
-    "schema": {
-      "language": {
-        "type": "string",
-        "required": true
-      }
-    },
-    "editor": {
-      "language": {
-        "enabled": true
-      }
-    }
-  }
 ]

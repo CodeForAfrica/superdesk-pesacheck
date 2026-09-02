@@ -1,0 +1,24 @@
+{
+    "_id": "contact_type",
+    "disable_entire_category_selection": false,
+    "display_name": "Contact Types",
+    "items": [],
+    "schema": {
+        "assignable": {
+            "label": "Assignable",
+            "required": false,
+            "type": "bool"
+        },
+        "name": {
+            "required": true,
+            "type": "string"
+        },
+        "qcode": {
+            "required": true,
+            "type": "string"
+        }
+    },
+    "selection_type": "do not show",
+    "type": "manageable",
+    "unique_field": "qcode"
+}

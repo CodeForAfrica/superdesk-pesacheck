@@ -1,0 +1,20 @@
+{
+    "_id": "author_roles",
+    "disable_entire_category_selection": false,
+    "display_name": "Author Roles",
+    "items": [
+        {"is_active": true, "name": "Writer", "qcode": "writer"}
+    ],
+    "schema": {
+        "name": {
+            "required": true,
+            "translate": true
+        },
+        "qcode": {
+            "required": true
+        }
+    },
+    "selection_type": "do not show",
+    "type": "manageable",
+    "unique_field": "qcode"
+}

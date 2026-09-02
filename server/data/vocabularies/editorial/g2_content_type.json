@@ -1,0 +1,18 @@
+{
+    "_id": "g2_content_type",
+    "disable_entire_category_selection": false,
+    "display_name": "Coverage content types",
+    "init_version": 1,
+    "items": [
+        {"content item type": "text", "is_active": true, "name": "Text", "qcode": "text"},
+        {"content item type": "picture", "is_active": true, "name": "Picture", "qcode": "picture"},
+        {"content item type": "video", "is_active": true, "name": "Video", "qcode": "video"},
+        {"content item type": "audio", "is_active": true, "name": "Audio", "qcode": "audio"},
+        {"content item type": "", "is_active": true, "name": "Infographics", "qcode": "infographics"},
+        {"content item type": "", "is_active": true, "name": "Live video", "qcode": "live_video"},
+        {"content item type": "", "is_active": true, "name": "Live blog", "qcode": "live_blog"}
+    ],
+    "selection_type": "do not show",
+    "type": "manageable",
+    "unique_field": "qcode"
+}

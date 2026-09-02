@@ -1,0 +1,14 @@
+{
+    "_id": "assignment_priority",
+    "disable_entire_category_selection": false,
+    "display_name": "Assignment Priority",
+    "init_version": 1,
+    "items": [
+        {"is_active": true, "name": "High", "qcode": 1},
+        {"is_active": true, "name": "Medium", "qcode": 2},
+        {"is_active": true, "name": "Low", "qcode": 3}
+    ],
+    "selection_type": "do not show",
+    "type": "manageable",
+    "unique_field": "qcode"
+}

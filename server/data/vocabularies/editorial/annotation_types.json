@@ -1,0 +1,20 @@
+{
+    "_id": "annotation_types",
+    "disable_entire_category_selection": false,
+    "display_name": "Annotation Types",
+    "items": [
+        {"is_active": true, "name": "Regular", "qcode": "regular"},
+        {"is_active": true, "name": "Remark", "qcode": "remark"}
+    ],
+    "schema": {
+        "name": {
+            "required": true
+        },
+        "qcode": {
+            "required": true
+        }
+    },
+    "selection_type": "do not show",
+    "type": "manageable",
+    "unique_field": "qcode"
+}

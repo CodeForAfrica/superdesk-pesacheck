@@ -1,0 +1,20 @@
+{
+    "_id": "type",
+    "disable_entire_category_selection": false,
+    "display_name": "Article Type",
+    "init_version": 2,
+    "items": [
+        {"is_active": true, "name": "text", "qcode": "text"},
+        {"is_active": true, "name": "preformatted", "qcode": "preformatted"},
+        {"is_active": true, "name": "audio", "qcode": "audio"},
+        {"is_active": true, "name": "video", "qcode": "video"},
+        {"is_active": true, "name": "picture", "qcode": "picture"},
+        {"is_active": true, "name": "graphic", "qcode": "graphic"},
+        {"is_active": true, "name": "composite", "qcode": "composite"},
+        {"is_active": true, "name": "planning item", "qcode": "planning"},
+        {"is_active": true, "name": "event", "qcode": "event"},
+        {"is_active": true, "name": "Featured Stories", "qcode": "planning_featured"}
+    ],
+    "selection_type": "multi selection",
+    "type": "unmanageable"
+}

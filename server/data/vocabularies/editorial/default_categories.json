@@ -1,0 +1,22 @@
+{
+    "_id": "default_categories",
+    "disable_entire_category_selection": false,
+    "display_name": "Default Categories",
+    "items": [
+        {"is_active": true, "qcode": "a"},
+        {"is_active": true, "qcode": "e"},
+        {"is_active": true, "qcode": "f"},
+        {"is_active": true, "qcode": "i"},
+        {"is_active": true, "qcode": "s"},
+        {"is_active": true, "qcode": "t"},
+        {"is_active": true, "qcode": "v"}
+    ],
+    "schema": {
+        "qcode": {
+            "required": true
+        }
+    },
+    "selection_type": "multi selection",
+    "type": "manageable",
+    "unique_field": "qcode"
+}

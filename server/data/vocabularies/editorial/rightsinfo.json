@@ -1,0 +1,29 @@
+{
+    "_id": "rightsinfo",
+    "disable_entire_category_selection": false,
+    "display_name": "Copyrights",
+    "items": [
+        {"copyrightHolder": "", "copyrightNotice": "", "is_active": true, "name": "default", "usageTerms": ""}
+    ],
+    "schema": {
+        "copyrightHolder": {
+            "label": "Copyright Holder",
+            "translate": true
+        },
+        "copyrightNotice": {
+            "label": "Copyright Notice",
+            "translate": true
+        },
+        "name": {
+            "required": true,
+            "translate": true
+        },
+        "usageTerms": {
+            "label": "Usage Terms",
+            "translate": true
+        }
+    },
+    "selection_type": "multi selection",
+    "type": "manageable",
+    "unique_field": "name"
+}

@@ -1,0 +1,8 @@
+[
+    {"_id": "6a60cec4359af00f83894210", "content_expiry": null, "default_incoming": true, "description": "incoming content items", "desk": "6a60cec4359af00f83894212", "desk_order": 1, "is_visible": false, "local_readonly": false, "name": "Pitches", "working_stage": true},
+    {"_id": "6a60cec4359af00f83894211", "content_expiry": null, "default_incoming": false, "description": "Approved for write-up", "desk": "6a60cec4359af00f83894212", "desk_order": 2, "is_visible": false, "local_readonly": false, "name": "Approved", "working_stage": false},
+    {"_id": "6a60cf07359af00f83894214", "content_expiry": null, "default_incoming": false, "desk": "6a60cec4359af00f83894212", "desk_order": 3, "is_visible": true, "local_readonly": false, "name": "Rejected", "working_stage": false},
+    {"_id": "6a60cf189f14f7d023cc7c68", "content_expiry": null, "default_incoming": false, "desk": "6a60cec4359af00f83894212", "desk_order": 4, "is_visible": true, "local_readonly": false, "name": "Submitted", "working_stage": false},
+    {"_id": "6a60cf209f14f7d023cc7c6a", "content_expiry": null, "default_incoming": false, "desk": "6a60cec4359af00f83894212", "desk_order": 5, "is_visible": true, "local_readonly": false, "name": "QA", "working_stage": false},
+    {"_id": "6a60cf2c9f14f7d023cc7c6c", "content_expiry": null, "default_incoming": false, "desk": "6a60cec4359af00f83894212", "desk_order": 6, "is_visible": true, "local_readonly": false, "name": "Used media", "working_stage": false}
+]
