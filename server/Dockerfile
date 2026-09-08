@@ -41,6 +41,10 @@ COPY . .
 COPY docker/bootstrap/bootstrap-superdesk.sh    /usr/local/bin/bootstrap-superdesk.sh
 COPY docker/bootstrap/bootstrap_superdesk.py    /usr/local/bin/bootstrap_superdesk.py
 COPY docker/bootstrap/bootstrap-ghost-ingest.sh /usr/local/bin/bootstrap-ghost-ingest.sh
+# Editorial-page importer. It reads the fixtures baked by `COPY . .` above
+# (data/editorial/) — including the LFS-tracked media under data/editorial/media/,
+# so the build MUST run after `git lfs pull` or the media bakes as LFS pointers.
+COPY docker/bootstrap/import_editorial.py       /usr/local/bin/import_editorial.py
 RUN chmod +x /usr/local/bin/bootstrap-superdesk.sh /usr/local/bin/bootstrap-ghost-ingest.sh
 
 ENTRYPOINT [ "/opt/superdesk/docker/start.sh" ]
