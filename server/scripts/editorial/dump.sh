@@ -121,4 +121,36 @@ json.dump(data.get("pictures", []), open(f"{out}/pictures.json", "w"))
 print(f">> pages={len(data.get('pages',[]))} pictures={len(data.get('pictures',[]))}", file=sys.stderr)
 PY
 log "Wrote $OUT/pages.json and $OUT/pictures.json"
-log "NOTE: media bytes not yet pulled — see dump_media (TODO)."
+
+# Pull the ORIGINAL media bytes for each captured picture into the tracked,
+# LFS-backed media dir. Deployed media is S3 at
+# s3://pesacheck-media-<env>/superdesk/<original.media>; only the original is
+# kept (Superdesk regenerates renditions on import). Local media is GridFS and is
+# not captured here — the fixtures are always captured from a deployed instance.
+if [ "$SOURCE" = "local" ]; then
+  log "NOTE: local media is GridFS; capture fixtures from staging/prod for media."
+else
+  MEDIA_DEST="$(cd "$(dirname "$0")/../../data/editorial" && pwd)/media"
+  mkdir -p "$MEDIA_DEST"
+  BUCKET="pesacheck-media-${SOURCE}"
+  log "Pulling original media from s3://$BUCKET/superdesk/ ..."
+  python3 - "$OUT/pictures.json" <<'PY' > "$OUT/_media.txt"
+import json, sys
+ext = {"image/png": "png", "image/jpeg": "jpg", "image/jpg": "jpg",
+       "image/webp": "webp", "image/gif": "gif", "image/svg+xml": "svg"}
+for p in json.load(open(sys.argv[1])):
+    o = (p.get("renditions") or {}).get("original") or {}
+    key = o.get("media")
+    if not key:
+        continue
+    e = ext.get((p.get("mimetype") or o.get("mimetype") or "image/jpeg").lower(), "jpg")
+    print(f"{p['guid']} {key} {e}")
+PY
+  mcount=0
+  while read -r guid key e; do
+    [ -n "$guid" ] || continue
+    aws s3 cp "s3://$BUCKET/superdesk/$key" "$MEDIA_DEST/$guid.$e" --quiet \
+      && mcount=$((mcount + 1)) || log "  missing media: $guid ($key)"
+  done < "$OUT/_media.txt"
+  log "Pulled $mcount media file(s) into $MEDIA_DEST"
+fi
