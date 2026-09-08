@@ -18,7 +18,7 @@
         {"is_active": true, "name": "Chad", "qcode": "TCD"},
         {"is_active": true, "name": "Comoros", "qcode": "COM"},
         {"is_active": true, "name": "Côte d'Ivoire", "qcode": "CIV"},
-        {"is_active": true, "name": "DR Congo", "qcode": "COD"},
+        {"is_active": true, "name": "DR Congo", "qcode": "COG"},
         {"is_active": true, "name": "Djibouti", "qcode": "DJI"},
         {"is_active": true, "name": "Egypt", "qcode": "EGY"},
         {"is_active": true, "name": "Equatorial Guinea", "qcode": "GNQ"},

@@ -1,0 +1,19 @@
+{
+    "_deleted": false,
+    "_id": "cta_label",
+    "disable_entire_category_selection": false,
+    "display_name": "CTA button label",
+    "field_type": "text",
+    "helper_text": "Defaults to 'Get in touch'",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

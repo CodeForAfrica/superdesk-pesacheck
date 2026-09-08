@@ -1,0 +1,23 @@
+{
+    "_deleted": false,
+    "_id": "page_section_role",
+    "disable_entire_category_selection": false,
+    "display_name": "Page Section Role",
+    "field_type": null,
+    "items": [
+        {"is_active": true, "name": "CTA", "qcode": "cta"},
+        {"is_active": true, "name": "Hero", "qcode": "hero"},
+        {"is_active": true, "name": "Section", "qcode": "section"}
+    ],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "selection_type": "single selection",
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}
