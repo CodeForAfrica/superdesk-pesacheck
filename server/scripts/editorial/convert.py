@@ -38,6 +38,10 @@ PROFILE_REMAP = {
     "6a954d10dae059933bb05432": "6a97ed55d0756a69fc29fab7",  # FAQ -> FAQ
     "6a96a3f9d0756a69fc29f90d": "6a97ebdad0756a69fc29fab0",  # Ecosystem -> Ecosystem Partner
     "6a96df4cd0756a69fc29f9ae": "6a97ecc6d0756a69fc29fab4",  # Team -> Team Member
+    # Spotlight (6a8ef90a) is a DELETED profile — absent from content_types even on
+    # staging (its 4 Media-Centre-Spotlight pages render blank there too). Remap to
+    # Page Section, the generic media-bearing section card profile.
+    "6a8ef90ae2b084181606ab39": "6a98515dd0756a69fc29fb06",  # Spotlight -> Page Section
 }
 
 # Profiles accepted as-is: the canonical tracked content_types plus core ones.
@@ -50,8 +54,7 @@ TRACKED_PROFILES = {
     "6a97ecc6d0756a69fc29fab4",  # Team Member
     "6a97ed55d0756a69fc29fab7",  # FAQ
     "6a97edd7d0756a69fc29fabb",  # Event
-    "6a98515dd0756a69fc29fb06",  # Page Section  (pending in content-config)
-    "6a8ef90ae2b084181606ab39",  # Spotlight     (pending in content-config)
+    "6a98515dd0756a69fc29fb06",  # Page Section
     "article", "text", "picture", "composite", "audio", "video",
 }
 
