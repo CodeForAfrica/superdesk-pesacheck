@@ -12,6 +12,9 @@
     "language": "en",
     "priority": 6,
     "profile": "6a98515dd0756a69fc29fb06",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
     "type": "text",
     "urgency": 3
 }

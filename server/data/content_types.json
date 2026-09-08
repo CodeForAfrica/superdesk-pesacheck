@@ -747,7 +747,7 @@
         "priority": 0,
         "schema": {
             "abstract": {
-                "maxlength": 160,
+                "maxlength": 400,
                 "nullable": true,
                 "required": false,
                 "type": "string"
@@ -808,7 +808,7 @@
             "secondsourcesocial": null,
             "sign_off": null,
             "slugline": {
-                "maxlength": 24,
+                "maxlength": 80,
                 "nullable": true,
                 "required": false,
                 "type": "string"
@@ -1198,7 +1198,7 @@
         "priority": 0,
         "schema": {
             "abstract": {
-                "maxlength": 160,
+                "maxlength": 400,
                 "nullable": false,
                 "required": true,
                 "type": "string"
@@ -1245,7 +1245,7 @@
             "secondsourcesocial": null,
             "sign_off": null,
             "slugline": {
-                "maxlength": 24,
+                "maxlength": 80,
                 "nullable": true,
                 "required": false,
                 "type": "string"
@@ -1776,7 +1776,7 @@
         "priority": 0,
         "schema": {
             "abstract": {
-                "maxlength": 160,
+                "maxlength": 400,
                 "nullable": true,
                 "required": false,
                 "type": "string"

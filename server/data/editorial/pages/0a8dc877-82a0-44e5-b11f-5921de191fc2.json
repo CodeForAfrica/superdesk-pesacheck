@@ -14,7 +14,8 @@
     "profile": "6a98515dd0756a69fc29fb06",
     "slugline": "am-swa",
     "subject": [
-        {"name": "Broadcast", "qcode": "broadcast", "scheme": "media_centre_label"}
+        {"name": "Broadcast", "qcode": "broadcast", "scheme": "media_centre_label"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
     ],
     "type": "text",
     "urgency": 3

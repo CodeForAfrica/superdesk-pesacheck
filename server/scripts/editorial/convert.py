@@ -47,6 +47,15 @@ PROFILE_REMAP = {
 # Profiles accepted as-is: the canonical tracked content_types plus core ones.
 # Page Section / Spotlight MUST be added to the tracked content-config; list them
 # here once they are, so capture stops rejecting them.
+# Page Section pages require a page_section_role, stored as a `subject` entry
+# (vocab qcodes: hero/section/cta). A few staging pages (notably the Spotlight
+# pages remapped here) lack it, which blocks publish. Default the generic
+# "section" role so they publish; hero/cta pages already carry their own entry.
+PAGE_SECTION_PROFILE = "6a98515dd0756a69fc29fb06"
+PAGE_SECTION_ROLE_SCHEME = "page_section_role"
+DEFAULT_PAGE_SECTION_ROLE = {"name": "Section", "qcode": "section",
+                             "scheme": PAGE_SECTION_ROLE_SCHEME}
+
 TRACKED_PROFILES = {
     "6a8c9122e2b084181606a9ce",  # Announcement
     "6a8d9ff7e2b084181606aabb",  # Research Citations
@@ -142,6 +151,11 @@ def convert(src, dest, summary):
                 f"tracked/remap target — add it to content-config + TRACKED_PROFILES."
             )
         page["profile"] = pid
+        if pid == PAGE_SECTION_PROFILE:
+            subj = page.get("subject") or []
+            if not any(s.get("scheme") == PAGE_SECTION_ROLE_SCHEME for s in subj):
+                page["subject"] = subj + [dict(DEFAULT_PAGE_SECTION_ROLE)]
+                summary["role_defaulted"] += 1
         fm = featuremedia_guid(doc)
         if fm:
             page["feature_media"] = fm  # picture guid; importer re-links after upload
@@ -160,10 +174,11 @@ def main(argv=None):
     ap.add_argument("--source", required=True, help="dir holding pages.json / pictures.json")
     ap.add_argument("--dest", default="data/editorial", help="output dir (default: data/editorial)")
     args = ap.parse_args(argv)
-    summary = {"pages": 0, "pictures": 0}
+    summary = {"pages": 0, "pictures": 0, "role_defaulted": 0}
     convert(args.source, args.dest, summary)
     print(f"Pages:    {summary['pages']}")
     print(f"Pictures: {summary['pictures']}")
+    print(f"page_section_role defaulted to 'section': {summary['role_defaulted']}")
 
 
 if __name__ == "__main__":

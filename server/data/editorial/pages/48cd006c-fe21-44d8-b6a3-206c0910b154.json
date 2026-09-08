@@ -14,7 +14,8 @@
     "profile": "6a98515dd0756a69fc29fb06",
     "slugline": "Africa-Fact-Checking-Summit",
     "subject": [
-        {"name": "Sector review", "qcode": "sector_review", "scheme": "media_centre_label"}
+        {"name": "Sector review", "qcode": "sector_review", "scheme": "media_centre_label"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
     ],
     "type": "text",
     "urgency": 3
