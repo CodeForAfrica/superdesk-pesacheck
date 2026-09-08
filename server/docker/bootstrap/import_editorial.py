@@ -34,16 +34,19 @@ import os
 import re
 import subprocess
 import time
-import urllib.error
 import urllib.request
 from pathlib import Path
 
+import requests
 from pymongo import MongoClient
 
 DEFAULT_MONGO_URI = "mongodb://superdesk-mongodb/superdesk"
 DEFAULT_API = "http://superdesk-api:5000/api"
 DEFAULT_DATA = "/opt/superdesk/data/editorial"
 DESK_NAME = os.environ.get("STATIC_PAGES_DESK", "Static Pages")
+MEDIA_EXTS = ("png", "jpg", "jpeg", "webp", "gif", "svg")
+MIME_BY_EXT = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg",
+               "webp": "image/webp", "gif": "image/gif", "svg": "image/svg+xml"}
 
 
 def superdesk_db():
@@ -76,31 +79,48 @@ def admin_token():
 
 class Api:
     def __init__(self, base, token):
-        self.base, self.token = base.rstrip("/"), token
-
-    def _req(self, method, res, payload=None, etag=None):
-        headers = {"Authorization": self.token, "Content-Type": "application/json"}
-        if etag:
-            headers["If-Match"] = etag
-        req = urllib.request.Request(
-            f"{self.base}/{res}",
-            data=json.dumps(payload).encode() if payload is not None else None,
-            headers=headers, method=method,
-        )
-        try:
-            with urllib.request.urlopen(req, timeout=60) as r:
-                return r.status, json.loads(r.read() or "{}")
-        except urllib.error.HTTPError as e:
-            return e.code, json.loads(e.read().decode() or "{}")
+        self.base = base.rstrip("/")
+        self.s = requests.Session()
+        self.s.headers["Authorization"] = token
 
     def get(self, res):
-        return self._req("GET", res)
+        r = self.s.get(f"{self.base}/{res}", timeout=60)
+        return r.status_code, _json(r)
 
     def post(self, res, payload):
-        return self._req("POST", res, payload)
+        r = self.s.post(f"{self.base}/{res}", json=payload, timeout=90)
+        return r.status_code, _json(r)
 
     def patch(self, res, payload, etag):
-        return self._req("PATCH", res, payload, etag)
+        r = self.s.patch(f"{self.base}/{res}", json=payload,
+                         headers={"If-Match": etag}, timeout=120)
+        return r.status_code, _json(r)
+
+    def upload_picture(self, path, headline):
+        """POST the image as multipart; ArchiveMediaService creates a picture
+        item with renditions. Returns the picture doc, or None on failure."""
+        mime = MIME_BY_EXT.get(path.suffix.lstrip(".").lower(), "image/jpeg")
+        with path.open("rb") as fh:
+            r = self.s.post(f"{self.base}/archive",
+                            files={"media": (path.name, fh, mime)},
+                            data={"type": "picture", "headline": headline or ""},
+                            timeout=120)
+        return _json(r) if r.status_code in (200, 201) else None
+
+
+def _json(r):
+    try:
+        return r.json()
+    except ValueError:
+        return {}
+
+
+def find_media(media_dir, guid):
+    for ext in MEDIA_EXTS:
+        p = Path(media_dir, f"{guid}.{ext}")
+        if p.exists():
+            return p
+    return None
 
 
 def ensure_desk(db, api, admin_id):
@@ -137,8 +157,9 @@ def build_doc(page, desk_id, stage_id, admin_id):
 
 def import_pages(db, api, admin_id, data_dir):
     desk_id, stage_id = ensure_desk(db, api, admin_id)
+    media_dir = Path(data_dir, "media")
     pages = sorted(Path(data_dir, "pages").glob("*.json"))
-    created = published = skipped = failed = 0
+    created = published = skipped = failed = with_media = 0
     for path in pages:
         page = json.loads(path.read_text())
         guid = page["guid"]
@@ -146,7 +167,21 @@ def import_pages(db, api, admin_id, data_dir):
         if status == 200:
             skipped += 1
             continue
-        status, res = api.post("archive", build_doc(page, desk_id, stage_id, admin_id))
+        doc = build_doc(page, desk_id, stage_id, admin_id)
+        # Feature media: upload the tracked original (Superdesk regenerates
+        # renditions) and attach the returned picture item as featuremedia. A
+        # missing file just publishes the page text-only.
+        fm_guid = page.get("feature_media")
+        if fm_guid:
+            media_path = find_media(media_dir, fm_guid)
+            if media_path:
+                pic = api.upload_picture(media_path, page.get("headline"))
+                if pic:
+                    doc["associations"] = {"featuremedia": pic}
+                    with_media += 1
+                else:
+                    print(f"  media upload failed for {guid} ({fm_guid}); text-only")
+        status, res = api.post("archive", doc)
         if status not in (200, 201):
             print(f"  CREATE FAIL {guid}: {status} {res.get('_message') or res}")
             failed += 1
@@ -160,8 +195,9 @@ def import_pages(db, api, admin_id, data_dir):
         else:
             print(f"  PUBLISH FAIL {guid}: {status} {res.get('_message') or res}")
             failed += 1
-    print(f"Editorial pages: {created} created, {published} published, "
-          f"{skipped} already present, {failed} failed (of {len(pages)}).")
+    print(f"Editorial pages: {created} created ({with_media} with feature media), "
+          f"{published} published, {skipped} already present, {failed} failed "
+          f"(of {len(pages)}).")
     return failed
 
 
