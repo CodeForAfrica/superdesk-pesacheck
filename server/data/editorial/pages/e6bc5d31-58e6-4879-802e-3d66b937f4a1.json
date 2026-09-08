@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>-</p>",
+    "body_html": "<p>PesaCheck has a number of ways for the public to lodge complaints about its fact-checks, or to ask our researchers to fact-check a dubious claim by a public figure. But, who watches the watchdog? PesaCheck is a verified signatory of the International Fact-Checking Network's (IFCN) <a href=\"https://www.ifcncodeofprinciples.poynter.org/\"><b>Code of Principles</b></a>.</p>\n<p>As such, PesaCheck undergoes an independent annual assessment, to ensure that we are genuinely editorially independent and that we adhere to accepted professional standards.</p>\n<p>The IFCN code binds organisations that regularly publish nonpartisan reports on the accuracy of statements by public figures, major institutions, and other widely circulated claims of interest to society to a set of principles that include:</p>\n<ul><li>A commitment to transparency of sources</li><li>A commitment to nonpartisanship and fairness</li><li>A commitment to transparency of methodology</li><li>A commitment to open and honest corrections</li></ul>\n<p>To ensure that the code has teeth, and that PesaCheck is accountable, IFCN offers an independent <a href=\"https://www.ifcncodeofprinciples.poynter.org/complaints-policy\"><b>complaint mechanism</b></a> for anyone who believes that fact-checkers are violating their commitment to the principles.</p>",
+    "guid": "e6bc5d31-58e6-4879-802e-3d66b937f4a1",
+    "headline": "Holding Ourselves to International Standards",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "international-standards",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

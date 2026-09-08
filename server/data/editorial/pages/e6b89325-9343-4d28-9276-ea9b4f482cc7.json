@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>Abstract</p>",
+    "body_html": "<p>PesaCheck is structured as a journalistic newsroom, with a clear step-by-step workflow system that uses editorial checklists and production guidelines to create a transparent process for identifying eligible claims for our teams to fact-check, and a standardised methodology for researching and reporting our findings.</p>\n<!-- EMBED START Image {id: \"editor_0\"} -->\n<figure>\n    <img src=\"https://superdesk-staging.pesacheck.org/api/upload-raw/2026090806/6a9f92cba31c6dce9be4b8e1\" alt=\"\" />\n    <figcaption>The Process</figcaption>\n</figure>\n<!-- EMBED END Image {id: \"editor_0\"} -->\n<p><br></p>\n<p>The process ensures that each fact-check is reviewed and validated by multiple editors, to prevent personal bias/agendas. The structure (and accompanying role descriptions) also clearly outline the roles, responsibilities and mandate for each team member.</p>\n<!-- EMBED START Image {id: \"editor_1\"} -->\n<figure>\n    <img src=\"https://superdesk-staging.pesacheck.org/api/upload-raw/2026090806/6a9f95b5a31c6dce9be4b8f0\" alt=\"\" />\n    <figcaption>Editorial Workflow</figcaption>\n</figure>\n<!-- EMBED END Image {id: \"editor_1\"} -->\n<p><br></p>\n<p>PesaCheck is headed by a <b>publisher</b>, who is also CfA's chief operating officer. The publisher drives organisational strategy and partnerships. PesaCheck's editorial strategy and direction is set by PesaCheck's <b>editor-in-chief</b>, who is also CfA's chief executive officer. PesaCheck's newsroom is led by its <b>managing editor</b>, who is the senior editorial decision-maker and is responsible for shaping day-to-day editorial priorities and signing off all fact-checks before publication. The managing editor is assisted by three deputy editors: a <b>news editor</b> who manages the NewsDesk and in-country researchers/fact-checkers across the continent; a <b>chief copy editor</b> who manages the multilingual CopyDesk that uses a three-step process to check all fact-checks for factual accuracy and grammatical correctness; and a <b>special projects editor</b> who oversees PesaCheck's digital innovations including our DebunkBot, PromiseTracker, PesaYetu and TaxClock toolkits.</p>\n<p>PesaCheck currently publishes in two international languages, English and French, as well as a number of indigenous 'regional' African languages, such as Afaan-Oromo, Amharic and Kiswahili. The editors are therefore supported by deputies who serve as regional team coordinators, as well as newsdesk-based specialist data analysts/researchers.</p>\n<p>The PesaCheck newsdesk receives additional support from CfA's wider data journalism and infographic design teams, as well as its digital engagement (social media and multimedia) team. PesaCheck works closely with CfA's Academy to help mentor and train other newsrooms or civic watchdogs.</p>\n<!-- EMBED START Image {id: \"editor_2\"} -->\n<figure>\n    <img src=\"https://superdesk-staging.pesacheck.org/api/upload-raw/2026090806/6a9f95d2d0756a69fc2a0221\" alt=\"\" />\n    <figcaption>Newsroom</figcaption>\n</figure>\n<!-- EMBED END Image {id: \"editor_2\"} -->",
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "e6b89325-9343-4d28-9276-ea9b4f482cc7",
+    "headline": "Our Structure and Process",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "structure-and-process",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -1,0 +1,19 @@
+{
+    "extra": {
+        "content_list": "",
+        "cta_url": "<p>https://tiktok.com/</p>"
+    },
+    "feature_media": "a9950b73-2791-4bb4-9730-2776a59f955c",
+    "guid": "b54c2fce-95bc-46ec-93bc-bba0fa4fa323",
+    "headline": "TikTok",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "partner-tiktok",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"},
+        {"name": "Partner logos", "qcode": "partners-logos", "scheme": "page_section_template"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

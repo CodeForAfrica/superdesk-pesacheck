@@ -1,0 +1,21 @@
+{
+    "abstract": "<p>Two days on verification in low-resource languages, including tooling and community tip lines.</p>",
+    "extra": {
+        "event_cost": "",
+        "event_format": "",
+        "event_languages": "",
+        "event_meta": "<p>03 Dec 2026 · Addis Ababa</p>"
+    },
+    "feature_media": "7ff8e070-2e85-404c-9be3-ff00d2df601e",
+    "guid": "0a8dc877-82a0-44e5-b11f-5921de191fc2",
+    "headline": "Amharic and Somali verification lab",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a8ef90ae2b084181606ab39",
+    "slugline": "am-swa",
+    "subject": [
+        {"name": "Broadcast", "qcode": "broadcast", "scheme": "media_centre_label"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

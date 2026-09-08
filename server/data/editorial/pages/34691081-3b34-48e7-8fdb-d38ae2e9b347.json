@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>PesaCheck is an initiative of <a href=\"https://codeforafrica.org/\" target=\"_blank\"><b>Code for Africa</b></a> (CfA), which is the continent's largest open data/civic technology initiative with 103 full-time staff.</p>",
+    "body_html": "<p>PesaCheck is an initiative of <a href=\"https://codeforafrica.org/\" target=\"_blank\"><b>Code for Africa</b></a> (CfA), which is the continent's largest open data/civic technology initiative with 103 full-time staff (as at June 2022) in 21 African countries.</p>\n<p>CfA is registered as a public benefit and tax-exempt non-profit organisation in South Africa (registration number: <a href=\"http://www.npo.gov.za/PublicNpo/Npo/DetailsPublicDocs/33619918\" target=\"_blank\">168–092 NPO</a>), as well as an NGO in Kenya (where it is registered as the Civic Media Foundation, with registration number CPR/2016/220101) and Nigeria (registered as the Civic Foundation Nigeria Ltd/Gte RC 1503312).</p>\n<p>All CfA staff, including PesaCheck's team of 30 full-time editors/fact-checkers, are governed by the organisation's <a href=\"https://medium.com/code-for-africa/about-us-567c3fde3ad3\" target=\"_blank\"><b>Charter</b></a>, which explicitly states that CfA is non-partisan and non-aligned, and that CfA does not support or oppose any political party or candidate or cause.</p>\n<p>CfA and PesaCheck's explicit mission is to instead support active and engaged citizenship, by promoting citizens' access to actionable evidence-based information that they can then use to shape public discourse, engage their leaders and hold their governments accountable.</p>\n<p>Where PesaCheck has received funding, either directly or indirectly, related to a foreign government or one of its development agencies or sovereign funds, the terms of these grants include clauses that explicitly guarantee complete editorial control for PesaCheck.</p>",
+    "guid": "34691081-3b34-48e7-8fdb-d38ae2e9b347",
+    "headline": "Non-Partisanship and Fairness",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "non-partisanship",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

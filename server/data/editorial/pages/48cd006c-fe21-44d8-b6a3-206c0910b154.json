@@ -1,0 +1,21 @@
+{
+    "abstract": "<p>Two days with editors from every PesaCheck desk on verifying public finance claims, working across six publishing languages, and building tip lines that citizens actually use. Sessions are open to partner newsrooms, researchers and funders.</p>",
+    "extra": {
+        "event_cost": "<p>Free for partner newsrooms</p>",
+        "event_format": "<p>In person &amp; streamed</p>",
+        "event_languages": "<p>English, French, Kiswahili</p>",
+        "event_meta": "<p>Nairobi · 12–13 September 2026</p>"
+    },
+    "feature_media": "c53e8560-9647-4b4d-b4bc-76e0376c8a5f",
+    "guid": "48cd006c-fe21-44d8-b6a3-206c0910b154",
+    "headline": "Africa Fact-Checking Summit",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a8ef90ae2b084181606ab39",
+    "slugline": "Africa-Fact-Checking-Summit",
+    "subject": [
+        {"name": "Sector review", "qcode": "sector_review", "scheme": "media_centre_label"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>English, French, Kiswahili, Amharic, Somali and Afaan Oromo, across our desks in East, West and Southern Africa.</p>",
+    "body_html": "<p>English, French, Kiswahili, Amharic, Somali and Afaan Oromo, across our desks in East, West and Southern Africa.</p>",
+    "guid": "a5b0eae3-ac8d-47bd-9221-1b48bd0885b3",
+    "headline": "Which languages do you publish in?",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ed55d0756a69fc29fab7",
+    "slugline": "languages-we-publish-in",
+    "subject": [
+        {"name": "Questions about our fact-checks", "qcode": "factchecks", "scheme": "faq_group"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

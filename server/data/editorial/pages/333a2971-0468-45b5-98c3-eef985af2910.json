@@ -1,0 +1,17 @@
+{
+    "body_html": "<p>PesaCheck's income from July 2018 to June 2019 was $175,780 which paid for a team of 11 researchers, fact-checkers and editors working out of offices in Dar es Salaam, Kampala and Nairobi.</p>\n<!-- EMBED START Image {id: \"editor_0\"} -->\n<figure>\n    <img src=\"https://superdesk-staging.pesacheck.org/api/upload-raw/2026090808/6a9facc7d0756a69fc2a0266\" alt=\"\" />\n    <figcaption>Funding 2023</figcaption>\n</figure>\n<!-- EMBED END Image {id: \"editor_0\"} -->\n<p>&nbsp;</p>\n<!-- EMBED START Image {id: \"editor_1\"} -->\n<figure>\n    <img src=\"https://superdesk-staging.pesacheck.org/api/upload-raw/2026090808/6a9face0a31c6dce9be4b918\" alt=\"\" />\n    <figcaption>Funding 2023</figcaption>\n</figure>\n<!-- EMBED END Image {id: \"editor_1\"} -->\n<p><br></p>",
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "333a2971-0468-45b5-98c3-eef985af2910",
+    "headline": "Our Income",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "funding-our-income",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

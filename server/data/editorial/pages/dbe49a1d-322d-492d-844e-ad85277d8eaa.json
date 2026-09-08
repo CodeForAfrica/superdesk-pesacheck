@@ -1,0 +1,18 @@
+{
+    "extra": {
+        "content_list": ""
+    },
+    "feature_media": "c25a4020-6063-4d0c-933a-eb76bb03902d",
+    "guid": "dbe49a1d-322d-492d-844e-ad85277d8eaa",
+    "headline": "PesaCheck team at work",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "about-intro-image-1",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"},
+        {"name": "About intro", "qcode": "about-intro", "scheme": "page_section_template"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

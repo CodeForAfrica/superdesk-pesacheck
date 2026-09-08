@@ -1,0 +1,17 @@
+{
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "559c05ed-fb24-4af7-b5bd-da377a5bc5dc",
+    "headline": "Our team",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "about-team",
+    "subject": [
+        {"name": "team-grid", "qcode": "team-grid", "scheme": "page_section_template"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

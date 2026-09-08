@@ -1,0 +1,17 @@
+{
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "81da951a-d902-41bf-9d68-cd2dbe8fe370",
+    "headline": "More than fact-checking",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "tools-showcase",
+    "subject": [
+        {"name": "tools-showcase", "qcode": "tools-showcase", "scheme": "page_section_template"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

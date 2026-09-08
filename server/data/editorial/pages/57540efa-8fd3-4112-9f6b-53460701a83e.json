@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>-</p>",
+    "body_html": "<p>Misinformation is not new. It has always existed. The explosive growth of social media has, however, diluted the role of traditional gatekeepers and watchdogs such as the media by allowing ordinary citizens to become publishers in their own right. Social media is now amongst the largest sources of information for ordinary citizens in all 14 countries where PesaCheck operates. This democratisation of online information has turbocharged the spread of misleading or unsubstantiated information, and other toxic content (such as hate speech).</p>\n<p>To help combat the spread of misinformation at source, PesaCheck has partnered with <a href=\"https://pesacheck.org/pesacheck-and-facebook-partner-to-fight-misinformation-in-kenya-d6a45ee70c18\">Facebook since 2018</a>, and with WhatsApp since 2020. As a third party fact-checker with <a href=\"https://www.facebook.com/journalismproject/programs/third-party-fact-checking\">Meta's Journalism Program</a>, PesaCheck looks into questionable claims published on the platform that touch on matters of public interest, and rates them (as false, partly false, altered, missing context and satire) using a set of transparent processes for arriving at a determination.</p>\n<p>PesaCheck shares its findings with Facebook, which then decides to take action, if any, on the original posts that sparked our fact-checking. <a href=\"https://web.facebook.com/business/help/1964098996981326?id=211528469955719\">Learn more about fact-checking on Facebook</a>.</p>",
+    "guid": "57540efa-8fd3-4112-9f6b-53460701a83e",
+    "headline": "Our Partnership with Digital Platforms",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "digital-platforms",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

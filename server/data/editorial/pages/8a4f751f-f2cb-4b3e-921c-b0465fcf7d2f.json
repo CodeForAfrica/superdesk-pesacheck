@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>PesaCheck fact-checks and datasets are cited in peer-reviewed studies of misinformation, media trust and electoral integrity in African contexts.</p>",
+    "extra": {
+        "originator": ""
+    },
+    "guid": "8a4f751f-f2cb-4b3e-921c-b0465fcf7d2f",
+    "headline": "Peer-reviewed journals",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a8d9ff7e2b084181606aabb",
+    "slugline": "peer-reviewed-journal",
+    "subject": [
+        {"name": "Research", "qcode": "research", "scheme": "content_type"},
+        {"name": "Methodology", "qcode": "methodology", "scheme": "media_centre_label"}
+    ],
+    "type": "text",
+    "urgency": 1
+}

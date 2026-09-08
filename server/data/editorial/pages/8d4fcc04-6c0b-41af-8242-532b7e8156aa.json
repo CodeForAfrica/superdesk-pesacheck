@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>PesaCheck is a verified signatory of the International Fact-Checking Network's Code of Principles, and is reassessed annually against its standards for non-partisanship, transparency of sources and funding, and open corrections.</p>",
+    "extra": {
+        "partner_role": "<p>Verified signatory</p>",
+        "partner_url": "<p>https://www.poynter.org/ifcn/</p>"
+    },
+    "guid": "8d4fcc04-6c0b-41af-8242-532b7e8156aa",
+    "headline": "IFCN",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ebdad0756a69fc29fab0",
+    "slugline": "ifcn",
+    "subject": [
+        {"name": "Fact-checking networks", "qcode": "networks", "scheme": "ecosystem_group"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

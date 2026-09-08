@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>Section</p>",
+    "body_html": "<p>Social media is a key tool that we use to distribute our fact-checks. The following are guidelines that we use to keep our social media consistent and harmonised:</p>\n<ul>\n  <li>We don't post anything that we cannot stand by.</li>\n  <li>All posts follow a consistent structure — a question statement (what), a source (who) and a link to the story (where to find more). Example: FACT CHECK: Did <a href=\"https://twitter.com/Kandie_Phyllis\">@Kandie_Phyllis</a> misspeak about pledging Sh18bn for disabled kids? <a href=\"https://twitter.com/PesaCheck\">@PesaCheck</a> finds out.</li>\n  <li>Each fact check needs a standard hashtag, for example <a href=\"https://twitter.com/hashtag/PesaCheck\">#PesaCheck</a>.</li>\n  <li>All reactions and comments are looked into, especially when they lead to potential follow-up stories that may arise out of the fact check.</li>\n</ul>",
+    "guid": "a075a548-9c77-408d-bed1-c27d49cf1b5d",
+    "headline": "Social Media Policy",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "social-media-policy",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>We bring fact-checkers together across borders and languages — coordinating on claims that travel, and agreeing shared standards for how they are checked.</p>",
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "60e6610d-bcfd-4fb0-a417-93845b46fb9d",
+    "headline": "We convene",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "we-convene",
+    "subject": [
+        {"name": "announce", "qcode": "announce", "scheme": "ecosystem_role_icon"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

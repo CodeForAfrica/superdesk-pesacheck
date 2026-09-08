@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>PesaCheck was founded with a seed grant from Code for Africa's innovateAFRICA fund and is funded by a mix of grants and third-party fact-checking work. Our funding page lists every funder.</p>",
+    "body_html": "<p>PesaCheck was founded with a seed grant from Code for Africa's innovateAFRICA fund and is funded by a mix of grants and third-party fact-checking work. Our funding page lists every funder.</p>",
+    "guid": "d9197684-8a68-4a01-b69b-645fc6498db3",
+    "headline": "Who funds PesaCheck?",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ed55d0756a69fc29fab7",
+    "slugline": "who-funds-us",
+    "subject": [
+        {"name": "Questions about our policies", "qcode": "policies", "scheme": "faq_group"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

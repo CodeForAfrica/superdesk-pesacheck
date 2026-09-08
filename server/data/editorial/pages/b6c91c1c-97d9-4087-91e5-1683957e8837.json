@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>We prioritise claims that are circulating widely and could affect public decisions — health, elections, public finance and safety. Claims sent in by readers are triaged the same way.</p>",
+    "body_html": "<p>We prioritise claims that are circulating widely and could affect public decisions — health, elections, public finance and safety. Claims sent in by readers are triaged the same way.</p>",
+    "guid": "b6c91c1c-97d9-4087-91e5-1683957e8837",
+    "headline": "How do you choose which claims to fact-check?",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ed55d0756a69fc29fab7",
+    "slugline": "how-we-choose-claims",
+    "subject": [
+        {"name": "Questions about our fact-checks", "qcode": "factchecks", "scheme": "faq_group"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

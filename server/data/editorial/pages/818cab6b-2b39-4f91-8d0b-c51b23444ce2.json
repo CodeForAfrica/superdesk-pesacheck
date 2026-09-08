@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>PesaCheck is Africa's largest indigenous fact-checking organisation, debunking misleading claims and providing accurate information for sound decision-making</p>",
+    "extra": {
+        "content_list": ""
+    },
+    "feature_media": "cdba9ccf-916c-432b-84da-684c6bad220d",
+    "guid": "818cab6b-2b39-4f91-8d0b-c51b23444ce2",
+    "headline": "About Us",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "about-hero",
+    "subject": [
+        {"name": "Hero", "qcode": "hero", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

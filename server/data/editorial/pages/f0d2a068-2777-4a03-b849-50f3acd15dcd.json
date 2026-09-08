@@ -1,0 +1,17 @@
+{
+    "abstract": "<p>PesaCheck collaborates with ARIA partners — researchers, newsrooms and civic technologists — on cross-border responses to coordinated disinformation.</p>",
+    "extra": {
+        "partner_role": "<p>Alliance member</p>"
+    },
+    "guid": "f0d2a068-2777-4a03-b849-50f3acd15dcd",
+    "headline": "ARIA",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ebdad0756a69fc29fab0",
+    "slugline": "aria",
+    "subject": [
+        {"name": "Research & investigation", "qcode": "research", "scheme": "ecosystem_group"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -1,0 +1,17 @@
+{
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "cab03fa7-61a5-4895-9eb1-6a1bc2f31dd0",
+    "headline": "Event spotlight",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "media-centre-events",
+    "subject": [
+        {"name": "media-events", "qcode": "media-events", "scheme": "page_section_template"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

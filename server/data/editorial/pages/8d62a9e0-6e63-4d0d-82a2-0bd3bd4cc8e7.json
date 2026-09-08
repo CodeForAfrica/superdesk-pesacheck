@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>Media and communication departments across the continent draw on our verification archive as a primary source for teaching and published research.</p>",
+    "extra": {
+        "originator": ""
+    },
+    "guid": "8d62a9e0-6e63-4d0d-82a2-0bd3bd4cc8e7",
+    "headline": "University centres",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a8d9ff7e2b084181606aabb",
+    "slugline": "university-centres",
+    "subject": [
+        {"name": "Research", "qcode": "research", "scheme": "content_type"},
+        {"name": "Methodology", "qcode": "methodology", "scheme": "media_centre_label"}
+    ],
+    "type": "text",
+    "urgency": 1
+}

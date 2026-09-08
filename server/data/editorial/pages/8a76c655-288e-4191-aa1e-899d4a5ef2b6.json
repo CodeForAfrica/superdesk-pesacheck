@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>Verifies claims circulating in Amharic and Afaan Oromo, where source material is thinnest.</p>",
+    "body_html": "<p>Tewodros edits the Amharic desk and works closely with the Afaan Oromo team. Much of his work is on claims with little published source material, where verification depends on primary contact rather than documents.</p>",
+    "extra": {
+        "team_role": "<p>Amharic Desk Editor</p>"
+    },
+    "guid": "8a76c655-288e-4191-aa1e-899d4a5ef2b6",
+    "headline": "Tewodros Bekele",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ecc6d0756a69fc29fab4",
+    "slugline": "tewodros-bekele",
+    "type": "text",
+    "urgency": 3
+}

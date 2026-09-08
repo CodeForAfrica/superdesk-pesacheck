@@ -1,0 +1,18 @@
+{
+    "body_html": "<p>PesaCheck is an initiative of Code for Africa (CfA) and was co-founded in 2016 by Justin Arenstein and Catherine Gicheru as part of their ICFJ Knight Fellowships, underwritten by an innovateAFRICA.fund award PesaCheck is an initiative of Code for Africa (CfA) and was co-founded in 2016 by Justin Arenstein and Catherine Gicheru as part of their ICFJ Knight Fellowships, underwritten by an innovateAFRICA.fund award</p>",
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "5ee537c8-abc8-4ebd-81fa-0e7f1c9989eb",
+    "headline": "Our Allies",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "partners-allies",
+    "subject": [
+        {"name": "allies-logos", "qcode": "allies-logos", "scheme": "page_section_template"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

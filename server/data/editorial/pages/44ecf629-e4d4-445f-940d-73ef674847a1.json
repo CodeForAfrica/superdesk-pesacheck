@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>Transparency is central to PesaCheck's mission, and is crucial for building trust and accountability around the work we do. We therefore strive to be transparen</p>",
+    "body_html": "<p>Transparency is central to PesaCheck's mission, and is crucial for building trust and accountability around the work we do. We therefore strive to be transparent about not just our systems, but also how we arrive at a finding on any claim we are fact-checking.</p>\n<p>As such, PesaCheck's work is evidence-driven with all our research and fact-checking based on source documents or other evidence (such as data, or budgets, or multimedia recordings). We cite all the evidence we use in every fact-check, linking to the public version of the material where possible. Where there is no public version, PesaCheck uploads source documents to CfA's <a href=\"https://sourceafrica.net/\" target=\"_blank\"><b>sourceAFRICA</b></a> platform for our audience to read, annotate and share. We also upload any data we use to CfA's <a href=\"https://africaopendata.org/\" target=\"_blank\"><b>openAFRICA</b></a> platform for our audience to review, test and re-use as they wish. And, we back-up copies of videos or audio files, and webpages to <a href=\"https://archive.org/\" target=\"_blank\"><b>Archive.org</b></a> to ensure there is an abiding public record, even if the original source disappears.</p>\n<p>Where we quote human sources, we always explain their affiliations and expertise relating to the topic. We ensure that we flag any possible vested interests, or conflicts of interest. And, to ensure that no single source inadvertently misconstrues or misspeaks on an issue, we strive to multi-source key clarifications on the topics we are fact-checking.</p>\n<p>We also publish our step-by-step editorial workflow, along with a copy of our staff organisation chart, so that the public understands the technical process we follow to produce a fact-check, and understand our multi-person and multi-edit/verification process to ensure that all information is checked and validated by a team of editors to protect against bias by any single author or source.</p>\n<p>The result is a transparent process where our audience has unfettered immediate access to the supporting evidence we cite, to make up their own minds about our research.</p>",
+    "guid": "44ecf629-e4d4-445f-940d-73ef674847a1",
+    "headline": "Transparency of Sources and Evidence",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "transparency-of-sources",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}
