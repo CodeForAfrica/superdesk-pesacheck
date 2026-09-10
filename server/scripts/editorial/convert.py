@@ -15,7 +15,7 @@ the original media bytes from a running Superdesk. This converter writes:
 
     server/data/editorial/pages/<guid>.json      one text/page doc per file
     server/data/editorial/pictures/<guid>.json   one picture item per file
-    (media bytes are written by dump.sh directly, tracked via Git LFS)
+    (media bytes are written by dump.sh directly, tracked as git blobs)
 
 Input: `--source` dir holding `pages.json` and `pictures.json` (JSON arrays of
 Superdesk docs, latest version per guid), as produced by dump.sh.

@@ -20,7 +20,7 @@
 #
 # Writes pages.json + pictures.json into OUT_DIR (default ./editorial-dump).
 # Media bytes are pulled by a separate step (see dump_media, TODO) into
-# data/editorial/media/ and tracked via Git LFS.
+# data/editorial/media/ and tracked as regular git blobs.
 set -euo pipefail
 
 SOURCE="${1:-}"
@@ -130,8 +130,8 @@ print(f">> pages={len(data.get('pages',[]))} pictures={len(data.get('pictures',[
 PY
 log "Wrote $OUT/pages.json and $OUT/pictures.json"
 
-# Pull the ORIGINAL media bytes for each captured picture into the tracked,
-# LFS-backed media dir. Deployed media is S3 at
+# Pull the ORIGINAL media bytes for each captured picture into the tracked
+# media dir (regular git blobs). Deployed media is S3 at
 # s3://pesacheck-media-<env>/superdesk/<original.media>; only the original is
 # kept (Superdesk regenerates renditions on import). Local media is GridFS and is
 # not captured here — the fixtures are always captured from a deployed instance.

@@ -20,7 +20,7 @@ re-published). Pages are published onto a dedicated "Static Pages" desk.
 
 Media: each page's ``feature_media`` (hero image) and ``embedded_media`` (images
 embedded in body_html, keyed by editor block id) are uploaded and attached as
-associations, with the LFS media bytes tracked under ``data/editorial/media/``.
+associations, with the media bytes tracked as git blobs under ``data/editorial/media/``.
 SWP rewrites each body ``<img src>`` to a public URL from the matching
 association, so attaching them is what makes inline images render.
 
