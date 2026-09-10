@@ -50,8 +50,16 @@ wanted.forEach(function(g){
   var d=latest(g); if(!d) return;
   if(d.source==="Ghost") return;            // ingested, not a fixture
   pages.push(d);
-  var fm=(d.associations||{}).featuremedia;
-  if(fm){ var pg=fm.guid||fm._id; if(pg && !picSeen[pg]){ picSeen[pg]=1; var p=latest(pg)|| (fm.type?fm:null); if(p) pics.push(p); } }
+  // Capture EVERY association picture, not just featuremedia: images embedded in
+  // body_html are stored as associations keyed by their editor block id
+  // (editor_0, editor_1, ...). Missing these leaves the body <img> pointing at
+  // the authoring-time upload-raw URL (auth-gated) and the image renders blank.
+  var assoc=d.associations||{};
+  Object.keys(assoc).forEach(function(k){
+    var a=assoc[k]; if(!a) return;
+    var pg=a.guid||a._id; if(!pg||picSeen[pg]) return; picSeen[pg]=1;
+    var p=latest(pg)||(a.type?a:null); if(p) pics.push(p);
+  });
 });
 print(JSON.stringify({pages:pages, pictures:pics}));
 EOF
@@ -152,5 +160,41 @@ PY
     aws s3 cp "s3://$BUCKET/superdesk/$key" "$MEDIA_DEST/$guid.$e" --quiet \
       && mcount=$((mcount + 1)) || log "  missing media: $guid ($key)"
   done < "$OUT/_media.txt"
-  log "Pulled $mcount media file(s) into $MEDIA_DEST"
+  log "Pulled $mcount picture file(s) into $MEDIA_DEST"
+
+  # Inline body images pasted as raw `<img src="…upload-raw/<date>/<id>…">`
+  # (no association) are not captured above. convert.py normalises them into
+  # editor embeds keyed by the upload-raw media id, so pull those bytes by id.
+  # Skip ids already pulled as an association picture (same image, different name).
+  log "Pulling inline body-image media from s3://$BUCKET/superdesk/ ..."
+  python3 - "$OUT/pages.json" "$OUT/_media.txt" <<'PY' > "$OUT/_body_media.txt"
+import json, re, sys
+assoc = set()
+for line in open(sys.argv[2]):
+    parts = line.split()
+    if len(parts) >= 2:
+        assoc.add(parts[1].rsplit("/", 1)[-1])  # association original-media objectid
+seen = set()
+for d in json.load(open(sys.argv[1])):
+    for m in re.finditer(r"upload-raw/(?:(\d+)/)?([0-9a-f]{24})", d.get("body_html") or ""):
+        date, mid = m.group(1), m.group(2)
+        if mid in assoc or mid in seen:
+            continue
+        seen.add(mid)
+        print(f"{mid} {(date + '/' + mid) if date else mid}")
+PY
+  bcount=0
+  while read -r mid key; do
+    [ -n "$mid" ] || continue
+    ls "$MEDIA_DEST/$mid".* >/dev/null 2>&1 && continue
+    ct=$(aws s3api head-object --bucket "$BUCKET" --key "superdesk/$key" \
+      --query ContentType --output text 2>/dev/null || echo "")
+    case "$ct" in
+      image/png) e=png ;; image/jpeg|image/jpg) e=jpg ;; image/webp) e=webp ;;
+      image/gif) e=gif ;; image/svg+xml) e=svg ;; *) e=jpg ;;
+    esac
+    aws s3 cp "s3://$BUCKET/superdesk/$key" "$MEDIA_DEST/$mid.$e" --quiet \
+      && bcount=$((bcount + 1)) || log "  missing body media: $mid ($key)"
+  done < "$OUT/_body_media.txt"
+  log "Pulled $bcount inline body-image file(s) into $MEDIA_DEST"
 fi

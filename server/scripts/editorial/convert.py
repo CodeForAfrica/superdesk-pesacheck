@@ -31,6 +31,7 @@ fails loudly otherwise, so a missing profile is caught at capture, not at reset.
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 # Old (pre-canonical) profile ids -> the tracked content-config ids.
@@ -132,6 +133,72 @@ def featuremedia_guid(doc):
     return assoc.get("guid") or assoc.get("_id")
 
 
+# Images embedded in body_html are stored as editor blocks: a
+# `<!-- EMBED START Image {id: "editor_0"} -->` marker whose id is the KEY of an
+# `associations` entry holding the picture + renditions. SWP's
+# EmbeddedImageProcessor rewrites each <img src> to a public media URL, but ONLY
+# when that association is present — so the embed id -> picture guid map must be
+# tracked and re-attached on import, exactly like feature media. Without it the
+# body keeps its authoring-time upload-raw URL (auth-gated, 401) and the image
+# is blank. Keyed by the embed id, not the picture guid, because SWP matches the
+# marker id to the association key.
+EMBED_IMAGE_ID_RE = re.compile(r'EMBED START Image \{id: ?"([^"]+)"\}')
+
+
+def embedded_media_map(doc):
+    body = doc.get("body_html") or ""
+    assoc = doc.get("associations") or {}
+    out = {}
+    for embed_id in sorted(set(EMBED_IMAGE_ID_RE.findall(body))):
+        a = assoc.get(embed_id) or {}
+        guid = a.get("guid") or a.get("_id")
+        if guid:
+            out[embed_id] = guid
+    return out
+
+
+# Some authored pages carry images NOT as proper editor embeds but as raw HTML
+# blocks pasted into the body: `<div class="embed-block"><img src="…upload-raw…">`.
+# These have NO `associations` entry and NO EMBED marker, so SWP's
+# EmbeddedImageProcessor never rewrites them and the staging upload-raw URL
+# (auth-gated, 401) survives to the frontend. Normalise them into the SAME editor
+# embed shape the working images use — `<!-- EMBED START Image {id:"editor_N"} -->
+# <figure><img></figure><!-- EMBED END … -->` — and map the new id to the
+# upload-raw media id (used as the media-file key, pulled by dump.sh). SWP then
+# rewrites them per-environment exactly like every other embedded image.
+EMBED_BLOCK_RE = re.compile(
+    r'<div class="embed-block">\s*<img\b(?P<attrs>[^>]*)>\s*</div>', re.I | re.S
+)
+UPLOAD_RAW_ID_RE = re.compile(r'upload-raw/(?:\d+/)?([0-9a-f]{24})')
+
+
+def normalize_embed_blocks(body):
+    """Rewrite `<div class="embed-block"><img …></div>` into editor-embed markers.
+
+    Returns (new_body, {editor_id: upload_raw_media_id}). New ids continue after
+    any `editor_N` already present so they never collide with real editor embeds.
+    """
+    used = [int(n) for n in re.findall(r'"editor_(\d+)"', body)]
+    counter = [max(used) + 1 if used else 0]
+    mapping = {}
+
+    def repl(m):
+        attrs = m.group("attrs")
+        raw = UPLOAD_RAW_ID_RE.search(attrs)
+        if not raw:
+            return m.group(0)  # not an upload-raw image; leave the block untouched
+        eid = f"editor_{counter[0]}"
+        counter[0] += 1
+        mapping[eid] = raw.group(1)
+        return (
+            f'<!-- EMBED START Image {{id: "{eid}"}} -->\n'
+            f'<figure><img{attrs}></figure>\n'
+            f'<!-- EMBED END Image {{id: "{eid}"}} -->'
+        )
+
+    return EMBED_BLOCK_RE.sub(repl, body), mapping
+
+
 def pick(doc, fields):
     out = {}
     for f in fields:
@@ -143,6 +210,13 @@ def pick(doc, fields):
 def convert(src, dest, summary):
     dest = Path(dest)
     for doc in load_json(src, "pages.json"):
+        # Normalise raw `embed-block` images into editor embeds BEFORE picking, so
+        # the tracked body carries EMBED markers and the importer attaches their
+        # media as associations (see normalize_embed_blocks).
+        new_body, block_media = normalize_embed_blocks(doc.get("body_html") or "")
+        if block_media:
+            doc = {**doc, "body_html": new_body}
+            summary["embed_blocks"] += len(block_media)
         page = pick(doc, PAGE_FIELDS)
         pid = remap_profile(doc.get("profile"))
         if pid not in TRACKED_PROFILES:
@@ -159,6 +233,11 @@ def convert(src, dest, summary):
         fm = featuremedia_guid(doc)
         if fm:
             page["feature_media"] = fm  # picture guid; importer re-links after upload
+        emb = embedded_media_map(doc)
+        emb.update(block_media)  # normalised embed-block images (keyed by upload-raw id)
+        if emb:
+            page["embedded_media"] = emb  # embed id -> picture/media id; re-attached on import
+            summary["embedded_media"] += len(emb)
         write_json(dest / "pages" / f"{doc['guid']}.json", page)
         summary["pages"] += 1
 
@@ -174,10 +253,13 @@ def main(argv=None):
     ap.add_argument("--source", required=True, help="dir holding pages.json / pictures.json")
     ap.add_argument("--dest", default="data/editorial", help="output dir (default: data/editorial)")
     args = ap.parse_args(argv)
-    summary = {"pages": 0, "pictures": 0, "role_defaulted": 0}
+    summary = {"pages": 0, "pictures": 0, "role_defaulted": 0, "embedded_media": 0,
+               "embed_blocks": 0}
     convert(args.source, args.dest, summary)
     print(f"Pages:    {summary['pages']}")
     print(f"Pictures: {summary['pictures']}")
+    print(f"Embedded body images: {summary['embedded_media']}")
+    print(f"Normalised embed-block images: {summary['embed_blocks']}")
     print(f"page_section_role defaulted to 'section': {summary['role_defaulted']}")
 
 
