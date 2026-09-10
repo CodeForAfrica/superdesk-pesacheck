@@ -54,8 +54,11 @@ PROFILE_REMAP = {
 # "section" role so they publish; hero/cta pages already carry their own entry.
 PAGE_SECTION_PROFILE = "6a98515dd0756a69fc29fb06"
 PAGE_SECTION_ROLE_SCHEME = "page_section_role"
-DEFAULT_PAGE_SECTION_ROLE = {"name": "Section", "qcode": "section",
-                             "scheme": PAGE_SECTION_ROLE_SCHEME}
+DEFAULT_PAGE_SECTION_ROLE = {
+    "name": "Section",
+    "qcode": "section",
+    "scheme": PAGE_SECTION_ROLE_SCHEME,
+}
 
 TRACKED_PROFILES = {
     "6a8c9122e2b084181606a9ce",  # Announcement
@@ -65,18 +68,41 @@ TRACKED_PROFILES = {
     "6a97ed55d0756a69fc29fab7",  # FAQ
     "6a97edd7d0756a69fc29fabb",  # Event
     "6a98515dd0756a69fc29fb06",  # Page Section
-    "article", "text", "picture", "composite", "audio", "video",
+    "article",
+    "text",
+    "picture",
+    "composite",
+    "audio",
+    "video",
 }
 
 # Fields kept per page. Everything else (versions, task, queue_state, expiry,
 # timestamps, *_creator, unique_id, etags) is per-instance churn and dropped.
 PAGE_FIELDS = (
-    "guid", "type", "profile", "headline", "slugline", "language",
-    "abstract", "body_html", "byline", "priority", "urgency", "extra", "subject",
+    "guid",
+    "type",
+    "profile",
+    "headline",
+    "slugline",
+    "language",
+    "abstract",
+    "body_html",
+    "byline",
+    "priority",
+    "urgency",
+    "extra",
+    "subject",
 )
 PICTURE_FIELDS = (
-    "guid", "type", "profile", "headline", "description_text", "alt_text",
-    "slugline", "language", "byline",
+    "guid",
+    "type",
+    "profile",
+    "headline",
+    "description_text",
+    "alt_text",
+    "slugline",
+    "language",
+    "byline",
 )
 
 INDENT = "    "
@@ -101,7 +127,9 @@ def emit(obj, indent=0):
         lines = ["{"]
         for i, k in enumerate(keys):
             tail = "," if i < len(keys) - 1 else ""
-            lines.append(f"{child}{json.dumps(k, ensure_ascii=False)}: {emit(obj[k], indent + 1)}{tail}")
+            lines.append(
+                f"{child}{json.dumps(k, ensure_ascii=False)}: {emit(obj[k], indent + 1)}{tail}"
+            )
         lines.append(pad + "}")
         return "\n".join(lines)
     if isinstance(obj, list):
@@ -111,8 +139,11 @@ def emit(obj, indent=0):
         for i, v in enumerate(obj):
             tail = "," if i < len(obj) - 1 else ""
             compact = _compact(v)
-            lines.append(f"{child}{compact}{tail}" if len(compact) <= COMPACT_LINE_MAX
-                         else f"{child}{emit(v, indent + 1)}{tail}")
+            lines.append(
+                f"{child}{compact}{tail}"
+                if len(compact) <= COMPACT_LINE_MAX
+                else f"{child}{emit(v, indent + 1)}{tail}"
+            )
         lines.append(pad + "]")
         return "\n".join(lines)
     return json.dumps(obj, ensure_ascii=False)
@@ -169,7 +200,7 @@ def embedded_media_map(doc):
 EMBED_BLOCK_RE = re.compile(
     r'<div class="embed-block">\s*<img\b(?P<attrs>[^>]*)>\s*</div>', re.I | re.S
 )
-UPLOAD_RAW_ID_RE = re.compile(r'upload-raw/(?:\d+/)?([0-9a-f]{24})')
+UPLOAD_RAW_ID_RE = re.compile(r"upload-raw/(?:\d+/)?([0-9a-f]{24})")
 
 
 def normalize_embed_blocks(body):
@@ -192,7 +223,7 @@ def normalize_embed_blocks(body):
         mapping[eid] = raw.group(1)
         return (
             f'<!-- EMBED START Image {{id: "{eid}"}} -->\n'
-            f'<figure><img{attrs}></figure>\n'
+            f"<figure><img{attrs}></figure>\n"
             f'<!-- EMBED END Image {{id: "{eid}"}} -->'
         )
 
@@ -234,9 +265,13 @@ def convert(src, dest, summary):
         if fm:
             page["feature_media"] = fm  # picture guid; importer re-links after upload
         emb = embedded_media_map(doc)
-        emb.update(block_media)  # normalised embed-block images (keyed by upload-raw id)
+        emb.update(
+            block_media
+        )  # normalised embed-block images (keyed by upload-raw id)
         if emb:
-            page["embedded_media"] = emb  # embed id -> picture/media id; re-attached on import
+            page["embedded_media"] = (
+                emb  # embed id -> picture/media id; re-attached on import
+            )
             summary["embedded_media"] += len(emb)
         write_json(dest / "pages" / f"{doc['guid']}.json", page)
         summary["pages"] += 1
@@ -249,12 +284,23 @@ def convert(src, dest, summary):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--source", required=True, help="dir holding pages.json / pictures.json")
-    ap.add_argument("--dest", default="data/editorial", help="output dir (default: data/editorial)")
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    ap.add_argument(
+        "--source", required=True, help="dir holding pages.json / pictures.json"
+    )
+    ap.add_argument(
+        "--dest", default="data/editorial", help="output dir (default: data/editorial)"
+    )
     args = ap.parse_args(argv)
-    summary = {"pages": 0, "pictures": 0, "role_defaulted": 0, "embedded_media": 0,
-               "embed_blocks": 0}
+    summary = {
+        "pages": 0,
+        "pictures": 0,
+        "role_defaulted": 0,
+        "embedded_media": 0,
+        "embed_blocks": 0,
+    }
     convert(args.source, args.dest, summary)
     print(f"Pages:    {summary['pages']}")
     print(f"Pictures: {summary['pictures']}")

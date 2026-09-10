@@ -47,8 +47,14 @@ DEFAULT_API = "http://superdesk-api:5000/api"
 DEFAULT_DATA = "/opt/superdesk/data/editorial"
 DESK_NAME = os.environ.get("STATIC_PAGES_DESK", "Static Pages")
 MEDIA_EXTS = ("png", "jpg", "jpeg", "webp", "gif", "svg")
-MIME_BY_EXT = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg",
-               "webp": "image/webp", "gif": "image/gif", "svg": "image/svg+xml"}
+MIME_BY_EXT = {
+    "png": "image/png",
+    "jpg": "image/jpeg",
+    "jpeg": "image/jpeg",
+    "webp": "image/webp",
+    "gif": "image/gif",
+    "svg": "image/svg+xml",
+}
 
 
 def superdesk_db():
@@ -71,7 +77,8 @@ def wait_for_api(base, attempts=30, delay=2):
 def admin_token():
     out = subprocess.run(
         ["python3", "manage.py", "users:get_auth_token", "-u", "admin", "-p", "admin"],
-        capture_output=True, text=True,
+        capture_output=True,
+        text=True,
     )
     m = re.search(r"Generated token:\s+b'([^']+)'", out.stdout + out.stderr)
     if not m:
@@ -94,8 +101,9 @@ class Api:
         return r.status_code, _json(r)
 
     def patch(self, res, payload, etag):
-        r = self.s.patch(f"{self.base}/{res}", json=payload,
-                         headers={"If-Match": etag}, timeout=120)
+        r = self.s.patch(
+            f"{self.base}/{res}", json=payload, headers={"If-Match": etag}, timeout=120
+        )
         return r.status_code, _json(r)
 
     def upload_picture(self, path, headline):
@@ -103,10 +111,12 @@ class Api:
         item with renditions. Returns the picture doc, or None on failure."""
         mime = MIME_BY_EXT.get(path.suffix.lstrip(".").lower(), "image/jpeg")
         with path.open("rb") as fh:
-            r = self.s.post(f"{self.base}/archive",
-                            files={"media": (path.name, fh, mime)},
-                            data={"type": "picture", "headline": headline or ""},
-                            timeout=120)
+            r = self.s.post(
+                f"{self.base}/archive",
+                files={"media": (path.name, fh, mime)},
+                data={"type": "picture", "headline": headline or ""},
+                timeout=120,
+            )
         return _json(r) if r.status_code in (200, 201) else None
 
 
@@ -130,11 +140,14 @@ def ensure_desk(db, api, admin_id):
     service (so stage-visibility caches are maintained by core)."""
     desk = db.desks.find_one({"name": DESK_NAME})
     if not desk:
-        status, created = api.post("desks", {
-            "name": DESK_NAME,
-            "desk_type": "production",
-            "members": [{"user": str(admin_id)}],
-        })
+        status, created = api.post(
+            "desks",
+            {
+                "name": DESK_NAME,
+                "desk_type": "production",
+                "members": [{"user": str(admin_id)}],
+            },
+        )
         if status not in (200, 201):
             raise SystemExit(f"could not create desk {DESK_NAME!r}: {status} {created}")
         desk = db.desks.find_one({"name": DESK_NAME})
@@ -150,8 +163,18 @@ def build_doc(page, desk_id, stage_id, admin_id):
         "state": "in_progress",
         "task": {"desk": desk_id, "stage": stage_id, "user": str(admin_id)},
     }
-    for f in ("headline", "slugline", "language", "abstract", "body_html",
-              "byline", "urgency", "priority", "extra", "subject"):
+    for f in (
+        "headline",
+        "slugline",
+        "language",
+        "abstract",
+        "body_html",
+        "byline",
+        "urgency",
+        "priority",
+        "extra",
+        "subject",
+    ):
         if f in page:
             doc[f] = page[f]
     return doc
@@ -189,18 +212,24 @@ def import_pages(db, api, admin_id, data_dir):
                 else:
                     print(f"  media upload failed for {guid} ({fm_guid}); text-only")
             else:
-                print(f"  feature media bytes missing for {guid} ({fm_guid}); text-only")
+                print(
+                    f"  feature media bytes missing for {guid} ({fm_guid}); text-only"
+                )
         for embed_id, pic_guid in sorted((page.get("embedded_media") or {}).items()):
             embed_path = find_media(media_dir, pic_guid)
             if not embed_path:
-                print(f"  embedded media bytes missing for {guid} {embed_id} ({pic_guid})")
+                print(
+                    f"  embedded media bytes missing for {guid} {embed_id} ({pic_guid})"
+                )
                 continue
             epic = api.upload_picture(embed_path, page.get("headline"))
             if epic:
                 associations[embed_id] = epic
                 embedded_media += 1
             else:
-                print(f"  embedded media upload failed for {guid} {embed_id} ({pic_guid})")
+                print(
+                    f"  embedded media upload failed for {guid} {embed_id} ({pic_guid})"
+                )
         if associations:
             doc["associations"] = associations
         status, res = api.post("archive", doc)
@@ -211,15 +240,19 @@ def import_pages(db, api, admin_id, data_dir):
         created += 1
         # Publish: PATCH /archive/publish/{id} with the fresh etag.
         _, item = api.get(f"archive/{guid}")
-        status, res = api.patch(f"archive/publish/{guid}", {"state": "published"}, item.get("_etag"))
+        status, res = api.patch(
+            f"archive/publish/{guid}", {"state": "published"}, item.get("_etag")
+        )
         if status in (200, 201):
             published += 1
         else:
             print(f"  PUBLISH FAIL {guid}: {status} {res.get('_message') or res}")
             failed += 1
-    print(f"Editorial pages: {created} created ({with_media} with feature media, "
-          f"{embedded_media} embedded body images), {published} published, "
-          f"{skipped} already present, {failed} failed (of {len(pages)}).")
+    print(
+        f"Editorial pages: {created} created ({with_media} with feature media, "
+        f"{embedded_media} embedded body images), {published} published, "
+        f"{skipped} already present, {failed} failed (of {len(pages)})."
+    )
     return failed
 
 
