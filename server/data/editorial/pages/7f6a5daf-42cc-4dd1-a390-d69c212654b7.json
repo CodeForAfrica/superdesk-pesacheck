@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>Cape Town</p>",
+    "body_html": "<p>Christiaan van der Merwe</p>",
+    "extra": {
+        "contact_email": "<p>christiaan@pesacheck.org</p>"
+    },
+    "guid": "7f6a5daf-42cc-4dd1-a390-d69c212654b7",
+    "headline": "South Africa",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "contact-office-south-africa",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

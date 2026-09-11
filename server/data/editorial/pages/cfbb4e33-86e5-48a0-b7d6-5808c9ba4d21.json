@@ -1,0 +1,14 @@
+{
+    "body_html": "<ul><li><strong>ADPPA:</strong> American Data Privacy and Protection Act.</li><li><strong>CfA:</strong> Code for Africa.</li><li><strong>Data Controller:</strong> The natural or legal person who (either alone or jointly or in common with other persons) determines the purposes for which and the manner in which any personal information are, or are to be, processed.</li><li><strong>Data Processor:</strong> Any natural or legal person who processes the data on behalf of the Data Controller.</li><li><strong>Data Subject:</strong> Any living individual who is using our Service(s) and is the subject of Personal Data.</li><li><strong>GDPA:</strong> General Data Protection Regulation Act.</li><li><strong>POPIA:</strong> South African Protection of Personal Information Act.</li></ul>",
+    "guid": "cfbb4e33-86e5-48a0-b7d6-5808c9ba4d21",
+    "headline": "Definitions",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "privacy-definitions",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -651,6 +651,7 @@
             "claimformat": null,
             "claimtype": null,
             "company_codes": null,
+            "content_list": null,
             "content_type": null,
             "countries": null,
             "countrymention1": null,
@@ -658,6 +659,8 @@
             "countrymention3": null,
             "countrymention4": null,
             "countrymention5": null,
+            "cta_label": null,
+            "cta_url": null,
             "dateline": null,
             "drafturl": null,
             "ecosystem_group": {
@@ -669,6 +672,7 @@
                 "sdWidth": "full",
                 "section": "header"
             },
+            "ecosystem_role_icon": null,
             "ednote": null,
             "event_cost": null,
             "event_dates": null,
@@ -696,12 +700,15 @@
                 "sdWidth": "full",
                 "section": "content"
             },
+            "impact_icon": null,
             "keywords": null,
             "language": null,
             "linkedin_url": null,
             "media_centre_label": null,
             "media_description": null,
             "originator": null,
+            "page_section_role": null,
+            "page_section_template": null,
             "partner_role": {
                 "enabled": true,
                 "field_name": "Partner role",
@@ -761,6 +768,9 @@
             "body_html": null,
             "byline": null,
             "company_codes": null,
+            "content_list": null,
+            "cta_label": null,
+            "cta_url": null,
             "dateline": null,
             "drafturl": null,
             "ednote": null,
@@ -833,8 +843,12 @@
                         "countrymention4": null,
                         "countrymention5": null,
                         "ecosystem_group": null,
+                        "ecosystem_role_icon": null,
                         "faq_group": null,
+                        "impact_icon": null,
                         "media_centre_label": null,
+                        "page_section_role": null,
+                        "page_section_template": null,
                         "platform": null,
                         "project": null
                     }
@@ -1675,6 +1689,33 @@
             "claimformat": null,
             "claimtype": null,
             "company_codes": null,
+            "contact_address": {
+                "enabled": true,
+                "field_name": "Content list",
+                "order": 8,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "contact_email": {
+                "enabled": true,
+                "field_name": "Content list",
+                "order": 9,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "contact_phone": {
+                "enabled": true,
+                "field_name": "Content list",
+                "order": 10,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
             "content_list": {
                 "enabled": true,
                 "field_name": "Content list",
@@ -1696,6 +1737,7 @@
             "dateline": null,
             "drafturl": null,
             "ecosystem_group": null,
+            "ecosystem_role_icon": null,
             "ednote": null,
             "event_cost": null,
             "event_dates": null,
@@ -1723,6 +1765,7 @@
                 "sdWidth": "full",
                 "section": "content"
             },
+            "impact_icon": null,
             "keywords": null,
             "language": null,
             "linkedin_url": null,
@@ -1794,6 +1837,24 @@
             },
             "byline": null,
             "company_codes": null,
+            "contact_address": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "contact_email": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "contact_phone": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
             "content_list": {
                 "nullable": true,
                 "readonly": false,
@@ -1864,7 +1925,9 @@
                         "countrymention4": null,
                         "countrymention5": null,
                         "ecosystem_group": null,
+                        "ecosystem_role_icon": null,
                         "faq_group": null,
+                        "impact_icon": null,
                         "media_centre_label": null,
                         "page_section_role": {
                             "readonly": false,

@@ -1,0 +1,14 @@
+{
+    "body_html": "<p>CfA uses the collected personal data for various purposes:</p><ul><li>To provide you with services.</li><li>To notify you about changes to our services and/or products.</li><li>To provide customer support.</li><li>To gather analysis or valuable information so that we can improve our services.</li><li>To detect, prevent and address technical issues.</li></ul>",
+    "guid": "ba1920c0-92ad-43e6-96af-631be0e51ebc",
+    "headline": "How will we use your data?",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "privacy-how-we-use-your-data",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

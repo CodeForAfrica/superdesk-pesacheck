@@ -1,0 +1,18 @@
+{
+    "body_html": "<p>Send us claims that need checking on our dedicated WhatsApp tip-line, or follow our channel for the latest fact-checks from the PesaCheck team.</p>",
+    "extra": {
+        "contact_phone": "<p>+254 780 542626</p>"
+    },
+    "guid": "d0adf172-0770-4d58-a467-611429ed6fbd",
+    "headline": "We are on whatsapp!",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "contact-whatsapp",
+    "subject": [
+        {"name": "contact-whatsapp", "qcode": "contact-whatsapp", "scheme": "page_section_template"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

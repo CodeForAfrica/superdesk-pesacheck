@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>Conakry</p>",
+    "body_html": "<p>Arsene Assogba</p>",
+    "extra": {
+        "contact_email": "<p>arsene@pesacheck.org</p>"
+    },
+    "guid": "b23c6af4-a601-4189-9822-7944c3ddb74f",
+    "headline": "Guinea",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "contact-office-guinea",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -1,0 +1,14 @@
+{
+    "body_html": "<p>You can set your browser not to accept cookies, and <a href=\"https://allaboutcookies.org\">allaboutcookies.org</a> tells you how to remove cookies from your browser. However, in a few cases, some of our website features may not function as a result.</p>",
+    "guid": "7a4f1cf9-1dd0-433a-a069-c36259692e9e",
+    "headline": "How to manage cookies",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "privacy-how-to-manage-cookies",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

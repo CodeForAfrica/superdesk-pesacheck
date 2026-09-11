@@ -1,0 +1,15 @@
+{
+    "body_html": "<p>Do you <b>want us to fact-check</b> something a politician or other public figure has said about public finances? <a href=\"https://docs.google.com/forms/d/e/1FAIpQLSeI9xshwBWxwDuLwT4jhR9hdRLUNkwdjo0sqEqV9N5r5lCQYQ/viewform?usp=sf_link&ref=pesacheck.org\">Complete this form</a>, or reach out to us on any of the contacts above, and we’ll help ensure you’re not getting bamboozled.</p>",
+    "guid": "e5ae3396-0bed-408b-b34a-a5a884a5eafc",
+    "headline": "Send us a claim",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "contact-fact-check",
+    "subject": [
+        {"name": "contact-fact-check", "qcode": "contact-fact-check", "scheme": "page_section_template"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

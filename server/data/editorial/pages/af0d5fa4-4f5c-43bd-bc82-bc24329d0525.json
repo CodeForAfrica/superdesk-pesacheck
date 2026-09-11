@@ -1,0 +1,17 @@
+{
+    "extra": {
+        "content_list": "<p>Page — Imprint — Sections</p>"
+    },
+    "guid": "af0d5fa4-4f5c-43bd-bc82-bc24329d0525",
+    "headline": "Imprint",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "contact-imprint",
+    "subject": [
+        {"name": "legal-sections", "qcode": "legal-sections", "scheme": "page_section_template"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

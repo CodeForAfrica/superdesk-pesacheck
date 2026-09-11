@@ -1,0 +1,14 @@
+{
+    "body_html": "<p>CfA's legal basis for collecting and using the personal data described in this policy depends on the personal data we collect and the specific context in which we collect the information:</p><ul><li>You have given CfA permission to collect your data.</li><li>Processing your personal data is in CfA's legitimate interests.</li><li>CfA needs to comply with the relevant laws and legislation.</li></ul>",
+    "guid": "29546921-05f5-49bf-afcd-344892a003ef",
+    "headline": "Legal basis for collecting and processing personal data",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "privacy-legal-basis",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -1,0 +1,17 @@
+{
+    "body_html": "<p>Simon Muli</p>",
+    "extra": {
+        "contact_email": "<p>simon@pesacheck.org</p>"
+    },
+    "guid": "3ec29f6f-94a3-4b00-a9a8-09b2bb6533c8",
+    "headline": "Niger",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "contact-office-niger",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -1,0 +1,14 @@
+{
+    "body_html": "<p>Our principles for processing personal data are:</p><ul><li><strong>Fairness and lawfulness:</strong> When we process personal data, the individual rights of the Data Subjects must be protected. All personal data must be collected and processed in a legal and fair manner.</li><li><strong>Restricted to a specific purpose:</strong> The personal data of the Data Subject must be processed only for specific purposes.</li><li><strong>Transparency:</strong> The Data Subject must be informed of how his/her data is being collected, processed and used.</li></ul>",
+    "guid": "0ba5ff3a-2806-4d7f-8a37-c20fa639be94",
+    "headline": "Principles for processing personal data",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "privacy-principles-for-processing",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}
