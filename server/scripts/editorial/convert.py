@@ -7,8 +7,8 @@ Unlike Ghost fact-checks, nothing recreates them after a content reset, so they
 are tracked as fixtures under `server/data/editorial/` and re-authored + published
 by the importer at bootstrap, which puts them back into Publisher with their
 ORIGINAL guids so the Publisher membership seeder
-(`swp:config:seed-list-items`) can resolve them. See the plan
-docs/plans/publisher-curated-list-membership.md (tier 3).
+(`swp:config:seed-list-items`) can resolve them. This is tier 3 of the
+curated-list-membership work.
 
 Pairs with `dump.sh`, which pulls the pages, their feature-media picture items and
 the original media bytes from a running Superdesk. This converter writes:

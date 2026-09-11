@@ -4,9 +4,8 @@
 #
 # These pages (source=newsdesk) are the About/FAQ/Team/Ecosystem/Media-Centre
 # content that curated content lists point at. They are re-authored + published at
-# bootstrap so they return to Publisher with their original guids (see the plan
-# docs/plans/publisher-curated-list-membership.md, tier 3). This is the capture
-# half. Read-only against Mongo.
+# bootstrap so they return to Publisher with their original guids — the capture
+# half of the curated-list-membership work (tier 3). Read-only against Mongo.
 #
 # The guid set to capture is READ FROM the Publisher membership tree
 # (content_list_items.json) so the two always agree — only pages an actual list

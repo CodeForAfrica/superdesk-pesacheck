@@ -4,8 +4,7 @@
 The curated Publisher content lists point at Superdesk-authored pages
 (About/FAQ/Team/Ecosystem/Media-Centre/...) that a content reset does not
 recreate. They are tracked as fixtures under ``server/data/editorial/`` (see
-``server/scripts/editorial/`` and the plan
-docs/plans/publisher-curated-list-membership.md, tier 3). This importer
+``server/scripts/editorial/``; tier 3 of the curated-list-membership work). This importer
 re-authors + publishes them so they return to Publisher with their ORIGINAL
 guids, which the Publisher membership seeder (``swp:config:seed-list-items``)
 then resolves to fill the curated lists.
