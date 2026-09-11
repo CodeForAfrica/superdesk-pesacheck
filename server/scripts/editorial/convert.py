@@ -27,6 +27,12 @@ tracked equivalent (Page Section, Spotlight) are NOT remapped — the content-co
 tree must carry them (they are captured by `make content-config-refresh`); this
 converter asserts every profile it emits is either remapped or known-tracked and
 fails loudly otherwise, so a missing profile is caught at capture, not at reset.
+
+The set of accepted profiles is derived at runtime from the tracked
+`server/data/content_types.json` (the live `_id`s, minus any tombstoned with
+`_deleted`), so adding a profile is a single edit — capture it into content-config
+and the gate accepts it, no second list to keep in sync. `PROFILE_REMAP` stays
+manual: it encodes old-staging -> canonical id history the tree cannot supply.
 """
 
 import argparse
@@ -45,9 +51,6 @@ PROFILE_REMAP = {
     "6a8ef90ae2b084181606ab39": "6a98515dd0756a69fc29fb06",  # Spotlight -> Page Section
 }
 
-# Profiles accepted as-is: the canonical tracked content_types plus core ones.
-# Page Section / Spotlight MUST be added to the tracked content-config; list them
-# here once they are, so capture stops rejecting them.
 # Page Section pages require a page_section_role, stored as a `subject` entry
 # (vocab qcodes: hero/section/cta). A few staging pages (notably the Spotlight
 # pages remapped here) lack it, which blocks publish. Default the generic
@@ -60,21 +63,22 @@ DEFAULT_PAGE_SECTION_ROLE = {
     "scheme": PAGE_SECTION_ROLE_SCHEME,
 }
 
-TRACKED_PROFILES = {
-    "6a8c9122e2b084181606a9ce",  # Announcement
-    "6a8d9ff7e2b084181606aabb",  # Research Citations
-    "6a97ebdad0756a69fc29fab0",  # Ecosystem Partner
-    "6a97ecc6d0756a69fc29fab4",  # Team Member
-    "6a97ed55d0756a69fc29fab7",  # FAQ
-    "6a97edd7d0756a69fc29fabb",  # Event
-    "6a98515dd0756a69fc29fb06",  # Page Section
-    "article",
-    "text",
-    "picture",
-    "composite",
-    "audio",
-    "video",
-}
+# The tracked content-config tree that owns the profiles these fixtures reference.
+# Its `_id`s are the single source of truth for what a page may be published as;
+# `tracked_profiles()` reads them so this converter never drifts from it. Core
+# built-ins (article/text/picture/composite/audio/video) are themselves rows here.
+CONTENT_TYPES_JSON = Path(__file__).resolve().parents[2] / "data" / "content_types.json"
+
+
+def tracked_profiles(path=CONTENT_TYPES_JSON):
+    """Live profile ids from the tracked content-config, minus tombstoned ones.
+
+    A `_deleted` profile is intentionally excluded: a fixture published onto a
+    removed profile would validate but render wrong, so capture must reject it.
+    """
+    types = json.loads(Path(path).read_text(encoding="utf-8"))
+    return {str(t["_id"]) for t in types if not t.get("_deleted")}
+
 
 # Fields kept per page. Everything else (versions, task, queue_state, expiry,
 # timestamps, *_creator, unique_id, etags) is per-instance churn and dropped.
@@ -198,7 +202,8 @@ def embedded_media_map(doc):
 # upload-raw media id (used as the media-file key, pulled by dump.sh). SWP then
 # rewrites them per-environment exactly like every other embedded image.
 EMBED_BLOCK_RE = re.compile(
-    r'<div class="embed-block">\s*<img\b(?P<attrs>[^>]*)>\s*</div>', re.I | re.S
+    r'<div class="embed-block">\s*<img\b(?P<attrs>[^>]*)>\s*</div>',
+    re.IGNORECASE | re.DOTALL,
 )
 UPLOAD_RAW_ID_RE = re.compile(r"upload-raw/(?:\d+/)?([0-9a-f]{24})")
 
@@ -240,6 +245,7 @@ def pick(doc, fields):
 
 def convert(src, dest, summary):
     dest = Path(dest)
+    accepted = tracked_profiles()
     for doc in load_json(src, "pages.json"):
         # Normalise raw `embed-block` images into editor embeds BEFORE picking, so
         # the tracked body carries EMBED markers and the importer attaches their
@@ -250,10 +256,12 @@ def convert(src, dest, summary):
             summary["embed_blocks"] += len(block_media)
         page = pick(doc, PAGE_FIELDS)
         pid = remap_profile(doc.get("profile"))
-        if pid not in TRACKED_PROFILES:
+        if pid not in accepted:
             raise SystemExit(
                 f"page {doc.get('guid')} uses profile {doc.get('profile')!r} with no "
-                f"tracked/remap target — add it to content-config + TRACKED_PROFILES."
+                f"tracked/remap target — capture it into content-config "
+                f"({CONTENT_TYPES_JSON.name}) via `make content-config-refresh`, or add "
+                f"a PROFILE_REMAP entry if it maps to an existing profile."
             )
         page["profile"] = pid
         if pid == PAGE_SECTION_PROFILE:
