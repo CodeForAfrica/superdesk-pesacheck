@@ -588,12 +588,36 @@ def seed_demo_content():
 # --------------------------------------------------------------------------
 
 
+def import_editorial_pages():
+    """Import + publish the tracked editorial-page fixtures (About/FAQ/Team/etc.).
+
+    Runs after the publisher subscriber exists so publishing transmits to
+    Publisher with each page's stable guid, where the Publisher membership seeder
+    then attaches them to the curated content lists. Non-fatal: a page that fails
+    to publish must not abort the whole bootstrap.
+    """
+    if not env_flag("SUPERDESK_IMPORT_EDITORIAL", "1"):
+        step("Skipping editorial-page import (SUPERDESK_IMPORT_EDITORIAL=0)")
+        return
+    step("Importing editorial-page fixtures")
+    result = subprocess.run(
+        ["python3", "/usr/local/bin/import_editorial.py"], check=False
+    )
+    if result.returncode != 0:
+        print(
+            "WARNING: import_editorial.py reported failures (see above). "
+            "Bootstrap continues; unpublished pages will be absent from their "
+            "content lists until re-run."
+        )
+
+
 def main():
     initialize_base_data()
     report_known_index_conflicts()
     repair_generated_data()
     reassign_content_ownership()
     seed_publisher_subscriber()
+    import_editorial_pages()
 
     if env_flag("SUPERDESK_DEMO_DATA", "1"):
         seed_demo_content()

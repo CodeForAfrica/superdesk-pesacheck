@@ -1,0 +1,14 @@
+{
+    "abstract": "<p>Twelve places for journalists working in Amharic, Somali and Arabic-language newsrooms.</p>",
+    "guid": "d0c76a4a-6909-4076-9956-85f87be3c3c8",
+    "headline": "PesaCheck opens applications for the 2026 fellowship cohort",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a8c9122e2b084181606a9ce",
+    "slugline": "2026-cohort-application",
+    "subject": [
+        {"name": "Methodology", "qcode": "methodology", "scheme": "media_centre_label"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -1,0 +1,22 @@
+{
+    "abstract": "<p>A one-day clinic for newsroom teams covering the Ghanaian polls, run with our West Africa desk.</p>",
+    "extra": {
+        "event_cost": "",
+        "event_format": "",
+        "event_languages": "",
+        "event_meta": "<p>08 Oct 2026 · Accra</p>"
+    },
+    "feature_media": "8c3d2e52-ed58-4dad-b8e9-0bd12fba47e9",
+    "guid": "c10dcb4f-0774-4f58-b399-41cdd96a0afc",
+    "headline": "Verifying election claims in real time",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "elecction-verification",
+    "subject": [
+        {"name": "Summit", "qcode": "summit", "scheme": "media_centre_label"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

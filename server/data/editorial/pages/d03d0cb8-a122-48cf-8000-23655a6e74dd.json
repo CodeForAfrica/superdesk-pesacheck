@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>Learn more about PesaCheck Frequently Asked Query</p>",
+    "extra": {
+        "content_list": ""
+    },
+    "feature_media": "95e7c05c-6559-4110-9134-bf64b866a726",
+    "guid": "d03d0cb8-a122-48cf-8000-23655a6e74dd",
+    "headline": "Frequently Asked Questions",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "faqs-hero",
+    "subject": [
+        {"name": "Hero", "qcode": "hero", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

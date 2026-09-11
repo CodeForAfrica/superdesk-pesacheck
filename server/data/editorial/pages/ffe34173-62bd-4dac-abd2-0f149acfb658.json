@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>Election monitors reference our verification of campaign claims and viral content when documenting information conditions around African polls.</p>",
+    "extra": {
+        "originator": ""
+    },
+    "guid": "ffe34173-62bd-4dac-abd2-0f149acfb658",
+    "headline": "ELECTION OBSERVATION",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a8d9ff7e2b084181606aabb",
+    "slugline": "elog",
+    "subject": [
+        {"name": "Research", "qcode": "research", "scheme": "content_type"},
+        {"name": "Partnership", "qcode": "partnership", "scheme": "media_centre_label"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

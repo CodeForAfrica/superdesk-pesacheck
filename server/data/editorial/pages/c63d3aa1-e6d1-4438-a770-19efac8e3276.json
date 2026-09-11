@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>Where PesaCheck has been cited in research and other major publications</p>",
+    "extra": {
+        "content_list": ""
+    },
+    "feature_media": "ff81d6d1-8f6a-4b6c-bd92-c9f016781adf",
+    "guid": "c63d3aa1-e6d1-4438-a770-19efac8e3276",
+    "headline": "Media Centre",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "media-centre-hero",
+    "subject": [
+        {"name": "Hero", "qcode": "hero", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

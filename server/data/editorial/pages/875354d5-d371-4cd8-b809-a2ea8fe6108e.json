@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>The African Network of Centres for Investigative Reporting, whose iLAB forensics team supports PesaCheck investigations with data, OSINT and network analysis.</p>",
+    "extra": {
+        "partner_role": "<p>Sister initiative</p>",
+        "partner_url": "<p>https://investigativecenters.org</p>"
+    },
+    "guid": "875354d5-d371-4cd8-b809-a2ea8fe6108e",
+    "headline": "ANCIR",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ebdad0756a69fc29fab0",
+    "slugline": "ancir",
+    "subject": [
+        {"name": "Research & investigation", "qcode": "research", "scheme": "ecosystem_group"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

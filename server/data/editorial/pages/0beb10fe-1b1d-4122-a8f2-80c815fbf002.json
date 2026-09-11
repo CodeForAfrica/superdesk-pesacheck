@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>Builds the tooling the desks rely on, from claim triage to the archive.</p>",
+    "body_html": "<p>Samuel builds and maintains the internal tooling — claim triage, the archive, and the integrations that get fact-checks onto the site. He works with the ecosystem team on the open toolkits.</p>",
+    "extra": {
+        "team_role": "<p>Data Engineer</p>"
+    },
+    "guid": "0beb10fe-1b1d-4122-a8f2-80c815fbf002",
+    "headline": "Samuel Adeyemi",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ecc6d0756a69fc29fab4",
+    "slugline": "samuel-adeyemi",
+    "type": "text",
+    "urgency": 3
+}

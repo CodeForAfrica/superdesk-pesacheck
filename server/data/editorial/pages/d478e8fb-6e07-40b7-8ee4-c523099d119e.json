@@ -1,0 +1,14 @@
+{
+    "body_html": "<p>hello@pesacheck.org</p>",
+    "guid": "d478e8fb-6e07-40b7-8ee4-c523099d119e",
+    "headline": "Contact information",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "imprint-contact-information",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>A</p>",
+    "body_html": "<p>We have three main rules guiding our fact-checking process:</p>\n<ul>\n  <li><b>Golden Rule 1: Only one fact per fact-check.</b> We limit each fact check to one statement only, or a set of statements that are clearly related.</li>\n  <li><b>Golden Rule 2: Check every fact check.</b> We do our best to corroborate the fact/verification. For example, rather than using a newspaper story about the budget, we use the budget document to fact check a statement.</li>\n  <li><b>Golden Rule 3: Draw a conclusion based on the facts.</b> After all the research, corroboration and interviews, we assign a label to the fact check: <b>False, Satire, Partly False, False Headline, Missing Context, Hoax, Not Eligible</b> or <b>Inconclusive</b>.</li>\n</ul>\n<p>We use this <b>checklist</b> to write and prepare our fact-checks:</p>\n<ul>\n  <li>Is the statement being checked included verbatim?</li>\n  <li>Is there an explainer for why this statement was selected for checking?</li>\n  <li>Has the category of deception been identified?</li>\n  <li>Have all the sources for the fact-check been identified? Any source documents used in the fact-check that are not already online need to be annotated and uploaded to <a href=\"https://sourceafrica.net/\">sourceAFRICA</a>, including any additional useful data identified in the process of fact-checking.</li>\n  <li>Has the reason for labelling the statement False, Hoax, etc been indicated?</li>\n  <li>Is the label (False, Hoax, etc) mentioned briefly at the top of the story, and in more detail at the end of the story?</li>\n  <li>Have any links to the sources and the statement being checked been included in the body of the article?</li>\n</ul>",
+    "guid": "70ff0c92-bed6-40ff-b57e-bd3e1e84c2f7",
+    "headline": "Fact-Checking Guidelines",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "fact-checking-guidelines",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

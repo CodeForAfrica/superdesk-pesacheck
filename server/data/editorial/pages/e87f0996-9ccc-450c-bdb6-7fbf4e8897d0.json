@@ -1,0 +1,15 @@
+{
+    "abstract": "<p><b>Persons who are the subject of a fact-check get a reasonable opportunity to respond to us.</b></p>",
+    "body_html": "<p>Persons who are the subject of a fact-check get a reasonable opportunity to respond to us.</p>",
+    "guid": "e87f0996-9ccc-450c-bdb6-7fbf4e8897d0",
+    "headline": "Right of Reply",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "method-right-of-reply",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

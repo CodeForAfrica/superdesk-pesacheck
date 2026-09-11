@@ -1,0 +1,14 @@
+{
+    "abstract": "<p>Researchers can request the full corpus with verdicts, dates, regions and source links</p>",
+    "guid": "910e5a8b-521c-487e-8f5c-e3f2f7cec223",
+    "headline": "Fact-check archive now available as a downloadable dataset",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a8c9122e2b084181606a9ce",
+    "slugline": "fact-check",
+    "subject": [
+        {"name": "Data", "qcode": "data", "scheme": "media_centre_label"}
+    ],
+    "type": "text",
+    "urgency": 1
+}

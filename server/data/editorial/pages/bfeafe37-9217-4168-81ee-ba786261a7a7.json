@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>Our methodology and rating scale are referenced in papers presented at fact-checking and computational journalism conferences.</p>",
+    "extra": {
+        "originator": ""
+    },
+    "guid": "bfeafe37-9217-4168-81ee-ba786261a7a7",
+    "headline": "Conference Proceedings",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a8d9ff7e2b084181606aabb",
+    "slugline": "conference-proceedings",
+    "subject": [
+        {"name": "Research", "qcode": "research", "scheme": "content_type"},
+        {"name": "Methodology", "qcode": "methodology", "scheme": "media_centre_label"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

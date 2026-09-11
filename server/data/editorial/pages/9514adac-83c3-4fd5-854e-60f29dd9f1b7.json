@@ -1,0 +1,17 @@
+{
+    "abstract": "<p>PesaCheck takes part in the Africa Facts network of fact-checking organisations, sharing verification methods and coordinating with peers on claims that cross borders.</p>",
+    "extra": {
+        "partner_role": "<p>Network member</p>"
+    },
+    "guid": "9514adac-83c3-4fd5-854e-60f29dd9f1b7",
+    "headline": "Africa Facts",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ebdad0756a69fc29fab0",
+    "slugline": "africa-facts",
+    "subject": [
+        {"name": "Fact-checking networks", "qcode": "networks", "scheme": "ecosystem_group"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

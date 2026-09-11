@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>Intergovernmental and development institutions cite PesaCheck findings in reports on information integrity and public accountability.</p>",
+    "extra": {
+        "originator": ""
+    },
+    "guid": "7c82beee-3e6f-4bdb-964e-296591b0b7c4",
+    "headline": "MULTILATERAL BODIES",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a8d9ff7e2b084181606aabb",
+    "slugline": "multilateral-bodies",
+    "subject": [
+        {"name": "Research", "qcode": "research", "scheme": "content_type"},
+        {"name": "Partnership", "qcode": "partnership", "scheme": "media_centre_label"}
+    ],
+    "type": "text",
+    "urgency": 1
+}

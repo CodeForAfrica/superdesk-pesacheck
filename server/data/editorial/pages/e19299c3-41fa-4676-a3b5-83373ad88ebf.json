@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>mnm</p>",
+    "body_html": "<p>PesaCheck's mission is to counter harmful misinformation, by publishing factual information that corrects or contextualises misleading claims about how public resources are being utilised.</p>\n<p>We do this because misleading information and the resulting misunderstandings shape public perceptions and public policy, and ultimately distort how we organise and develop our societies.</p>\n<p>PesaCheck therefore doesn't just fact-check politicians or public officials. We also proactively fact-check the media itself, pointing out when journalists or pundits fall short of the facts.</p>\n<p>There is however simply too much misinformation for any one organisation to solve. That is why we seek to give citizens, and our watchdog partners, easy-to-use tools and data to fact-check claims themselves.</p>",
+    "guid": "e19299c3-41fa-4676-a3b5-83373ad88ebf",
+    "headline": "Our Mission",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "our-mission",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>Ouagadougou</p>",
+    "body_html": "<p>Françoise Dembele</p>",
+    "extra": {
+        "contact_email": "<p>francoise.dembele@pesacheck.org</p>"
+    },
+    "guid": "1d5dc559-e19b-439b-b2a3-2d372271171f",
+    "headline": "Burkina Faso",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "contact-office-burkina-faso",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

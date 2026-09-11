@@ -1,0 +1,17 @@
+{
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "2fc51cea-2013-4e5e-b9ea-fb29474cafd4",
+    "headline": "How we build the ecosystem",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "ecosystem-roles",
+    "subject": [
+        {"name": "ecosystem-roles", "qcode": "ecosystem-roles", "scheme": "page_section_template"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

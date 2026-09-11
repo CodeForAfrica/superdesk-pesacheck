@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>Our open toolkits — from PromiseTracker to DebunkBot — are built for the whole ecosystem to use, not just our own newsroom.</p>",
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "a9e4e4d3-359b-492b-9469-8901457a8743",
+    "headline": "We build tools",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "we-build-tools",
+    "subject": [
+        {"name": "server", "qcode": "server", "scheme": "ecosystem_role_icon"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

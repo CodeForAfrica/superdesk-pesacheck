@@ -1,0 +1,17 @@
+{
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "26d7f69e-b7cf-472a-9be1-7cc922957030",
+    "headline": "In the news",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "media-centre-news",
+    "subject": [
+        {"name": "media-news", "qcode": "media-news", "scheme": "page_section_template"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -1,0 +1,12 @@
+{
+    "_deleted": false,
+    "_id": "contact_phone",
+    "disable_entire_category_selection": false,
+    "display_name": "Contact phone",
+    "field_type": "text",
+    "items": [],
+    "service": {
+        "all": 1
+    },
+    "type": "manageable"
+}

@@ -1,0 +1,22 @@
+{
+    "abstract": "<p>Track promises. Measure progress. Demand accountability.</p>",
+    "body_html": "<p>Monitor political and government commitments, follow implementation progress, and see whether elected leaders are delivering on the promises they've made.</p>",
+    "extra": {
+        "content_list": "",
+        "cta_label": "<p>Visit website</p>",
+        "cta_url": "<p>https://promisetracker.africa/</p>"
+    },
+    "feature_media": "598a0e06-b0fe-488e-8433-2425caed84fc",
+    "guid": "d66c7776-d6d7-43ce-bdf6-39f48ff1449d",
+    "headline": "Promise Tracker",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "tool-promise-tracker",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"},
+        {"name": "Tools showcase", "qcode": "tools-showcase", "scheme": "page_section_template"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

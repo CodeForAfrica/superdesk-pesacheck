@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>TDA</p>",
+    "body_html": "<p>As a matter of editorial policy, we do not grant take-down requests. If the subject claims that the story was inaccurate, we are prepared to investigate and, if necessary, publish a correction.</p>\n<p>Stories will be updated if we checked a claim and drew a conclusion based on facts available at the time, but there is significant new information that will warrant a change in that conclusion.</p>\n<p>In short, our response will be to consider whether further action is warranted, but not to remove the article as though it had never been published.</p>",
+    "guid": "d7f795de-7ee2-4f66-b604-bd3fde555e17",
+    "headline": "Take-Down Requests",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "take-down-requests",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

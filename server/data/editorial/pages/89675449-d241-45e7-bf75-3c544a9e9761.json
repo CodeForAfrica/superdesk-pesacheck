@@ -1,0 +1,21 @@
+{
+    "abstract": "<p>A</p>",
+    "body_html": "<p>PesaCheck's editorial team is composed of fact-checkers who have extensive journalistic experience, or who are research specialists in topics such as economics, public finances or development issues.</p>\n<p>Our fact-checkers are always locally based, in the 13 countries we report from, in Burkina Faso, Burundi, Cameroon, Central African Republic, Côte d'Ivoire, Ethiopia, Guinea, Kenya, Mali, Niger, Senegal, Tanzania and Uganda. The managing editor and chief copy editor are based in Kenya, while the special projects editor and other Francophone support staff are based in Senegal.</p>\n<!-- EMBED START Image {id: \"editor_0\"} -->\n<figure>\n    <img src=\"https://superdesk-staging.pesacheck.org/api/upload-raw/2026090806/6a9f91ddd0756a69fc2a0207\" alt=\"\" />\n    <figcaption>Coverage Map</figcaption>\n</figure>\n<!-- EMBED END Image {id: \"editor_0\"} -->\n<p><br></p>\n<p>The fact-checkers regularly collaborate on regional verification projects, tackling cross-cutting thematic issues such as climate denialism and the COVID-19 health emergency, or assisting each other as part of 'rapid response teams' during civil wars/conflicts/coups in countries such as the Central African Republic, Ethiopia and Mali, as well as during the run-up/polling to fiercely contested elections.</p>\n<p>PesaCheck occasionally appoints additional specialists, as short-term 'fellows' or associates, to drive specific projects such as our research into persistent conspiracy theories on YouTube or the spread of toxic speech (such as racist incitement and other hate speech) on WhatsApp.</p>\n<p>PesaCheck's fact-checkers focus on verifying the accuracy and meaning of the actual content in mis-/disinformation claims. The <a href=\"https://investigate.africa/ilab-reports/\"><b>iLAB</b></a> at ANCIR uses data science and forensic investigation to probe the 'hidden hand' networks and digital techniques used to make misleading content go viral. PesaCheck often collaborates with the iLAB and another CfA partner, the <a href=\"https://medium.com/dfrlab\"><b>Digital Forensic Labs</b></a>' (DFRLab) Africa team, to expose large-scale coordinated inauthentic behaviour (CiB) and influence operations.</p>\n<p>More information on the core PesaCheck team can be found on our About page.</p>",
+    "embedded_media": {
+        "editor_0": "73fa99f6-ef8c-45ca-b3a4-e4c5a5c9a719"
+    },
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "89675449-d241-45e7-bf75-3c544a9e9761",
+    "headline": "Our Researchers",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "our-researchers",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

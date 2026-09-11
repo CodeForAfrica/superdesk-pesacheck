@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>A</p>",
+    "body_html": "<p>We use the following final editing checklist based in part on the <a href=\"https://www.factcheck.org/our-process/\">PolitiFact checklist</a>:</p>\n<ul>\n  <li>Is the claim open to interpretation? Is there another way to read the claim?</li>\n  <li>Is the rating fair and consistent with other fact-checks?</li>\n  <li>Is the rating supported by all available facts? Do questions linger?</li>\n</ul>",
+    "guid": "eef7a339-1fea-4815-b95a-0e1bf167cc5e",
+    "headline": "Final Editing Checklist",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "final-editing-checklist",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

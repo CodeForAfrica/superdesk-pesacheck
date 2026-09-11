@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>Yes. Our work is free to republish with attribution and a link back to the original.</p>",
+    "body_html": "<p>Yes. Our work is free to republish with attribution and a link back to the original.</p>",
+    "guid": "6fbf8a13-303f-4356-b537-196149daa07c",
+    "headline": "Can I republish your fact-checks?",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ed55d0756a69fc29fab7",
+    "slugline": "republishing",
+    "subject": [
+        {"name": "Questions about using the site", "qcode": "site", "scheme": "faq_group"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>A</p>",
+    "body_html": "<p>We strive to be truthful about the source of our information. Facts and quotations in a story that were not produced by our own reporting need an attribution. Attribution of material from other media must be total. Plagiarism is not permitted. We place a premium value on original reporting.</p>\n<p>For further clarification, contact us at <a href=\"mailto:hello@pesacheck.org\">hello@pesacheck.org</a>. You can also find our contact information here.</p>",
+    "guid": "cc793b71-8189-4b51-a556-0dd1553ceebc",
+    "headline": "Attribution",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "attribution",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -1,0 +1,14 @@
+{
+    "body_html": "<p>CfA may send you information and/or alerts about initiatives or services by our digital democracy programmes that we think you might like, as well as those of our partner organisations, including from:</p><ul><li>CfA's Academy for digital citizen engagement</li><li>africanDRONE</li><li>ANCIR and its iLAB</li><li>PesaCheck</li><li>sensors.AFRICA</li></ul><p>If you have agreed to receive marketing, including alerts and newsletters, you may always opt out at a later date. You have the right at any time to stop CfA from contacting you for marketing purposes or giving your data to other members of the CfA network. If you no longer wish to be contacted for marketing purposes, please email us at <a href=\"mailto:hello@codeforafrica.org\">hello@codeforafrica.org</a>.</p>",
+    "guid": "b1692e47-5e31-43d1-992a-716bdb74d24f",
+    "headline": "Marketing",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "privacy-marketing",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

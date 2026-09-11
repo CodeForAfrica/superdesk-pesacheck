@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>Standing up new fact-checking desks from scratch.</p>",
+    "body_html": "<p>The incubator helps organisations establish standalone fact-checking desks: methodology, corrections policy, tooling and the first months of published output. It is the most involved of our programmes and runs with a small number of partners at a time.</p>",
+    "guid": "7f888ac9-9cf5-4310-a7bd-3df018ecfca9",
+    "headline": "Incubator",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "incubator",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

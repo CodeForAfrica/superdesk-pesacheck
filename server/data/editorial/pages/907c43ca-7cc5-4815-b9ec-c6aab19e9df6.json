@@ -1,0 +1,14 @@
+{
+    "body_html": "<p>We send updates every thursday</p>",
+    "guid": "907c43ca-7cc5-4815-b9ec-c6aab19e9df6",
+    "headline": "Follow our channel",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "contact-whatsapp-follow-our-channel",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

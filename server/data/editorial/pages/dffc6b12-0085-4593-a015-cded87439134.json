@@ -1,0 +1,17 @@
+{
+    "body_html": "<p>If you have any questions about CfA's privacy policy, the data we hold on you, or you would like to exercise one of your data protection rights, please do not hesitate to contact us. Email us at: <a href=\"mailto:hello@codeforafrica.org\">hello@codeforafrica.org</a>.</p>",
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "dffc6b12-0085-4593-a015-cded87439134",
+    "headline": "How to contact us",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "privacy-how-to-contact-us",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}
