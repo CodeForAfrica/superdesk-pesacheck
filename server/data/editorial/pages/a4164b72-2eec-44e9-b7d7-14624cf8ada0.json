@@ -1,0 +1,19 @@
+{
+    "abstract": "<p>Pesacheck has lorem ipsum dolor sit amet consectetur adipiscing</p>",
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "a4164b72-2eec-44e9-b7d7-14624cf8ada0",
+    "headline": "6 Publishing Languages",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "impact-6-publishing-languages",
+    "subject": [
+        {"name": "languages", "qcode": "languages", "scheme": "impact_icon"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"},
+        {"name": "Impact figures", "qcode": "impact-stats", "scheme": "page_section_template"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

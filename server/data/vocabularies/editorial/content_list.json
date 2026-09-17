@@ -1,0 +1,19 @@
+{
+    "_deleted": false,
+    "_id": "content_list",
+    "disable_entire_category_selection": false,
+    "display_name": "Content list",
+    "field_type": "text",
+    "helper_text": "Overrides the template's default list; leave blank to use it",
+    "items": [],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

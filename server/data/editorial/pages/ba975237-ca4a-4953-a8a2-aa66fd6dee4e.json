@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>Abstract</p>",
+    "body_html": "<p>Not all statements are created equal. Here are some criteria that we use to help establish a hierarchy of important statements to fact-check:</p>\n<ul>\n  <li>Amounts that can be checked and verified. Example: <a href=\"https://pesacheck.org/cabinet-secretary-phyllis-kandie-promises-sh18bn-for-orphans-disabled-kids-7b953b5f4550\">Cabinet Secretary Phyllis Kandie promises Ksh18bn for orphans, disabled kids</a></li>\n  <li>Statements that are causing the most buzz. Example: <a href=\"https://pesacheck.org/governors-or-elected-county-assembly-members-who-really-controls-the-money-8238fad5ca4c\">Who really controls Ward Development Funds?</a></li>\n  <li>Statements that have gone viral on social media or are being repeated often by public officials. Example: <a href=\"https://pesacheck.org/will-kenyas-olympic-champs-get-a-ksh1-billion-bonus-216c42809da7\">Will Kenya Olympic champs get Sh1bn bonus</a></li>\n  <li>Statements that can be proved or are well supported by facts — is the statement a prediction, or subjective? Example: <a href=\"https://pesacheck.org/is-kenya-increasing-investment-in-health-sector-2fd1155929f0\">Is Kenya increasing funding to the health sector?</a></li>\n  <li>Numbers that may have been manipulated to support a partisan message. Examples: <a href=\"https://pesacheck.org/uhurus-maternity-care-promises-exaggerated-2c238a3dfd9b\">Uhuru's maternity care numbers exaggerated</a>; <a href=\"https://pesacheck.org/has-kiambu-county-doubled-its-revenue-to-ksh4-7-billion-a9e16bb140f4\">Has Kiambu collected Ksh4.7bn in revenue?</a></li>\n</ul>\n<p>Members of the public can also suggest claims to be fact-checked, by:</p>\n<ul>\n  <li>Emailing the newsdesk at <a href=\"mailto:hello@pesacheck.org\">hello@pesacheck.org</a></li>\n  <li>Emailing the managing editor at <a href=\"mailto:doreen@pesacheck.org\">doreen@pesacheck.org</a></li>\n  <li>Contacting us on PesaCheck's <a href=\"https://wa.me/254780542626\">WhatsApp tipline</a> at +254 780 542626</li>\n</ul>\n<p>If claims from the public meet the public interest criteria, they'll be looked into, and feedback provided on the channel it was shared.</p>",
+    "guid": "ba975237-ca4a-4953-a8a2-aa66fd6dee4e",
+    "headline": "Identifying Claims to Check",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "identifying-claims",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

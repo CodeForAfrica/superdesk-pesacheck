@@ -1,0 +1,22 @@
+{
+    "abstract": "<p>See where your tax time goes.</p>",
+    "body_html": "<p>Estimate how much of your working time goes towards paying taxes and better understand how public revenue supports government services.</p>",
+    "extra": {
+        "content_list": "",
+        "cta_label": "<p>Visit website</p>",
+        "cta_url": "<p>https://taxclock.pesacheck.org/</p>"
+    },
+    "feature_media": "db9e81af-b207-4aa9-8bca-7fbe6ef60555",
+    "guid": "94ce1d3d-3fd0-446d-9cec-9db7ef4a66aa",
+    "headline": "Tax Clock",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "tool-tax-clock",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"},
+        {"name": "Tools showcase", "qcode": "tools-showcase", "scheme": "page_section_template"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

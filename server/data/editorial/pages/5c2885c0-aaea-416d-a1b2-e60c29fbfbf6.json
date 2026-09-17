@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>Send it to our tip line on WhatsApp, or use the contact form. Include a link or screenshot and where you saw it.</p>",
+    "body_html": "<p>Send it to our tip line on WhatsApp, or use the contact form. Include a link or screenshot and where you saw it.</p>",
+    "guid": "5c2885c0-aaea-416d-a1b2-e60c29fbfbf6",
+    "headline": "How do I submit a claim for fact-checking?",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ed55d0756a69fc29fab7",
+    "slugline": "how-to-submit-a-claim",
+    "subject": [
+        {"name": "Questions about using the site", "qcode": "site", "scheme": "faq_group"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

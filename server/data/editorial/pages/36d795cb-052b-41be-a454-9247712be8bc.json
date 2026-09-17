@@ -1,0 +1,17 @@
+{
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "36d795cb-052b-41be-a454-9247712be8bc",
+    "headline": "Announcements",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "media-centre-announcements",
+    "subject": [
+        {"name": "media-announcements", "qcode": "media-announcements", "scheme": "page_section_template"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

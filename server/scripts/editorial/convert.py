@@ -1,0 +1,321 @@
+#!/usr/bin/env python3
+"""Convert a dump of authored editorial pages into the tracked fixture tree.
+
+These are the Superdesk-authored pages (`source=newsdesk`) that the curated
+Publisher content lists point at — About/FAQ/Team/Ecosystem/Media-Centre/etc.
+Unlike Ghost fact-checks, nothing recreates them after a content reset, so they
+are tracked as fixtures under `server/data/editorial/` and re-authored + published
+by the importer at bootstrap, which puts them back into Publisher with their
+ORIGINAL guids so the Publisher membership seeder
+(`swp:config:seed-list-items`) can resolve them. This is tier 3 of the
+curated-list-membership work.
+
+Pairs with `dump.sh`, which pulls the pages, their feature-media picture items and
+the original media bytes from a running Superdesk. This converter writes:
+
+    server/data/editorial/pages/<guid>.json      one text/page doc per file
+    server/data/editorial/pictures/<guid>.json   one picture item per file
+    (media bytes are written by dump.sh directly, tracked as git blobs)
+
+Input: `--source` dir holding `pages.json` and `pictures.json` (JSON arrays of
+Superdesk docs, latest version per guid), as produced by dump.sh.
+
+Profile-id remap: staging authored pages reference OLDER profile ids than the
+tracked content-config installs. They are remapped to the canonical tracked ids
+here so the fixtures validate after a content-config reseed. Profiles with NO
+tracked equivalent (Page Section, Spotlight) are NOT remapped — the content-config
+tree must carry them (they are captured by `make content-config-refresh`); this
+converter asserts every profile it emits is either remapped or known-tracked and
+fails loudly otherwise, so a missing profile is caught at capture, not at reset.
+
+The set of accepted profiles is derived at runtime from the tracked
+`server/data/content_types.json` (the live `_id`s, minus any tombstoned with
+`_deleted`), so adding a profile is a single edit — capture it into content-config
+and the gate accepts it, no second list to keep in sync. `PROFILE_REMAP` stays
+manual: it encodes old-staging -> canonical id history the tree cannot supply.
+"""
+
+import argparse
+import json
+import re
+from pathlib import Path
+
+# Old (pre-canonical) profile ids -> the tracked content-config ids.
+PROFILE_REMAP = {
+    "6a954d10dae059933bb05432": "6a97ed55d0756a69fc29fab7",  # FAQ -> FAQ
+    "6a96a3f9d0756a69fc29f90d": "6a97ebdad0756a69fc29fab0",  # Ecosystem -> Ecosystem Partner
+    "6a96df4cd0756a69fc29f9ae": "6a97ecc6d0756a69fc29fab4",  # Team -> Team Member
+    # Spotlight (6a8ef90a) is a DELETED profile — absent from content_types even on
+    # staging (its 4 Media-Centre-Spotlight pages render blank there too). Remap to
+    # Page Section, the generic media-bearing section card profile.
+    "6a8ef90ae2b084181606ab39": "6a98515dd0756a69fc29fb06",  # Spotlight -> Page Section
+}
+
+# Page Section pages require a page_section_role, stored as a `subject` entry
+# (vocab qcodes: hero/section/cta). A few staging pages (notably the Spotlight
+# pages remapped here) lack it, which blocks publish. Default the generic
+# "section" role so they publish; hero/cta pages already carry their own entry.
+PAGE_SECTION_PROFILE = "6a98515dd0756a69fc29fb06"
+PAGE_SECTION_ROLE_SCHEME = "page_section_role"
+DEFAULT_PAGE_SECTION_ROLE = {
+    "name": "Section",
+    "qcode": "section",
+    "scheme": PAGE_SECTION_ROLE_SCHEME,
+}
+
+# The tracked content-config tree that owns the profiles these fixtures reference.
+# Its `_id`s are the single source of truth for what a page may be published as;
+# `tracked_profiles()` reads them so this converter never drifts from it. Core
+# built-ins (article/text/picture/composite/audio/video) are themselves rows here.
+CONTENT_TYPES_JSON = Path(__file__).resolve().parents[2] / "data" / "content_types.json"
+
+
+def tracked_profiles(path=CONTENT_TYPES_JSON):
+    """Live profile ids from the tracked content-config, minus tombstoned ones.
+
+    A `_deleted` profile is intentionally excluded: a fixture published onto a
+    removed profile would validate but render wrong, so capture must reject it.
+    """
+    types = json.loads(Path(path).read_text(encoding="utf-8"))
+    return {str(t["_id"]) for t in types if not t.get("_deleted")}
+
+
+# Fields kept per page. Everything else (versions, task, queue_state, expiry,
+# timestamps, *_creator, unique_id, etags) is per-instance churn and dropped.
+PAGE_FIELDS = (
+    "guid",
+    "type",
+    "profile",
+    "headline",
+    "slugline",
+    "language",
+    "abstract",
+    "body_html",
+    "byline",
+    "priority",
+    "urgency",
+    "extra",
+    "subject",
+)
+PICTURE_FIELDS = (
+    "guid",
+    "type",
+    "profile",
+    "headline",
+    "description_text",
+    "alt_text",
+    "slugline",
+    "language",
+    "byline",
+)
+
+INDENT = "    "
+COMPACT_LINE_MAX = 800
+
+
+def remap_profile(pid):
+    return PROFILE_REMAP.get(pid, pid)
+
+
+def _compact(obj):
+    return json.dumps(obj, sort_keys=True, ensure_ascii=False, separators=(", ", ": "))
+
+
+def emit(obj, indent=0):
+    pad = INDENT * indent
+    child = INDENT * (indent + 1)
+    if isinstance(obj, dict):
+        if not obj:
+            return "{}"
+        keys = sorted(obj)
+        lines = ["{"]
+        for i, k in enumerate(keys):
+            tail = "," if i < len(keys) - 1 else ""
+            lines.append(
+                f"{child}{json.dumps(k, ensure_ascii=False)}: {emit(obj[k], indent + 1)}{tail}"
+            )
+        lines.append(pad + "}")
+        return "\n".join(lines)
+    if isinstance(obj, list):
+        if not obj:
+            return "[]"
+        lines = ["["]
+        for i, v in enumerate(obj):
+            tail = "," if i < len(obj) - 1 else ""
+            compact = _compact(v)
+            lines.append(
+                f"{child}{compact}{tail}"
+                if len(compact) <= COMPACT_LINE_MAX
+                else f"{child}{emit(v, indent + 1)}{tail}"
+            )
+        lines.append(pad + "]")
+        return "\n".join(lines)
+    return json.dumps(obj, ensure_ascii=False)
+
+
+def write_json(path, obj):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(emit(obj) + "\n", encoding="utf-8")
+
+
+def load_json(src, name):
+    p = Path(src) / name
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else []
+
+
+def featuremedia_guid(doc):
+    assoc = (doc.get("associations") or {}).get("featuremedia") or {}
+    return assoc.get("guid") or assoc.get("_id")
+
+
+# Images embedded in body_html are stored as editor blocks: a
+# `<!-- EMBED START Image {id: "editor_0"} -->` marker whose id is the KEY of an
+# `associations` entry holding the picture + renditions. SWP's
+# EmbeddedImageProcessor rewrites each <img src> to a public media URL, but ONLY
+# when that association is present — so the embed id -> picture guid map must be
+# tracked and re-attached on import, exactly like feature media. Without it the
+# body keeps its authoring-time upload-raw URL (auth-gated, 401) and the image
+# is blank. Keyed by the embed id, not the picture guid, because SWP matches the
+# marker id to the association key.
+EMBED_IMAGE_ID_RE = re.compile(r'EMBED START Image \{id: ?"([^"]+)"\}')
+
+
+def embedded_media_map(doc):
+    body = doc.get("body_html") or ""
+    assoc = doc.get("associations") or {}
+    out = {}
+    for embed_id in sorted(set(EMBED_IMAGE_ID_RE.findall(body))):
+        a = assoc.get(embed_id) or {}
+        guid = a.get("guid") or a.get("_id")
+        if guid:
+            out[embed_id] = guid
+    return out
+
+
+# Some authored pages carry images NOT as proper editor embeds but as raw HTML
+# blocks pasted into the body: `<div class="embed-block"><img src="…upload-raw…">`.
+# These have NO `associations` entry and NO EMBED marker, so SWP's
+# EmbeddedImageProcessor never rewrites them and the staging upload-raw URL
+# (auth-gated, 401) survives to the frontend. Normalise them into the SAME editor
+# embed shape the working images use — `<!-- EMBED START Image {id:"editor_N"} -->
+# <figure><img></figure><!-- EMBED END … -->` — and map the new id to the
+# upload-raw media id (used as the media-file key, pulled by dump.sh). SWP then
+# rewrites them per-environment exactly like every other embedded image.
+EMBED_BLOCK_RE = re.compile(
+    r'<div class="embed-block">\s*<img\b(?P<attrs>[^>]*)>\s*</div>',
+    re.IGNORECASE | re.DOTALL,
+)
+UPLOAD_RAW_ID_RE = re.compile(r"upload-raw/(?:\d+/)?([0-9a-f]{24})")
+
+
+def normalize_embed_blocks(body):
+    """Rewrite `<div class="embed-block"><img …></div>` into editor-embed markers.
+
+    Returns (new_body, {editor_id: upload_raw_media_id}). New ids continue after
+    any `editor_N` already present so they never collide with real editor embeds.
+    """
+    used = [int(n) for n in re.findall(r'"editor_(\d+)"', body)]
+    counter = [max(used) + 1 if used else 0]
+    mapping = {}
+
+    def repl(m):
+        attrs = m.group("attrs")
+        raw = UPLOAD_RAW_ID_RE.search(attrs)
+        if not raw:
+            return m.group(0)  # not an upload-raw image; leave the block untouched
+        eid = f"editor_{counter[0]}"
+        counter[0] += 1
+        mapping[eid] = raw.group(1)
+        return (
+            f'<!-- EMBED START Image {{id: "{eid}"}} -->\n'
+            f"<figure><img{attrs}></figure>\n"
+            f'<!-- EMBED END Image {{id: "{eid}"}} -->'
+        )
+
+    return EMBED_BLOCK_RE.sub(repl, body), mapping
+
+
+def pick(doc, fields):
+    out = {}
+    for f in fields:
+        if f in doc and doc[f] not in (None, "", [], {}):
+            out[f] = doc[f]
+    return out
+
+
+def convert(src, dest, summary):
+    dest = Path(dest)
+    accepted = tracked_profiles()
+    for doc in load_json(src, "pages.json"):
+        # Normalise raw `embed-block` images into editor embeds BEFORE picking, so
+        # the tracked body carries EMBED markers and the importer attaches their
+        # media as associations (see normalize_embed_blocks).
+        new_body, block_media = normalize_embed_blocks(doc.get("body_html") or "")
+        if block_media:
+            doc = {**doc, "body_html": new_body}
+            summary["embed_blocks"] += len(block_media)
+        page = pick(doc, PAGE_FIELDS)
+        pid = remap_profile(doc.get("profile"))
+        if pid not in accepted:
+            raise SystemExit(
+                f"page {doc.get('guid')} uses profile {doc.get('profile')!r} with no "
+                f"tracked/remap target — capture it into content-config "
+                f"({CONTENT_TYPES_JSON.name}) via `make content-config-refresh`, or add "
+                f"a PROFILE_REMAP entry if it maps to an existing profile."
+            )
+        page["profile"] = pid
+        if pid == PAGE_SECTION_PROFILE:
+            subj = page.get("subject") or []
+            if not any(s.get("scheme") == PAGE_SECTION_ROLE_SCHEME for s in subj):
+                page["subject"] = subj + [dict(DEFAULT_PAGE_SECTION_ROLE)]
+                summary["role_defaulted"] += 1
+        fm = featuremedia_guid(doc)
+        if fm:
+            page["feature_media"] = fm  # picture guid; importer re-links after upload
+        emb = embedded_media_map(doc)
+        emb.update(
+            block_media
+        )  # normalised embed-block images (keyed by upload-raw id)
+        if emb:
+            page["embedded_media"] = (
+                emb  # embed id -> picture/media id; re-attached on import
+            )
+            summary["embedded_media"] += len(emb)
+        write_json(dest / "pages" / f"{doc['guid']}.json", page)
+        summary["pages"] += 1
+
+    for doc in load_json(src, "pictures.json"):
+        pic = pick(doc, PICTURE_FIELDS)
+        pic["profile"] = "picture"
+        write_json(dest / "pictures" / f"{doc['guid']}.json", pic)
+        summary["pictures"] += 1
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    ap.add_argument(
+        "--source", required=True, help="dir holding pages.json / pictures.json"
+    )
+    ap.add_argument(
+        "--dest", default="data/editorial", help="output dir (default: data/editorial)"
+    )
+    args = ap.parse_args(argv)
+    summary = {
+        "pages": 0,
+        "pictures": 0,
+        "role_defaulted": 0,
+        "embedded_media": 0,
+        "embed_blocks": 0,
+    }
+    convert(args.source, args.dest, summary)
+    print(f"Pages:    {summary['pages']}")
+    print(f"Pictures: {summary['pictures']}")
+    print(f"Embedded body images: {summary['embedded_media']}")
+    print(f"Normalised embed-block images: {summary['embed_blocks']}")
+    print(f"page_section_role defaulted to 'section': {summary['role_defaulted']}")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,19 @@
+{
+    "extra": {
+        "content_list": "",
+        "cta_url": "<p>https://dw.com/</p>"
+    },
+    "feature_media": "4ef09a60-fe91-49d3-922e-0aab8f4bf9c2",
+    "guid": "caf41f06-7d90-4559-b57e-e01ef03c1b52",
+    "headline": "Deutsche Welle",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "partner-deutsche-welle",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"},
+        {"name": "Partner logos", "qcode": "partners-logos", "scheme": "page_section_template"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

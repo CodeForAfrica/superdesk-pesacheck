@@ -1,0 +1,14 @@
+{
+    "body_html": "<p>PesaCheck is an indigenous initiative that is pioneering frontline fact-checking across Africa. Initially focused on verifying the financial and other statistical numbers quoted by public figures in Kenya, Tanzania and Uganda, PesaCheck is now Africa’s largest with full-time staff in 18 countries in both east and west Africa, as well as across the Sahel. PesaCheck fact-checks in two international languages (English and French), as well as major African languages such as Amharic, Kiswahili and Somali. Our network helps track political promises by politicians (through our Wajibisha/PromiseTracker toolkit), helps unpack budget and census data (through our PesaYetu and TaxClock platforms), and builds machine learning/artificial intelligence tools (such as DebunkBot) to help automate verification. PesaCheck also helps watchdog media and NGOs establish their own standalone fact-check teams, and works with universities across the continent to train a new generation of civic watchdogs. PesaCheck is an initiative of Code for Africa (CfA) and was co-founded in 2016 by Justin Arenstein and Catherine Gicheru as part of their ICFJ Knight Fellowships, underwritten by an innovateAFRICA.fund award</p>",
+    "guid": "29df3db6-d42d-40ae-8a48-fab93c963ee6",
+    "headline": "Licensing and syndication",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "contact-licensing",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

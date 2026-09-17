@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>Bujumbura</p>",
+    "body_html": "<p>Cedrick Irakoze</p>",
+    "extra": {
+        "contact_email": "<p>cedrick@pesacheck.org</p>"
+    },
+    "guid": "cee03d86-95f9-4818-b9d4-1f517358e528",
+    "headline": "Burundi",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "contact-office-burundi",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

@@ -1,0 +1,17 @@
+{
+    "body_html": "<p>Simon Muli</p>",
+    "extra": {
+        "contact_email": "<p>simon@pesacheck.org</p>"
+    },
+    "guid": "3ea73986-e925-4d15-9065-95a268c526cf",
+    "headline": "Tanzania",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "contact-office-tanzania",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

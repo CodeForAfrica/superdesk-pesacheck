@@ -1,0 +1,14 @@
+{
+    "body_html": "<p>There are a number of different types of cookies; our website uses:</p><ul><li><strong>Functionality:</strong> CfA uses cookies so that we recognise you on our website and remember your previously selected preferences. These could include what language you prefer and the location you are in. A mix of first-party and third-party cookies is used.</li><li><strong>Advertising:</strong> CfA uses cookies to collect information about your visit to our website, the content you viewed, the links you followed and information about your browser, device and IP address. CfA sometimes shares some limited aspects of this data with third parties for advertising purposes.</li></ul>",
+    "guid": "69a17264-ff0b-4e51-8d30-c840c90e47a0",
+    "headline": "What types of cookies do we use?",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "privacy-types-of-cookies",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

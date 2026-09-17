@@ -1,0 +1,17 @@
+{
+    "abstract": "<p>PesaCheck works alongside AFCA members to counter mis- and disinformation across the continent's language and border lines.</p>",
+    "extra": {
+        "partner_role": "<p>Alliance member</p>"
+    },
+    "guid": "953a5702-8fc4-4697-a31a-495019d43889",
+    "headline": "AFCA",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ebdad0756a69fc29fab0",
+    "slugline": "afca",
+    "subject": [
+        {"name": "Fact-checking networks", "qcode": "networks", "scheme": "ecosystem_group"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

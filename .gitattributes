@@ -1,0 +1,1 @@
+server/data/editorial/media/** !text !filter !merge !diff

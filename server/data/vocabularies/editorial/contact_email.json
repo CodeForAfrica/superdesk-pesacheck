@@ -1,0 +1,12 @@
+{
+    "_deleted": false,
+    "_id": "contact_email",
+    "disable_entire_category_selection": false,
+    "display_name": "Contact email",
+    "field_type": "text",
+    "items": [],
+    "service": {
+        "all": 1
+    },
+    "type": "manageable"
+}

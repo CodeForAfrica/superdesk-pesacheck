@@ -1,0 +1,18 @@
+{
+    "body_html": "<p>PesaCheck does more than publish fact-checks. We help build the infrastructure that African fact-checking depends on — convening networks, training newsrooms, and sharing tooling and data with peers across the continent. These are the alliances and networks we belong to.</p>",
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "1e508a24-9589-440e-b1b1-221cb2dea5e9",
+    "headline": "PesaCheck does more than publish fact-checks.",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "ecosystem-groups",
+    "subject": [
+        {"name": "ecosystem-groups", "qcode": "ecosystem-groups", "scheme": "page_section_template"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

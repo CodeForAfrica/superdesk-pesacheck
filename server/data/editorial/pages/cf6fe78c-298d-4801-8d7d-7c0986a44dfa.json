@@ -1,0 +1,14 @@
+{
+    "body_html": "<p>Cookies are text files placed on your computer to collect standard internet log information and visitor behaviour information. When you visit our websites, we may collect information from you automatically through cookies or similar technology. For further information, visit <a href=\"https://allaboutcookies.org\">allaboutcookies.org</a>.</p>",
+    "guid": "cf6fe78c-298d-4801-8d7d-7c0986a44dfa",
+    "headline": "What are cookies?",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "privacy-what-are-cookies",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

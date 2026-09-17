@@ -1,0 +1,17 @@
+{
+    "extra": {
+        "content_list": ""
+    },
+    "guid": "50adb3bc-5cab-4c37-b353-8da0025f1383",
+    "headline": "Our Impact",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "about-impact",
+    "subject": [
+        {"name": "impact-stats", "qcode": "impact-stats", "scheme": "page_section_template"},
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

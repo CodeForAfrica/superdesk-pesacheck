@@ -1,0 +1,14 @@
+{
+    "abstract": "<p>The desk adds daily monitoring in two additional languages and a shared tip line.</p>",
+    "guid": "ac0104a4-34c3-417c-a5b6-e1b0cbf5c773",
+    "headline": "New verification desk launches",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a8c9122e2b084181606a9ce",
+    "slugline": "verification-desk",
+    "subject": [
+        {"name": "Partnership", "qcode": "partnership", "scheme": "media_centre_label"}
+    ],
+    "type": "text",
+    "urgency": 1
+}

@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>We correct it and say so. Corrections are published on the original fact-check with a note explaining what changed and when.</p>",
+    "body_html": "<p>We correct it and say so. Corrections are published on the original fact-check with a note explaining what changed and when.</p>",
+    "guid": "4f7c92ce-2d73-455b-b02b-6c5ff01f43d1",
+    "headline": "What happens if you get something wrong?",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ed55d0756a69fc29fab7",
+    "slugline": "corrections-policy",
+    "subject": [
+        {"name": "Questions about our policies", "qcode": "policies", "scheme": "faq_group"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

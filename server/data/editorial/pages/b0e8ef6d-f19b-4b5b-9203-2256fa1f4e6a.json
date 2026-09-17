@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>Use the filters on the fact-checks page to narrow by country, topic, language or verdict.</p>",
+    "body_html": "<p>Use the filters on the fact-checks page to narrow by country, topic, language or verdict.</p>",
+    "guid": "b0e8ef6d-f19b-4b5b-9203-2256fa1f4e6a",
+    "headline": "How do I find fact-checks on a specific topic?",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ed55d0756a69fc29fab7",
+    "slugline": "finding-factchecks",
+    "subject": [
+        {"name": "Questions about using the site", "qcode": "site", "scheme": "faq_group"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

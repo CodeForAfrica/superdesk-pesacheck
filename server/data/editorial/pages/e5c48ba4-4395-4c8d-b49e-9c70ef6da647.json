@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>Learn about PesaCheck's Privacy Policy</p>",
+    "extra": {
+        "content_list": ""
+    },
+    "feature_media": "9bf70aad-5480-4a80-b52e-7163c83b6618",
+    "guid": "e5c48ba4-4395-4c8d-b49e-9c70ef6da647",
+    "headline": "Privacy Policy",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "privacy-hero",
+    "subject": [
+        {"name": "Hero", "qcode": "hero", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

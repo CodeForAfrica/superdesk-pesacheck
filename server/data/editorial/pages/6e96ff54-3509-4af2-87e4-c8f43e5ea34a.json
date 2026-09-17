@@ -1,0 +1,19 @@
+{
+    "extra": {
+        "content_list": "",
+        "cta_url": "<p>https://academy.africa/</p>"
+    },
+    "feature_media": "b7b32d32-65e5-40df-bd02-79aaa919de94",
+    "guid": "6e96ff54-3509-4af2-87e4-c8f43e5ea34a",
+    "headline": "Academy Africa",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "ally-academy-africa",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"},
+        {"name": "Allies logos", "qcode": "allies-logos", "scheme": "page_section_template"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

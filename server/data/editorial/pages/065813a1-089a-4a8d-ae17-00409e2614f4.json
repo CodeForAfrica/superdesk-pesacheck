@@ -1,0 +1,19 @@
+{
+    "extra": {
+        "content_list": "",
+        "cta_url": "<p>https://takwimu.africa/</p>"
+    },
+    "feature_media": "2a6041b2-d538-44ce-81db-2d9cbaa9b43c",
+    "guid": "065813a1-089a-4a8d-ae17-00409e2614f4",
+    "headline": "Takwimu",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "ally-takwimu",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"},
+        {"name": "Allies logos", "qcode": "allies-logos", "scheme": "page_section_template"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

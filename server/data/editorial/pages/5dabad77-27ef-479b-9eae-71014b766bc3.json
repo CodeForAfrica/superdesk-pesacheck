@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>-</p>",
+    "body_html": "<p>Transparency is a core value at PesaCheck. We strive for accuracy, but we all make mistakes sometimes. While every error is a weakness, some errors are inevitable, and we are fully open to correcting them promptly in whatever material we publish on our platforms.</p>\n<p>When we run a correction, clarification or editor's note, our goal is to tell readers, as clearly and quickly as possible, what was wrong and what is correct. Anyone should be able to understand how and why a mistake has been corrected.</p>",
+    "guid": "5dabad77-27ef-479b-9eae-71014b766bc3",
+    "headline": "Our Mistakes and Corrections",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "mistakes-and-corrections",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

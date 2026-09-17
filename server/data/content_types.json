@@ -651,6 +651,7 @@
             "claimformat": null,
             "claimtype": null,
             "company_codes": null,
+            "content_list": null,
             "content_type": null,
             "countries": null,
             "countrymention1": null,
@@ -658,6 +659,8 @@
             "countrymention3": null,
             "countrymention4": null,
             "countrymention5": null,
+            "cta_label": null,
+            "cta_url": null,
             "dateline": null,
             "drafturl": null,
             "ecosystem_group": {
@@ -669,6 +672,7 @@
                 "sdWidth": "full",
                 "section": "header"
             },
+            "ecosystem_role_icon": null,
             "ednote": null,
             "event_cost": null,
             "event_dates": null,
@@ -696,12 +700,15 @@
                 "sdWidth": "full",
                 "section": "content"
             },
+            "impact_icon": null,
             "keywords": null,
             "language": null,
             "linkedin_url": null,
             "media_centre_label": null,
             "media_description": null,
             "originator": null,
+            "page_section_role": null,
+            "page_section_template": null,
             "partner_role": {
                 "enabled": true,
                 "field_name": "Partner role",
@@ -747,7 +754,7 @@
         "priority": 0,
         "schema": {
             "abstract": {
-                "maxlength": 160,
+                "maxlength": 400,
                 "nullable": true,
                 "required": false,
                 "type": "string"
@@ -761,6 +768,9 @@
             "body_html": null,
             "byline": null,
             "company_codes": null,
+            "content_list": null,
+            "cta_label": null,
+            "cta_url": null,
             "dateline": null,
             "drafturl": null,
             "ednote": null,
@@ -808,7 +818,7 @@
             "secondsourcesocial": null,
             "sign_off": null,
             "slugline": {
-                "maxlength": 24,
+                "maxlength": 80,
                 "nullable": true,
                 "required": false,
                 "type": "string"
@@ -833,8 +843,12 @@
                         "countrymention4": null,
                         "countrymention5": null,
                         "ecosystem_group": null,
+                        "ecosystem_role_icon": null,
                         "faq_group": null,
+                        "impact_icon": null,
                         "media_centre_label": null,
+                        "page_section_role": null,
+                        "page_section_template": null,
                         "platform": null,
                         "project": null
                     }
@@ -1198,7 +1212,7 @@
         "priority": 0,
         "schema": {
             "abstract": {
-                "maxlength": 160,
+                "maxlength": 400,
                 "nullable": false,
                 "required": true,
                 "type": "string"
@@ -1245,7 +1259,7 @@
             "secondsourcesocial": null,
             "sign_off": null,
             "slugline": {
-                "maxlength": 24,
+                "maxlength": 80,
                 "nullable": true,
                 "required": false,
                 "type": "string"
@@ -1603,6 +1617,340 @@
                         "scheme": {
                             "allowed": [
                                 "media_centre_label"
+                            ],
+                            "nullable": true,
+                            "required": true,
+                            "type": "string"
+                        },
+                        "service": {
+                            "nullable": true
+                        }
+                    },
+                    "type": "dict"
+                },
+                "type": "list"
+            },
+            "team_role": null,
+            "thirdsource": null,
+            "urgency": null,
+            "usageterms": null
+        },
+        "type": "text"
+    },
+    {
+        "_id": "6a98515dd0756a69fc29fb06",
+        "description": "Named generically because it serves every static page, not just Knowledge — Funding, Principles and Methodology are the same shape.",
+        "editor": {
+            "01harm": null,
+            "Debunk": null,
+            "Debunklang": null,
+            "GEC": null,
+            "Harm_type": null,
+            "abstract": {
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "link"
+                ],
+                "order": 5,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "anpa_category": null,
+            "anpa_take_key": null,
+            "archiveurl": null,
+            "attachments": null,
+            "authors": null,
+            "body_footer": null,
+            "body_html": {
+                "cleanPastedHTML": false,
+                "editor3": true,
+                "enabled": true,
+                "formatOptions": [
+                    "h2",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "quote",
+                    "link",
+                    "embed",
+                    "media"
+                ],
+                "order": 6,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "byline": null,
+            "claimformat": null,
+            "claimtype": null,
+            "company_codes": null,
+            "contact_address": {
+                "enabled": true,
+                "field_name": "Content list",
+                "order": 8,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "contact_email": {
+                "enabled": true,
+                "field_name": "Content list",
+                "order": 9,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "contact_phone": {
+                "enabled": true,
+                "field_name": "Content list",
+                "order": 10,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "content_list": {
+                "enabled": true,
+                "field_name": "Content list",
+                "order": 3,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "content_type": null,
+            "countries": null,
+            "countrymention1": null,
+            "countrymention2": null,
+            "countrymention3": null,
+            "countrymention4": null,
+            "countrymention5": null,
+            "cta_label": null,
+            "cta_url": null,
+            "dateline": null,
+            "drafturl": null,
+            "ecosystem_group": null,
+            "ecosystem_role_icon": null,
+            "ednote": null,
+            "event_cost": null,
+            "event_dates": null,
+            "event_format": null,
+            "event_languages": null,
+            "event_meta": null,
+            "event_venue": null,
+            "faq_group": null,
+            "feature_media": {
+                "enabled": true,
+                "order": 7,
+                "required": false,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "firstsource": null,
+            "firstsourcesocial": null,
+            "footer": null,
+            "genre": null,
+            "headline": {
+                "enabled": true,
+                "formatOptions": [],
+                "order": 4,
+                "required": true,
+                "sdWidth": "full",
+                "section": "content"
+            },
+            "impact_icon": null,
+            "keywords": null,
+            "language": null,
+            "linkedin_url": null,
+            "media_centre_label": null,
+            "media_description": null,
+            "originator": null,
+            "page_section_role": {
+                "enabled": true,
+                "field_name": "Page Section Role",
+                "order": 1,
+                "readonly": false,
+                "required": true,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "page_section_template": {
+                "enabled": true,
+                "field_name": "Section Template",
+                "order": 2,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "partner_role": null,
+            "partner_url": null,
+            "place": null,
+            "platform": null,
+            "priority": null,
+            "project": null,
+            "related": null,
+            "secondsourcesocial": null,
+            "sign_off": null,
+            "slugline": {
+                "enabled": true,
+                "order": 0,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "sms": null,
+            "subject": null,
+            "team_role": null,
+            "thirdsource": null,
+            "urgency": null,
+            "usageterms": null
+        },
+        "embeddable": false,
+        "enabled": true,
+        "label": "Page Section",
+        "priority": 0,
+        "schema": {
+            "abstract": {
+                "maxlength": 400,
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "anpa_category": null,
+            "anpa_take_key": null,
+            "archiveurl": null,
+            "attachments": null,
+            "authors": null,
+            "body_footer": null,
+            "body_html": {
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "byline": null,
+            "company_codes": null,
+            "contact_address": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "contact_email": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "contact_phone": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "content_list": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "cta_label": null,
+            "cta_url": null,
+            "dateline": null,
+            "drafturl": null,
+            "ednote": null,
+            "event_cost": null,
+            "event_dates": null,
+            "event_format": null,
+            "event_languages": null,
+            "event_meta": null,
+            "event_venue": null,
+            "feature_media": {
+                "nullable": true,
+                "required": false,
+                "type": "media"
+            },
+            "firstsource": null,
+            "firstsourcesocial": null,
+            "footer": null,
+            "genre": null,
+            "headline": {
+                "maxlength": 64,
+                "nullable": false,
+                "required": true,
+                "type": "string"
+            },
+            "keywords": null,
+            "language": null,
+            "linkedin_url": null,
+            "media_description": null,
+            "originator": null,
+            "partner_role": null,
+            "partner_url": null,
+            "place": null,
+            "priority": null,
+            "related": null,
+            "secondsourcesocial": null,
+            "sign_off": null,
+            "slugline": {
+                "maxlength": 80,
+                "nullable": true,
+                "required": false,
+                "type": "string"
+            },
+            "sms": null,
+            "subject": {
+                "default": [],
+                "mandatory_in_list": {
+                    "scheme": {
+                        "01harm": null,
+                        "Debunk": null,
+                        "Debunklang": null,
+                        "GEC": null,
+                        "Harm_type": null,
+                        "claimformat": null,
+                        "claimtype": null,
+                        "content_type": null,
+                        "countries": null,
+                        "countrymention1": null,
+                        "countrymention2": null,
+                        "countrymention3": null,
+                        "countrymention4": null,
+                        "countrymention5": null,
+                        "ecosystem_group": null,
+                        "ecosystem_role_icon": null,
+                        "faq_group": null,
+                        "impact_icon": null,
+                        "media_centre_label": null,
+                        "page_section_role": {
+                            "readonly": false,
+                            "required": true
+                        },
+                        "page_section_template": null,
+                        "platform": null,
+                        "project": null
+                    }
+                },
+                "readonly": false,
+                "required": false,
+                "schema": {
+                    "schema": {
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {},
+                        "scheme": {
+                            "allowed": [
+                                "page_section_role",
+                                "page_section_template"
                             ],
                             "nullable": true,
                             "required": true,

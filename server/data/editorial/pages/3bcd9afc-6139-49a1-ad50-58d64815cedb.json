@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>Our evidence is submitted to and quoted in consultations on platform accountability, media regulation and public-interest journalism.</p>",
+    "extra": {
+        "originator": ""
+    },
+    "guid": "3bcd9afc-6139-49a1-ad50-58d64815cedb",
+    "headline": "REGULATORY SUBMISSIONS",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a8d9ff7e2b084181606aabb",
+    "slugline": "regulatory-submissions",
+    "subject": [
+        {"name": "Research", "qcode": "research", "scheme": "content_type"},
+        {"name": "Data", "qcode": "data", "scheme": "media_centre_label"}
+    ],
+    "type": "text",
+    "urgency": 1
+}

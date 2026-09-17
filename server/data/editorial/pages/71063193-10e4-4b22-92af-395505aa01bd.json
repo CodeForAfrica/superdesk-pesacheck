@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>PesaCheck is an initiative of Code for Africa, the continent's largest network of civic technology and data journalism labs, operating in more than 20 countries.</p>",
+    "extra": {
+        "partner_role": "<p>Parent network</p>",
+        "partner_url": "<p>https://codeforafrica.org</p>"
+    },
+    "guid": "71063193-10e4-4b22-92af-395505aa01bd",
+    "headline": "Code for Africa",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ebdad0756a69fc29fab0",
+    "slugline": "code-for-africa",
+    "subject": [
+        {"name": "Research & investigation", "qcode": "research", "scheme": "ecosystem_group"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

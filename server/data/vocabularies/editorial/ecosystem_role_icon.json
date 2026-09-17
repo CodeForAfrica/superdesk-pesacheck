@@ -1,0 +1,23 @@
+{
+    "_deleted": false,
+    "_id": "ecosystem_role_icon",
+    "disable_entire_category_selection": false,
+    "display_name": "Ecosystem Role Icon",
+    "field_type": null,
+    "items": [
+        {"is_active": true, "name": "Megaphone (convene)", "qcode": "announce"},
+        {"is_active": true, "name": "Hand (train)", "qcode": "hand"},
+        {"is_active": true, "name": "Server (build tools)", "qcode": "server"}
+    ],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "selection_type": "single selection",
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}

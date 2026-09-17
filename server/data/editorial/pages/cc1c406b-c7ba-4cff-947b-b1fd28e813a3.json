@@ -1,0 +1,15 @@
+{
+    "abstract": "<p>Corrections Policy</p>",
+    "body_html": "<p>Transparency is a core value for PesaCheck, and we strive for accurate and comprehensive fact-checking. We all make mistakes sometimes, and while every error is a weakness, some errors are inevitable, and we are fully open to correcting them promptly in whatever material we publish on our platforms.</p>\n<p>When we run a correction, clarification or editor's note, our goal is to tell readers, as clearly and quickly as possible, what was wrong and what is correct. Anyone should be able to understand how and why a mistake has been corrected. It is necessary to use a correction, clarification or editor's note to inform readers whenever we correct a <b>significant</b> mistake. Updates are used to reflect important new information or clarifications; corrections are for mistakes.</p>\n<p>Clarification: when the content is factually correct but the language used to explain the facts is not as clear or detailed as it should be, the post will be rewritten and a clarification added to the story. A clarification can also be used to note that we initially failed to seek a comment or response that has since been added to the story.</p>\n<p>Editor's notes: a correction that calls into question the entire substance of an article, raises a significant ethical matter or addresses whether an article did not meet our standards, may require an Editor's Note and be followed by an explanation of what is at issue. Therefore:</p>\n<ul>\n  <li>When an error is brought to our attention, we will indicate in comments that it has been corrected.</li>\n  <li>Any erroneous information published on our social platforms will be corrected on any and all platforms it was published on.</li>\n  <li>We do not attribute blame to individuals, but we may note that an error was the result of incorrect information from a trusted source.</li>\n</ul>\n<p>The correction policy was sourced in part from <a href=\"https://www.buzzfeed.com/emmyf/buzzfeed-style-guide\"><b>Buzzfeed</b></a> and <a href=\"https://www.washingtonpost.com/news/ask-the-post/wp/2017/01/01/policies-and-standards/\"><b>The Washington Post</b></a>.</p>",
+    "guid": "cc1c406b-c7ba-4cff-947b-b1fd28e813a3",
+    "headline": "Corrections Policy",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "metho-corrections-policy",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

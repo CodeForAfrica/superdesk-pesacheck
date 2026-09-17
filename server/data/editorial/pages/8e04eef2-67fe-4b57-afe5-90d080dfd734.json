@@ -1,0 +1,17 @@
+{
+    "body_html": "<p>Doreen Wainainah</p>",
+    "extra": {
+        "contact_email": "<p>doreen@pesacheck.org</p>"
+    },
+    "guid": "8e04eef2-67fe-4b57-afe5-90d080dfd734",
+    "headline": "Nigeria",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "contact-office-nigeria",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

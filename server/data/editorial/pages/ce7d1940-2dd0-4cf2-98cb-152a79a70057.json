@@ -1,0 +1,18 @@
+{
+    "abstract": "<p>The organisations we work with across the continent</p>",
+    "extra": {
+        "content_list": ""
+    },
+    "feature_media": "2db49512-673b-4f90-a78e-bdd90dd870fd",
+    "guid": "ce7d1940-2dd0-4cf2-98cb-152a79a70057",
+    "headline": "Our Partners",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "partners-hero",
+    "subject": [
+        {"name": "Hero", "qcode": "hero", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

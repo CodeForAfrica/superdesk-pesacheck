@@ -1,0 +1,14 @@
+{
+    "body_html": "<p>Data privacy laws differ depending on your country of residence, so it is impossible to detail each under this policy. It has, however, taken into consideration acts from the European Economic Area (EEA), the United States of America and South Africa. Regardless of your location, you have the following data protection rights:</p><ul><li><strong>The right to access:</strong> You have the right to request CfA for copies of your personal data.</li><li><strong>The right to rectification:</strong> You have the right to request that CfA correct any information you believe is inaccurate, and to request that CfA complete information you believe is incomplete.</li><li><strong>The right to erasure:</strong> You have the right to request that CfA erase your personal data, under certain conditions.</li><li><strong>The right to restrict processing:</strong> You have the right to request that CfA restrict the processing of your personal data, under certain conditions.</li><li><strong>The right to object to processing:</strong> You have the right to object to CfA's processing of your personal data, under certain conditions.</li><li><strong>The right to data portability:</strong> You have the right to request that CfA transfer the data that we have collected to another organisation, or directly to you, under certain conditions.</li></ul>",
+    "guid": "5c288a9e-72aa-46f2-b8ed-bb6290097bc7",
+    "headline": "What are your data protection rights?",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "privacy-data-protection-rights",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}
