@@ -1732,8 +1732,24 @@
             "countrymention3": null,
             "countrymention4": null,
             "countrymention5": null,
-            "cta_label": null,
-            "cta_url": null,
+            "cta_label": {
+                "enabled": true,
+                "field_name": "Content list",
+                "order": 12,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
+            "cta_url": {
+                "enabled": true,
+                "field_name": "Content list",
+                "order": 11,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "full",
+                "section": "header"
+            },
             "dateline": null,
             "drafturl": null,
             "ecosystem_group": null,
@@ -1861,8 +1877,18 @@
                 "required": false,
                 "type": "text"
             },
-            "cta_label": null,
-            "cta_url": null,
+            "cta_label": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
+            "cta_url": {
+                "nullable": true,
+                "readonly": false,
+                "required": false,
+                "type": "text"
+            },
             "dateline": null,
             "drafturl": null,
             "ednote": null,

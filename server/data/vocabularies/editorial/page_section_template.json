@@ -1,47 +1,35 @@
 {
-  "_deleted": false,
-  "_id": "page_section_template",
-  "disable_entire_category_selection": false,
-  "display_name": "Section Template",
-  "field_type": null,
-  "items": [
-    { "is_active": true, "name": "Faq questions", "qcode": "faq-questions" },
-    { "is_active": true, "name": "Tools showcase", "qcode": "tools-showcase" },
-    { "is_active": true, "name": "Legal sections", "qcode": "legal-sections" },
-    { "is_active": true, "name": "Media research", "qcode": "media-research" },
-    { "is_active": true, "name": "Media news", "qcode": "media-news" },
-    {
-      "is_active": true,
-      "name": "Media announcements",
-      "qcode": "media-announcements"
+    "_deleted": false,
+    "_id": "page_section_template",
+    "disable_entire_category_selection": false,
+    "display_name": "Section Template",
+    "field_type": null,
+    "items": [
+        {"is_active": true, "name": "Faq questions", "qcode": "faq-questions"},
+        {"is_active": true, "name": "Tools showcase", "qcode": "tools-showcase"},
+        {"is_active": true, "name": "Legal sections", "qcode": "legal-sections"},
+        {"is_active": true, "name": "Media research", "qcode": "media-research"},
+        {"is_active": true, "name": "Media news", "qcode": "media-news"},
+        {"is_active": true, "name": "Media announcements", "qcode": "media-announcements"},
+        {"is_active": true, "name": "Media events", "qcode": "media-events"},
+        {"is_active": true, "name": "About intro", "qcode": "about-intro"},
+        {"is_active": true, "name": "Team grid", "qcode": "team-grid"},
+        {"is_active": true, "name": "Impact stats", "qcode": "impact-stats"},
+        {"is_active": true, "name": "Ally partner strip", "qcode": "ally-partner-strip"},
+        {"is_active": true, "name": "Allies logos", "qcode": "allies-logos"},
+        {"is_active": true, "name": "Partners logos", "qcode": "partners-logos"},
+        {"is_active": true, "name": "Ecosystem groups", "qcode": "ecosystem-groups"},
+        {"is_active": true, "name": "Ecosystem roles", "qcode": "ecosystem-roles"}
+    ],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
     },
-    { "is_active": true, "name": "Media events", "qcode": "media-events" },
-    { "is_active": true, "name": "About intro", "qcode": "about-intro" },
-    { "is_active": true, "name": "Team grid", "qcode": "team-grid" },
-    { "is_active": true, "name": "Impact stats", "qcode": "impact-stats" },
-    {
-      "is_active": true,
-      "name": "Ally partner strip",
-      "qcode": "ally-partner-strip"
+    "selection_type": "single selection",
+    "service": {
+        "all": 1
     },
-    { "is_active": true, "name": "Allies logos", "qcode": "allies-logos" },
-    { "is_active": true, "name": "Partners logos", "qcode": "partners-logos" },
-    {
-      "is_active": true,
-      "name": "Ecosystem groups",
-      "qcode": "ecosystem-groups"
-    },
-    { "is_active": true, "name": "Ecosystem roles", "qcode": "ecosystem-roles" }
-  ],
-  "schema": {
-    "name": {},
-    "parent": {},
-    "qcode": {}
-  },
-  "selection_type": "single selection",
-  "service": {
-    "all": 1
-  },
-  "type": "manageable",
-  "unique_field": "qcode"
+    "type": "manageable",
+    "unique_field": "qcode"
 }
