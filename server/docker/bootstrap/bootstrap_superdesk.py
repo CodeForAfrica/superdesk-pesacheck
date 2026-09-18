@@ -593,8 +593,14 @@ def import_editorial_pages():
 
     Runs after the publisher subscriber exists so publishing transmits to
     Publisher with each page's stable guid, where the Publisher membership seeder
-    then attaches them to the curated content lists. Non-fatal: a page that fails
-    to publish must not abort the whole bootstrap.
+    then attaches them to the curated content lists.
+
+    A PARTIAL failure (import_editorial.py exit 1 — some individual pages failed)
+    is non-fatal: one bad page must not abort the whole bootstrap. A SYSTEMIC
+    failure (exit 2 — API unreachable, no fixtures, or every page failed) IS
+    fatal: it means the import is misconfigured (as when SUPERDESK_INTERNAL_API_URL
+    was unset and every publish silently failed), and finishing bootstrap with an
+    empty Static Pages desk while reporting success is exactly the trap we hit.
     """
     if not env_flag("SUPERDESK_IMPORT_EDITORIAL", "1"):
         step("Skipping editorial-page import (SUPERDESK_IMPORT_EDITORIAL=0)")
@@ -603,10 +609,16 @@ def import_editorial_pages():
     result = subprocess.run(
         ["python3", "/usr/local/bin/import_editorial.py"], check=False
     )
+    if result.returncode == 2:
+        raise SystemExit(
+            "FATAL: editorial-page import hit a SYSTEMIC failure (see above) — "
+            "e.g. the Superdesk API was unreachable or no page published. "
+            "Refusing to finish bootstrap with an empty Static Pages desk."
+        )
     if result.returncode != 0:
         print(
-            "WARNING: import_editorial.py reported failures (see above). "
-            "Bootstrap continues; unpublished pages will be absent from their "
+            "WARNING: some editorial pages failed to publish (see above). "
+            "Bootstrap continues; the missing pages will be absent from their "
             "content lists until re-run."
         )
 
