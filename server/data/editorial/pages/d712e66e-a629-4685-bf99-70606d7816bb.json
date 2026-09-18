@@ -1,0 +1,14 @@
+{
+    "abstract": "<p>Yes. No funder sees a fact-check before publication or has any say in which claims we check or what we conclude</p>",
+    "body_html": "<p>Yes. No funder sees a fact-check before publication or has any say in which claims we check or what we conclude.</p>",
+    "guid": "d712e66e-a629-4685-bf99-70606d7816bb",
+    "headline": "Are you independent of your funders?",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a97ed55d0756a69fc29fab7",
+    "subject": [
+        {"name": "Questions about our fact-checks", "qcode": "factchecks", "scheme": "faq_group"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

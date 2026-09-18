@@ -1,0 +1,21 @@
+{
+    "abstract": "<p>Standing up new fact-checking desks from scratch.</p>",
+    "body_html": "<p>PesaCheck incubator helps organisations establish standalone fact-checking desks: methodology, corrections policy, tooling and the first months of published output. It is the most involved of our programmes and runs with a small number of partners at a time.</p>",
+    "extra": {
+        "contact_address": "",
+        "contact_email": "",
+        "contact_phone": "",
+        "content_list": ""
+    },
+    "guid": "ebf55055-0357-4524-b359-6618bbd49cfb",
+    "headline": "Incubator",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "incubator",
+    "subject": [
+        {"name": "Section", "qcode": "section", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}

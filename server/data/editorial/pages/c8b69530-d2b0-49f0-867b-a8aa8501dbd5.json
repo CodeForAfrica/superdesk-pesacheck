@@ -1,0 +1,21 @@
+{
+    "abstract": "<p>Open source toolkits built for the whole fact-checking ecosystem, not just our own newsroom</p>",
+    "extra": {
+        "contact_address": "",
+        "contact_email": "",
+        "contact_phone": "",
+        "content_list": ""
+    },
+    "feature_media": "81501292-45d2-44f5-8084-106c4352000d",
+    "guid": "c8b69530-d2b0-49f0-867b-a8aa8501dbd5",
+    "headline": "Tools",
+    "language": "en",
+    "priority": 6,
+    "profile": "6a98515dd0756a69fc29fb06",
+    "slugline": "tools-hero",
+    "subject": [
+        {"name": "Hero", "qcode": "hero", "scheme": "page_section_role"}
+    ],
+    "type": "text",
+    "urgency": 3
+}
