@@ -45,6 +45,13 @@ DEFAULT_MONGO_URI = "mongodb://superdesk-mongodb/superdesk"
 DEFAULT_API = "http://superdesk-api:5000/api"
 DEFAULT_DATA = "/opt/superdesk/data/editorial"
 DESK_NAME = os.environ.get("STATIC_PAGES_DESK", "Static Pages")
+
+# Exit codes. 0 = clean; 1 = PARTIAL (some pages failed — the caller may treat as
+# a warning and continue); 2 = SYSTEMIC (API unreachable, no admin, no fixtures,
+# or every page failed — a misconfiguration the caller MUST treat as fatal, so a
+# broken import can't masquerade as a clean bootstrap the way it did when the
+# internal API URL was unset).
+EXIT_SYSTEMIC = 2
 MEDIA_EXTS = ("png", "jpg", "jpeg", "webp", "gif", "svg")
 MIME_BY_EXT = {
     "png": "image/png",
@@ -81,7 +88,8 @@ def admin_token():
     )
     m = re.search(r"Generated token:\s+b'([^']+)'", out.stdout + out.stderr)
     if not m:
-        raise SystemExit(f"could not parse auth token:\n{out.stdout}\n{out.stderr}")
+        print(f"SYSTEMIC: could not parse auth token:\n{out.stdout}\n{out.stderr}")
+        raise SystemExit(EXIT_SYSTEMIC)
     return m.group(1)
 
 
@@ -252,7 +260,7 @@ def import_pages(db, api, admin_id, data_dir):
         f"{embedded_media} embedded body images), {published} published, "
         f"{skipped} already present, {failed} failed (of {len(pages)})."
     )
-    return failed
+    return created, failed, len(pages)
 
 
 def main():
@@ -261,10 +269,24 @@ def main():
     db = superdesk_db()
     admin = db.users.find_one({"user_type": "administrator"}) or db.users.find_one()
     if not admin:
-        raise SystemExit("no admin user; run the Superdesk bootstrap first")
-    wait_for_api(base)
+        print("SYSTEMIC: no admin user; run the Superdesk bootstrap first")
+        raise SystemExit(EXIT_SYSTEMIC)
+    try:
+        wait_for_api(base)
+    except Exception as exc:
+        print(f"SYSTEMIC: Superdesk API unreachable at {base} ({exc})")
+        raise SystemExit(EXIT_SYSTEMIC)
     api = Api(base, admin_token())
-    failed = import_pages(db, api, admin["_id"], data_dir)
+    created, failed, total = import_pages(db, api, admin["_id"], data_dir)
+    if total == 0:
+        print(f"SYSTEMIC: no editorial page fixtures found under {data_dir}")
+        raise SystemExit(EXIT_SYSTEMIC)
+    if created == 0 and failed > 0:
+        print(
+            "SYSTEMIC: every editorial page failed to publish "
+            "(API misconfigured/unreachable?)"
+        )
+        raise SystemExit(EXIT_SYSTEMIC)
     raise SystemExit(1 if failed else 0)
 
 
