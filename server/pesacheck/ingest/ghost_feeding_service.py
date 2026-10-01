@@ -24,10 +24,11 @@ logger = logging.getLogger(__name__)
 BATCH_SIZE = env_int("GHOST_INGEST_BATCH_SIZE", 10)
 
 # Desk the ingested fact-checks are fetched onto on their way to being
-# published. Publisher assigns the route from the article's language, not the
-# desk, so the desk is only a required waypoint in Superdesk's publish workflow;
-# override it with the provider config ``publish_desk``.
-DEFAULT_PUBLISH_DESK = "Newsdesk"
+# published: the production sign-off desk, onto its incoming stage. Publisher
+# assigns the route from the article's language, not the desk, so the desk only
+# decides where the item sits in Superdesk; override it with the provider config
+# ``publish_desk``. The name must match a tracked desk (server/data/desks.json).
+DEFAULT_PUBLISH_DESK = "Sign-offs"
 
 # Hard ceiling on a single item's fetch+publish. Publishing is decoupled from
 # ingest (see below), but a stuck publish must still be bounded so one bad item
@@ -454,9 +455,10 @@ async def _publish_guids(provider, guids):
 
     desk_id, stage_id = await _resolve_publish_target(provider)
     if desk_id is None:
-        logger.warning(
-            "Ghost auto-publish skipped: no desk to fetch onto "
-            "(set the provider config 'publish_desk')"
+        logger.error(
+            "Ghost auto-publish skipped: no desk named %r to fetch onto "
+            "(check the provider config 'publish_desk' against data/desks.json)",
+            _publish_desk_name(provider),
         )
         return
 
@@ -520,13 +522,21 @@ async def _publish_one(fetch_service, publish_service, ingest_item, desk_id, sta
         await publish_service.patch_async(archive_id, {"auto_publish": True})
 
 
+def _publish_desk_name(provider):
+    return provider.get("config", {}).get("publish_desk") or DEFAULT_PUBLISH_DESK
+
+
 async def _resolve_publish_target(provider):
-    """Return the ``(desk_id, stage_id)`` to fetch onto, or ``(None, None)``."""
+    """Return the ``(desk_id, stage_id)`` to fetch onto, or ``(None, None)``.
+
+    Resolved strictly by name. There is deliberately no "first desk" fallback:
+    with several desks tracked, a misnamed ``publish_desk`` would otherwise
+    publish every fact-check onto an arbitrary desk without a word.
+    """
     desks_service = get_resource_service("desks")
-    desk_name = provider.get("config", {}).get("publish_desk") or DEFAULT_PUBLISH_DESK
-    desk = await desks_service.find_one_async(req=None, name=desk_name)
-    if not desk:
-        desk = await desks_service.find_one_async(req=None)
+    desk = await desks_service.find_one_async(
+        req=None, name=_publish_desk_name(provider)
+    )
     if not desk:
         return None, None
     return desk[ID_FIELD], desk.get("incoming_stage")

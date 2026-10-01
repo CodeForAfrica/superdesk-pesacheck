@@ -22,15 +22,15 @@
 #
 # The collections dumped are the content-config set: the same ones convert.py
 # materialises under server/data/ (content_types, content_templates,
-# vocabularies, content_filters, coverage_profiles, planning_types, desks,
-# stages).
+# vocabularies, content_filters, coverage_profiles, planning_types). Desks and
+# stages are workflow config: see scripts/workflow_config/.
 set -euo pipefail
 
 SOURCE="${1:-}"
 OUT="${2:-./superdesk-content-config.${SOURCE}.tgz}"
 REGION="${REGION:-eu-west-1}"
 DB="${DB:-superdesk}"
-COLLECTIONS="content_types content_templates vocabularies content_filters coverage_profiles planning_types desks stages"
+COLLECTIONS="content_types content_templates vocabularies content_filters coverage_profiles planning_types"
 
 log() { printf '>> %s\n' "$*" >&2; }
 die() { printf 'error: %s\n' "$*" >&2; exit 1; }

@@ -18,8 +18,6 @@ Output: written under `--dest` (default `server/data`):
     vocabularies/reference/<_id>.json      one file per reference vocabulary
     content_types.json                     list, sorted by _id
     content_templates.json                 list, sorted by _id
-    desks.json                             list, sorted by _id
-    stages.json                            list, sorted by _id
     planning_types.json                    list, sorted by _id
     (content_filters / coverage_profiles: written only if non-empty)
 
@@ -89,11 +87,12 @@ PER_INSTANCE_FIELDS = {
 }
 
 # Non-vocabulary collections to convert, in output order. Value is the filename.
+# desks / stages / roles are the workflow config and are owned by
+# scripts/workflow_config/convert_api.py, so the two refreshes never both write
+# the same file.
 DOCUMENT_COLLECTIONS = {
     "content_types": "content_types.json",
     "content_templates": "content_templates.json",
-    "desks": "desks.json",
-    "stages": "stages.json",
     "planning_types": "planning_types.json",
     "content_filters": "content_filters.json",
     "coverage_profiles": "coverage_profiles.json",

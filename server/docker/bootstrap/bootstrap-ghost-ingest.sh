@@ -36,7 +36,7 @@
 #                                                       (default: true)
 #   PUBLISH_DESK     desk the items are fetched onto before publishing; the
 #                    Publisher route is chosen by language, not the desk
-#                                                       (default: Newsdesk)
+#                                                       (default: Sign-offs)
 #   MONGO_URI        mongo connection string
 #                                                       (default: mongodb://superdesk-mongodb/superdesk)
 #
@@ -51,7 +51,7 @@ export CONTENT_TYPES="${CONTENT_TYPES:-text,picture}"
 export UPDATE_MINUTES="${UPDATE_MINUTES:-5}"
 export IS_CLOSED="${IS_CLOSED:-false}"
 export AUTO_PUBLISH="${AUTO_PUBLISH:-true}"
-export PUBLISH_DESK="${PUBLISH_DESK:-Newsdesk}"
+export PUBLISH_DESK="${PUBLISH_DESK:-Sign-offs}"
 
 python3 - <<'PY'
 import os
