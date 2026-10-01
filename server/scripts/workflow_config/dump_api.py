@@ -18,13 +18,19 @@ token, or a full `Basic ...` header value such as `manage.py
 users:get_auth_token` prints).
 
 The output holds usernames and display names, so write it outside the repo (the
-scratchpad) — it is review input, not a tracked file. Users are reduced to an
+a scratch directory) — it is review input, not a tracked file. Users are reduced to an
 allow-list of workflow fields (USER_FIELDS); email, phone, password and
 session data are never written.
 
+The reference instance the tracked workflow was reconciled from (2026-09-28)
+is the externally hosted pesacheck-staging.superdesk.pro, reachable only as an
+API user. It is NOT the legacy `*.cfa2.superdesk.pro` EC2 hosts in our own AWS
+account: their `sd-pesacheck-uat` database is an older deployment with one desk
+and no roles.
+
 Usage:
-  ./dump_api.py --api https://pesacheck-staging-api.superdesk.pro/api --out DIR
-  ./dump_api.py --api https://superdesk-staging.pesacheck.org/api --out DIR
+  ./dump_api.py --api https://pesacheck-staging-api.superdesk.pro/api --out DIR  # reference
+  ./dump_api.py --api https://superdesk-staging.pesacheck.org/api --out DIR      # our staging
 
   --username (or SUPERDESK_USERNAME) skips the username prompt.
 

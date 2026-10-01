@@ -25,9 +25,12 @@ reference is resolved *by name* and re-pointed at the tracked tree:
     create-template for that profile. An unresolvable profile is an error, not a
     silent null.
 
-Decisions (docs/plans/workflow-config-as-tracked-json.md §5) are the constants
-below, so they re-apply on every refresh instead of being hand-edits a refresh
-would undo.
+The decisions taken when reconciling with the reference instance (2026-09-28)
+are the constants below, so they re-apply on every refresh instead of being
+hand-edits a refresh would undo. Two live elsewhere: Ghost auto-publish targets
+Sign-offs (`DEFAULT_PUBLISH_DESK` in `pesacheck/ingest/ghost_feeding_service.py`),
+and people (users, their roles and desk membership) are not tracked at all;
+membership is preserved across bootstraps by `bootstrap_superdesk.py`.
 
 Stdlib only; runs on the host:
 
