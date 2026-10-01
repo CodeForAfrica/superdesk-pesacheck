@@ -254,11 +254,10 @@ def repair_generated_data():
         },
     )
 
-    desks = db.desks.update_many(
-        {}, {"$set": {"desk_type": "production", "_updated": now}}
-    )
-    if desks.modified_count:
-        print(f"Marked {desks.modified_count} bootstrap desk(s) as production desks.")
+    # Desk types are tracked per desk (data/desks.json) and are no longer forced
+    # to "production" here: core reads desk_type only to record
+    # last_authoring_desk / last_production_desk when an item moves between
+    # desks of different types.
 
     # A null `renditions` on a media item crashes the monitoring view.
     media = db.archive.update_many(
@@ -295,7 +294,6 @@ def reassign_ownership(db, admin, now):
         {},
         {
             "$set": {
-                "desk_type": "production",
                 "members": [{"user": admin["_id"]}],
                 "_updated": now,
                 "_etag": new_etag(),
@@ -498,7 +496,7 @@ def api_post(api_base, auth_token, resource, payload):
         ) from error
 
 
-def resolve_demo_desk(db, admin, now, post):
+def resolve_demo_desk(db, admin, post):
     desk = (
         db.desks.find_one(
             {"name": os.environ.get("SUPERDESK_DEMO_DESK_NAME", "Newsdesk")}
@@ -516,10 +514,6 @@ def resolve_demo_desk(db, admin, now, post):
             },
         )
 
-    db.desks.update_one(
-        {"_id": desk["_id"]},
-        {"$set": {"desk_type": "production", "_updated": now}},
-    )
     return desk
 
 
@@ -532,7 +526,6 @@ def seed_demo_content():
     step("Seeding demo content")
     db = superdesk_db()
     admin = require_admin(db, "seed demo content")
-    now = utcnow()
 
     api_base = os.environ.get(
         "SUPERDESK_INTERNAL_API_URL", DEFAULT_INTERNAL_API_URL
@@ -543,7 +536,7 @@ def seed_demo_content():
     def post(resource, payload):
         return api_post(api_base, auth_token, resource, payload)
 
-    desk = resolve_demo_desk(db, admin, now, post)
+    desk = resolve_demo_desk(db, admin, post)
     desk_name = desk.get("name", "local desk")
 
     demo_defaults = {
