@@ -275,8 +275,46 @@ def repair_generated_data():
 # --------------------------------------------------------------------------
 
 
-def reassign_ownership(db, admin, now):
-    """Point the tracked content config at this instance's admin user."""
+def snapshot_desk_membership():
+    """Record each desk's members before the drop-load wipes them.
+
+    Desks are drop-loaded from tracked JSON on every bootstrap
+    (pesacheck/content_config_patch), and membership is deliberately NOT tracked:
+    it is per-instance, keyed on user ObjectIds. Without this, every bootstrap
+    run would reset each desk to the admin alone -- and since non-members get a
+    desk's hidden stages in their ``invisible_stages``, editors would also lose
+    sight of everything sitting on Newsdesk's hidden Pitches stage. Desks keep
+    fixed ``_id``s across the drop, so the snapshot is keyed on desk id.
+    """
+    step("Snapshotting desk membership")
+    db = superdesk_db()
+    snapshot = {
+        desk["_id"]: [m["user"] for m in desk.get("members") or [] if m.get("user")]
+        for desk in db.desks.find({}, {"members": 1})
+    }
+    print(
+        f"Recorded membership of {len(snapshot)} desk(s), "
+        f"{sum(len(v) for v in snapshot.values())} member entries."
+    )
+    return snapshot
+
+
+def desk_members(desk_id, admin_id, snapshot, existing_users):
+    """The admin first, then the desk's preserved members that still exist."""
+    members = [admin_id]
+    for user_id in snapshot.get(desk_id, []):
+        if user_id in existing_users and user_id not in members:
+            members.append(user_id)
+    return [{"user": user_id} for user_id in members]
+
+
+def reassign_ownership(db, admin, now, membership=None):
+    """Point the tracked content config at this instance's admin user.
+
+    Desk membership is restored from ``membership`` (see
+    snapshot_desk_membership), with the admin always included; a desk that is new
+    to this instance gets the admin alone.
+    """
     if not db.desks.find_one(sort=[("name", ASCENDING)]):
         return
     db.content_types.update_many(
@@ -290,16 +328,28 @@ def reassign_ownership(db, admin, now):
             }
         },
     )
-    db.desks.update_many(
-        {},
-        {
-            "$set": {
-                "members": [{"user": admin["_id"]}],
-                "_updated": now,
-                "_etag": new_etag(),
-            }
-        },
-    )
+    membership = membership or {}
+    existing_users = {u["_id"] for u in db.users.find({}, {"_id": 1})}
+    desk_ids = [d["_id"] for d in db.desks.find({}, {"_id": 1})]
+    for desk_id in desk_ids:
+        db.desks.update_one(
+            {"_id": desk_id},
+            {
+                "$set": {
+                    "members": desk_members(
+                        desk_id, admin["_id"], membership, existing_users
+                    ),
+                    "_updated": now,
+                    "_etag": new_etag(),
+                }
+            },
+        )
+    dropped = set(membership) - set(desk_ids)
+    if dropped:
+        print(
+            f"Membership of {len(dropped)} desk(s) no longer tracked was discarded: "
+            f"{sorted(str(d) for d in dropped)}"
+        )
     db.content_templates.update_many(
         {"user": {"$exists": True}},
         {"$set": {"user": admin["_id"], "_updated": now, "_etag": new_etag()}},
@@ -353,7 +403,7 @@ def refresh_stage_visibility(db, now):
         )
 
 
-def reassign_content_ownership():
+def reassign_content_ownership(membership=None):
     """Point the tracked content config at this instance's admin user.
 
     The content config itself now loads from tracked JSON under data/ via
@@ -363,11 +413,12 @@ def reassign_content_ownership():
     profiles, desks and stages must point at THIS newsroom's admin user, and desks
     need their membership and etags set. That is what reassign_ownership does, and
     it deliberately stays code because the admin ObjectId is per-instance.
+    Membership recorded before the drop-load is restored rather than reset.
     """
     step("Reassigning content ownership")
     db = superdesk_db()
     admin = require_admin(db, "reassign content ownership")
-    reassign_ownership(db, admin, utcnow())
+    reassign_ownership(db, admin, utcnow(), membership)
     print("Content ownership reassigned.")
 
 
@@ -617,10 +668,11 @@ def import_editorial_pages():
 
 
 def main():
+    membership = snapshot_desk_membership()
     initialize_base_data()
     report_known_index_conflicts()
     repair_generated_data()
-    reassign_content_ownership()
+    reassign_content_ownership(membership)
     seed_publisher_subscriber()
     import_editorial_pages()
 
