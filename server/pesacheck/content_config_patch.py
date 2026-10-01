@@ -5,7 +5,7 @@ one file per collection — except `vocabularies`, which is split into `data/voc
 and `data/vocabularies/reference/*.json`, one file per vocabulary, so a change to
 one vocabulary is a one-file diff.
 
-Core's `app:initialize_data` loads that config, but two collection groups need
+Core's `app:initialize_data` loads that config, but three collection groups need
 help, so this patch wraps `apps.prepopulate.app_initialize.import_file`:
 
 1. **`vocabularies` — the split directory.** Core expects a single
@@ -34,6 +34,15 @@ help, so this patch wraps `apps.prepopulate.app_initialize.import_file`:
    then re-stamps ownership and desk membership afterwards. This is the plan's
    "keep a drop step" decision for the load-once collections.
 
+3. **`roles` — the same raw drop-and-load.** Core lists `roles` as a non-patch
+   entity, which loads only into an *empty* collection: an edit to the tracked
+   `roles.json` would never reach a seeded database. Drop-loading makes the file
+   the source of truth on every bootstrap; the fixed `_id`s keep users' `role`
+   references valid across the drop. After loading, the roles' privileges are
+   checked against core's registry (`_check_role_privileges`) so a core bump that
+   renames, removes or adds a privilege is logged rather than silently granting
+   nothing.
+
 What would invalidate this patch: core no longer routing these entities through
 `import_file(entity_name, path, file_name, ...)`, renaming an entity, or changing
 `_mongotize`. Re-check `apps/prepopulate/app_initialize.py` on a core bump. It is
@@ -52,7 +61,11 @@ logger = logging.getLogger(__name__)
 VOCABULARY_DENY_LIST = {"keywords"}
 
 # Load-once collections whose service hooks mutate the data on insert.
-RAW_LOAD_ENTITIES = {"desks", "stages", "content_templates"}
+RAW_LOAD_ENTITIES = {"desks", "stages", "content_templates", "roles"}
+
+# Roles meant to hold every registered privilege. Mirrors ALL_PRIVILEGE_ROLES in
+# scripts/workflow_config/convert_api.py, which grants them on refresh.
+ALL_PRIVILEGE_ROLES = {"Managing editor"}
 
 
 def _load_split_vocabularies(vocab_dir):
@@ -70,6 +83,32 @@ def _load_split_vocabularies(vocab_dir):
             continue
         docs.append(doc)
     return docs
+
+
+def _check_role_privileges(roles):
+    """Log role privileges core does not register, and "all" roles missing some."""
+    from superdesk.privilege import get_privilege_list
+
+    registered = {p["name"] for p in get_privilege_list()}
+    for role in roles:
+        granted = {p for p, v in (role.get("privileges") or {}).items() if v}
+        unknown = sorted(granted - registered)
+        if unknown:
+            # Harmless (an unregistered privilege grants nothing) and expected
+            # when this image's core is older than the one roles.json was
+            # refreshed against, so a warning, not a failure.
+            logger.warning(
+                "content_config: role %r grants privileges this core does not register: %s",
+                role.get("name"),
+                unknown,
+            )
+        if role.get("name") in ALL_PRIVILEGE_ROLES and registered - granted:
+            logger.warning(
+                "content_config: role %r should hold every privilege but lacks %s "
+                "(refresh roles.json: make workflow-config-refresh)",
+                role.get("name"),
+                sorted(registered - granted),
+            )
 
 
 async def _raw_drop_load(entity_name, file_path, index_params, original_import_file):
@@ -109,6 +148,8 @@ async def _raw_drop_load(entity_name, file_path, index_params, original_import_f
     if docs:
         collection.insert_many(docs)
     await original_import_file(entity_name, None, None, index_params)
+    if entity_name == "roles":
+        _check_role_privileges(docs)
     logger.info(
         "content_config: raw-loaded %d %s (service hooks bypassed)",
         len(docs),
