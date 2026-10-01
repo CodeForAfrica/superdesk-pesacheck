@@ -1,5 +1,6 @@
 {
     "_id": "availability_manager_tags",
+    "disable_entire_category_selection": false,
     "display_name": "Availability Manager Tags",
     "items": [],
     "schema": {
