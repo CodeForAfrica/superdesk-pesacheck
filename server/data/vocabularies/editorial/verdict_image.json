@@ -1,0 +1,22 @@
+{
+    "_deleted": false,
+    "_id": "verdict_image",
+    "disable_entire_category_selection": false,
+    "display_name": "Verdict Image",
+    "field_type": null,
+    "items": [
+        {"is_active": true, "name": "Default", "qcode": "default"},
+        {"is_active": true, "name": "Use uploaded image", "qcode": "uploaded"}
+    ],
+    "schema": {
+        "name": {},
+        "parent": {},
+        "qcode": {}
+    },
+    "selection_type": "single selection",
+    "service": {
+        "all": 1
+    },
+    "type": "manageable",
+    "unique_field": "qcode"
+}
