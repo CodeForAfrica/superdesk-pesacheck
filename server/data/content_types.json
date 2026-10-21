@@ -2021,7 +2021,7 @@
             "Debunklang": {
                 "enabled": true,
                 "field_name": "Debunk language",
-                "order": 8,
+                "order": 9,
                 "readonly": false,
                 "required": false,
                 "sdWidth": "full",
@@ -2030,7 +2030,7 @@
             "GEC": {
                 "enabled": true,
                 "field_name": "GEC category",
-                "order": 7,
+                "order": 8,
                 "readonly": false,
                 "required": false,
                 "sdWidth": "full",
@@ -2039,7 +2039,7 @@
             "Harm_type": {
                 "enabled": true,
                 "field_name": "Claim topic",
-                "order": 5,
+                "order": 6,
                 "readonly": false,
                 "required": false,
                 "sdWidth": "full",
@@ -2114,7 +2114,7 @@
             "claimformat": {
                 "enabled": true,
                 "field_name": "Claim format",
-                "order": 4,
+                "order": 5,
                 "readonly": false,
                 "required": false,
                 "sdWidth": "full",
@@ -2123,7 +2123,7 @@
             "claimtype": {
                 "enabled": true,
                 "field_name": "Claim type",
-                "order": 6,
+                "order": 7,
                 "readonly": false,
                 "required": false,
                 "sdWidth": "full",
@@ -2133,7 +2133,7 @@
             "content_type": {
                 "enabled": true,
                 "field_name": "Content Type",
-                "order": 15,
+                "order": 16,
                 "readonly": false,
                 "required": false,
                 "sdWidth": "half",
@@ -2142,7 +2142,7 @@
             "countries": {
                 "enabled": true,
                 "field_name": "Countries mentioned",
-                "order": 11,
+                "order": 12,
                 "readonly": false,
                 "required": false,
                 "sdWidth": "full",
@@ -2151,7 +2151,7 @@
             "countrymention1": {
                 "enabled": true,
                 "field_name": "Primary country",
-                "order": 10,
+                "order": 11,
                 "readonly": false,
                 "required": false,
                 "sdWidth": "full",
@@ -2173,7 +2173,7 @@
             },
             "ednote": {
                 "enabled": true,
-                "order": 13,
+                "order": 14,
                 "readonly": false,
                 "required": false,
                 "sdWidth": "full",
@@ -2223,7 +2223,7 @@
             "originator": {
                 "enabled": true,
                 "field_name": "Claim originator",
-                "order": 12,
+                "order": 13,
                 "readonly": false,
                 "required": false,
                 "sdWidth": "full",
@@ -2233,7 +2233,7 @@
             "platform": {
                 "enabled": true,
                 "field_name": "Primary platform",
-                "order": 9,
+                "order": 10,
                 "readonly": false,
                 "required": false,
                 "sdWidth": "full",
@@ -2276,7 +2276,7 @@
             },
             "slugline": {
                 "enabled": true,
-                "order": 14,
+                "order": 15,
                 "readonly": false,
                 "required": true,
                 "sdWidth": "full",
@@ -2301,7 +2301,16 @@
                 "sdWidth": "full",
                 "section": "header"
             },
-            "usageterms": null
+            "usageterms": null,
+            "verdict_image": {
+                "enabled": true,
+                "field_name": "Verdict Image",
+                "order": 4,
+                "readonly": false,
+                "required": false,
+                "sdWidth": "half",
+                "section": "header"
+            }
         },
         "embeddable": false,
         "enabled": true,
@@ -2438,7 +2447,8 @@
                         "countrymention5": null,
                         "media_centre_label": null,
                         "platform": null,
-                        "project": null
+                        "project": null,
+                        "verdict_image": null
                     }
                 },
                 "readonly": false,
@@ -2458,6 +2468,7 @@
                                 "countrymention1",
                                 "Debunklang",
                                 "Debunk",
+                                "verdict_image",
                                 "GEC",
                                 "01harm",
                                 "platform",
@@ -2488,7 +2499,8 @@
                 "required": false,
                 "type": "integer"
             },
-            "usageterms": null
+            "usageterms": null,
+            "verdict_image": null
         },
         "type": "text"
     },
