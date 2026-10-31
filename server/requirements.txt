@@ -139,6 +139,8 @@ frozenlist==1.8.0
     # via
     #   aiohttp
     #   aiosignal
+graypy==2.1.0
+    # via superdesk-core
 h11==0.16.0
     # via
     #   hypercorn
@@ -227,7 +229,7 @@ propcache==0.5.2
     # via
     #   aiohttp
     #   yarl
-pyasn1==0.6.4
+pyasn1==0.6.5
     # via
     #   ldap3
     #   oauth2client
